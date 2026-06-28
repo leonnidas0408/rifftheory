@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0D0D0D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Riff Theory">
+<title>Riff Theory</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-512.png">
+<style>
+  :root {
+    --preto:   #0D0D0D;
+    --carvao:  #1A1A1A;
+    --grafite: #2A2A2A;
+    --dourado: #C9933A;
+    --dourado2:#E8B44A;
+    --branco:  #F0F0F0;
+    --cinza:   #888888;
+    --vermelho:#D94F3D;
+    --verde:   #4CAF76;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--preto); color: var(--branco); font-family: 'Segoe UI', Arial, sans-serif; min-height: 100dvh; }
+
+  /* header */
+  header { background: var(--carvao); padding: 14px 16px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 10; }
+  header h1 { font-size: 20px; color: var(--dourado); font-weight: 700; letter-spacing: .5px; }
+  header span { font-size: 11px; color: var(--cinza); }
+
+  /* entrada */
+  .entrada { background: var(--grafite); margin: 12px; border-radius: 12px; padding: 14px; }
+  .entrada label { font-size: 12px; font-weight: 700; color: var(--dourado); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
+  .row { display: flex; gap: 8px; }
+  input[type=text] {
+    flex: 1; background: var(--carvao); border: 1.5px solid var(--dourado);
+    color: var(--branco); border-radius: 8px; padding: 10px 12px;
+    font-size: 15px; outline: none; font-family: 'Courier New', monospace;
+  }
+  input::placeholder { color: var(--cinza); font-size: 13px; }
+  input:focus { border-color: var(--dourado2); }
+  button.gerar {
+    background: var(--dourado); color: var(--preto); border: none;
+    border-radius: 8px; padding: 10px 16px; font-size: 14px; font-weight: 700;
+    cursor: pointer; white-space: nowrap; transition: background .15s;
+  }
+  button.gerar:active { background: var(--dourado2); }
+  .erro { color: var(--vermelho); font-size: 12px; margin-top: 8px; min-height: 16px; }
+
+  /* resultado */
+  .resultado { margin: 0 12px 12px; display: flex; flex-direction: column; gap: 10px; }
+  .card { background: var(--grafite); border-radius: 12px; padding: 14px; }
+  .card-titulo { font-size: 11px; font-weight: 700; color: var(--dourado); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .card-valor { font-family: 'Courier New', monospace; font-size: 14px; color: var(--branco); line-height: 1.6; }
+  .card-valor.italic { font-style: italic; color: #AAAAAA; font-family: inherit; font-size: 13px; }
+
+  /* acordes chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .chip {
+    background: var(--carvao); border: 1.5px solid var(--grafite);
+    color: var(--branco); border-radius: 20px; padding: 5px 12px;
+    font-size: 13px; font-family: 'Courier New', monospace; cursor: pointer;
+    transition: all .15s;
+  }
+  .chip.ativo { border-color: var(--dourado); color: var(--dourado); background: #2a2000; }
+
+  /* braço */
+  .braco-card { background: var(--grafite); border-radius: 12px; padding: 14px; }
+  .braco-titulo { font-size: 11px; font-weight: 700; color: var(--dourado); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  #braco-nome { font-size: 18px; font-weight: 700; color: var(--branco); font-family: 'Courier New', monospace; margin-bottom: 8px; }
+  canvas { display: block; margin: 0 auto; border-radius: 8px; background: var(--carvao); }
+
+  /* rodape */
+  footer { text-align: center; padding: 12px; color: #444; font-size: 10px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎸 Riff Theory</h1>
+  <span>Escalas · Acordes · Braço</span>
+</header>
+
+<div class="entrada">
+  <label>Nota e escala</label>
+  <div class="row">
+    <input type="text" id="campo" placeholder="Ex: C maior | Am | G blues | F# menor" autocomplete="off" autocorrect="off" spellcheck="false">
+    <button class="gerar" onclick="gerar()">GERAR ▶</button>
+  </div>
+  <div class="erro" id="erro"></div>
+</div>
+
+<div class="resultado" id="resultado" style="display:none">
+  <div class="card">
+    <div class="card-titulo">Escala</div>
+    <div class="card-valor" id="r-escala">—</div>
+  </div>
+  <div class="card">
+    <div class="card-titulo">Acordes do modo</div>
+    <div class="chips" id="r-chips"></div>
+  </div>
+  <div class="card">
+    <div class="card-titulo">Estilo musical</div>
+    <div class="card-valor italic" id="r-estilo">—</div>
+  </div>
+  <div class="braco-card">
+    <div class="braco-titulo">Braço da guitarra</div>
+    <div id="braco-nome">—</div>
+    <canvas id="braco" width="320" height="200"></canvas>
+  </div>
+</div>
+
+<footer>Riff Theory · escalas · acordes · braço</footer>
+
+<script>
+const NOTAS = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+
+const ESCALAS = {
+  ionico:[0,2,4,5,7,9,11], dorico:[0,2,3,5,7,9,10], frigio:[0,1,3,5,7,8,10],
+  lidio:[0,2,4,6,7,9,11], mixolidio:[0,2,4,5,7,9,10], eolio:[0,2,3,5,7,8,10],
+  locrio:[0,1,3,5,6,8,10], maior:[0,2,4,5,7,9,11], menor:[0,2,3,5,7,8,10],
+  menor_harmonica:[0,2,3,5,7,8,11], menor_melodica:[0,2,3,5,7,9,11],
+  pentatonica_maior:[0,2,4,7,9], pentatonica_menor:[0,3,5,7,10],
+  blues:[0,3,5,6,7,10], tons_inteiros:[0,2,4,6,8,10],
+  cromatica:[0,1,2,3,4,5,6,7,8,9,10,11], diminuta:[0,2,3,5,6,8,9,11], aumentada:[0,3,4,7,8,11]
+};
+
+const ESTILOS = {
+  ionico:"Pop, rock clássico", dorico:"Funk, jazz, rock", frigio:"Metal, flamenco",
+  lidio:"Rock progressivo", mixolidio:"Blues, rock clássico", eolio:"Rock, metal, baladas",
+  locrio:"Jazz tenso, metal", maior:"Pop, folk, clássico", menor:"Rock, baladas",
+  menor_harmonica:"Metal neoclássico", menor_melodica:"Jazz, erudito",
+  pentatonica_maior:"Country, pop", pentatonica_menor:"Rock, blues, solos",
+  blues:"Blues, rock, soul", tons_inteiros:"Jazz experimental",
+  cromatica:"Jazz moderno", diminuta:"Suspense, jazz", aumentada:"Jazz experimental"
+};
+
+const ACORDES_ESCALA = {
+  maior:["M","m","m","M","M","m","dim"], menor:["m","dim","M","m","m","M","M"],
+  menor_harmonica:["m","dim","aum","m","M","M","dim"], dorico:["m","m","M","M","m","dim","M"],
+  mixolidio:["M","m","dim","M","m","m","M"], frigio:["m","M","M","m","dim","M","m"],
+  eolio:["m","dim","M","m","m","M","M"]
+};
+
+const FORMAS = {
+  "C": {c:[[5,3],[4,2],[3,0],[2,1],[1,0]], p:null, i:0},
+  "D": {c:[[4,0],[3,2],[2,3],[1,2]], p:null, i:0},
+  "E": {c:[[6,0],[5,2],[4,2],[3,1],[2,0],[1,0]], p:null, i:0},
+  "F": {c:[[6,1],[5,3],[4,3],[3,2],[2,1],[1,1]], p:1, i:1},
+  "G": {c:[[6,3],[5,2],[4,0],[3,0],[2,0],[1,3]], p:null, i:0},
+  "A": {c:[[5,0],[4,2],[3,2],[2,2],[1,0]], p:null, i:0},
+  "B": {c:[[5,2],[4,4],[3,4],[2,4],[1,2]], p:2, i:2},
+  "Am":{c:[[5,0],[4,2],[3,2],[2,1],[1,0]], p:null, i:0},
+  "Em":{c:[[6,0],[5,2],[4,2],[3,0],[2,0],[1,0]], p:null, i:0},
+  "Dm":{c:[[4,0],[3,2],[2,3],[1,1]], p:null, i:0},
+  "Bm":{c:[[6,2],[5,4],[4,4],[3,4],[2,3],[1,2]], p:2, i:2},
+  "C#":{c:[[6,4],[5,6],[4,6],[3,5],[2,4],[1,4]], p:4, i:4},
+  "F#":{c:[[6,2],[5,4],[4,4],[3,3],[2,2],[1,2]], p:2, i:2},
+  "G#":{c:[[6,4],[5,6],[4,6],[3,5],[2,4],[1,4]], p:4, i:4},
+  "A#":{c:[[6,6],[5,8],[4,8],[3,7],[2,6],[1,6]], p:6, i:6},
+};
+
+function parsear(txt) {
+  const p = txt.trim().toLowerCase().split(/\s+/);
+  if (!p.length) return null;
+  const raw = p[0];
+  const nota = (raw.length > 1 && raw[1] === '#') ? raw.slice(0,2).toUpperCase() : raw[0].toUpperCase();
+  if (!NOTAS.includes(nota)) return null;
+  let tipo = raw.slice(nota.length);
+  if (p.length > 1) tipo = p.slice(1).join('_');
+  const sin = {m:'menor',min:'menor',maj:'maior',pent:'pentatonica_menor',
+                harm:'menor_harmonica',mel:'menor_melodica','':'maior'};
+  tipo = sin[tipo] ?? tipo;
+  if (!ESCALAS[tipo]) return null;
+  return [nota, tipo];
+}
+
+function calcEscala(nota, tipo) {
+  const i = NOTAS.indexOf(nota);
+  return ESCALAS[tipo].map(p => NOTAS[(i+p)%12]);
+}
+
+function calcAcordes(notas, tipo) {
+  if (!ACORDES_ESCALA[tipo]) return notas;
+  const suf = ACORDES_ESCALA[tipo];
+  const sim = {M:'',m:'m',dim:'°',aum:'+'};
+  return notas.map((n,i) => n + (sim[suf[i]] ?? ''));
+}
+
+let acordeAtivo = null;
+
+function gerar() {
+  const txt = document.getElementById('campo').value;
+  const res = parsear(txt);
+  if (!res) {
+    document.getElementById('erro').textContent = '⚠ inválido. Ex: C maior | Am | G blues | F# menor_harmonica';
+    return;
+  }
+  document.getElementById('erro').textContent = '';
+  const [nota, tipo] = res;
+  const notas = calcEscala(nota, tipo);
+  const acordes = calcAcordes(notas, tipo);
+
+  document.getElementById('r-escala').textContent = notas.join('  ·  ');
+  document.getElementById('r-estilo').textContent = ESTILOS[tipo] ?? 'Vários estilos';
+
+  // chips de acordes
+  const chips = document.getElementById('r-chips');
+  chips.innerHTML = '';
+  const disponiveis = [];
+  notas.forEach(n => ['','m'].forEach(s => { if (FORMAS[n+s]) disponiveis.push(n+s); }));
+
+  disponiveis.forEach((key, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'chip' + (idx === 0 ? ' ativo' : '');
+    btn.textContent = key;
+    btn.onclick = () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('ativo'));
+      btn.classList.add('ativo');
+      desenharBraco(key);
+    };
+    chips.appendChild(btn);
+  });
+
+  // adiciona acordes do modo como texto se não tiverem diagrama
+  acordes.forEach((a, i) => {
+    if (!disponiveis.includes(a) && !disponiveis.includes(notas[i])) {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = `[${i+1}] ${a}`;
+      btn.style.opacity = '0.5';
+      btn.style.cursor = 'default';
+      chips.appendChild(btn);
+    }
+  });
+
+  document.getElementById('resultado').style.display = 'flex';
+  if (disponiveis.length) desenharBraco(disponiveis[0]);
+}
+
+function desenharBraco(key) {
+  acordeAtivo = key;
+  document.getElementById('braco-nome').textContent = key;
+  const canvas = document.getElementById('braco');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#1A1A1A';
+  ctx.fillRect(0,0,W,H);
+
+  if (!FORMAS[key]) {
+    ctx.fillStyle = '#888';
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Diagrama não disponível', W/2, H/2);
+    return;
+  }
+
+  const {c: casas, p: pestana, i: inicio} = FORMAS[key];
+  const C = 6, F = 5;
+  const MX = 36, MY = 28;
+  const UW = W - MX - 16, UH = H - MY - 20;
+  const dx = UW/(C-1), dy = UH/F;
+
+  // numero casa
+  if (inicio > 0) {
+    ctx.fillStyle = '#C9933A';
+    ctx.font = 'bold 11px Courier New';
+    ctx.textAlign = 'right';
+    ctx.fillText(inicio+'fr', MX-6, MY + dy*0.6);
+  }
+
+  // pestana
+  if (pestana !== null) {
+    const yp = MY + (pestana-inicio)*dy;
+    ctx.fillStyle = '#C9933A';
+    ctx.beginPath();
+    ctx.roundRect(MX-4, yp-5, UW+8, 10, 5);
+    ctx.fill();
+  }
+
+  // trastes
+  for (let i=0; i<=F; i++) {
+    const y = MY + i*dy;
+    ctx.strokeStyle = i===0 ? '#F0F0F0' : '#444';
+    ctx.lineWidth = i===0 ? 2.5 : 1;
+    ctx.beginPath(); ctx.moveTo(MX,y); ctx.lineTo(MX+UW,y); ctx.stroke();
+  }
+
+  // cordas
+  ctx.strokeStyle = '#555'; ctx.lineWidth = 1;
+  for (let i=0; i<C; i++) {
+    const x = MX + i*dx;
+    ctx.beginPath(); ctx.moveTo(x,MY); ctx.lineTo(x,MY+UH); ctx.stroke();
+  }
+
+  const tocadas = new Set(casas.map(([c]) => c));
+
+  // bolinhas
+  casas.forEach(([corda, casa]) => {
+    const xi = C - corda;
+    const x = MX + xi*dx;
+    const rel = casa - inicio;
+    const y = MY + rel*dy;
+    if (casa === 0) {
+      ctx.strokeStyle = '#4CAF76'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(x, MY-16, 7, 0, Math.PI*2); ctx.stroke();
+    } else {
+      ctx.fillStyle = '#C9933A';
+      ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#0D0D0D';
+      ctx.font = 'bold 9px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(rel, x, y);
+    }
+  });
+
+  // X abafadas
+  ctx.strokeStyle = '#D94F3D'; ctx.lineWidth = 1.5;
+  for (let i=0; i<C; i++) {
+    const corda = C-i;
+    if (!tocadas.has(corda)) {
+      const x = MX + i*dx;
+      const y = MY-16;
+      const s = 5;
+      ctx.beginPath(); ctx.moveTo(x-s,y-s); ctx.lineTo(x+s,y+s); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x+s,y-s); ctx.lineTo(x-s,y+s); ctx.stroke();
+    }
+  }
+}
+
+// enter no campo
+document.getElementById('campo').addEventListener('keydown', e => { if (e.key==='Enter') gerar(); });
+
+// PWA install
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
