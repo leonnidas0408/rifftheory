@@ -1,14 +1,5 @@
-// Recursos armazenados no HTML (para o código ficar sem clutter cheio de variáveis grandes)
-function getResource(id, json = true) {
-    const res = document.getElementById(id);
-    if (!res)
-        return null;
-    if (res && res.nodeName == "SCRIPT") {
-        return !json ? res.textContent : JSON.parse(res.textContent);
-    }
-    return undefined;
-}
 
+// getResource em resources.js
 const NOTAS = getResource("NOTAS");
 const ESCALAS = getResource("ESCALAS");
 const ESTILOS = getResource("ESTILOS");
