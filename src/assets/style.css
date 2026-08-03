@@ -1,14 +1,32 @@
 /* Paleta de cores do tema "escuro/dourado" usada em todo o app */
 :root {
-    --preto: #0d0d0d;
-    --carvao: #1a1a1a;
-    --grafite: #2a2a2a;
+    --preto: #040404;
+    --carvao: #030303;
+    --grafite: #0a0a0e;
     --dourado: #4a8df9;
     --dourado2: #300a39;
+    --dourado2-bright: #c800f5;
     --branco: #f0f0f0;
     --cinza: #888888;
     --vermelho: #d94f3d;
     --verde: #4caf76;
+    --button-gradient: linear-gradient(to right,  #4a8df9, #e000b7);
+    --panel-gradient: linear-gradient(var(--grafite), var(--preto));
+}
+
+@font-face {
+    font-family: "Ethnocentric";
+    src: url("fonts/Ethnocentric-Regular.otf");
+}
+
+@font-face {
+    font-family: "Robotech";
+    src: url("fonts/ROBOTECH GP.ttf");
+}
+
+@font-face {
+    font-family: "X-Scale";
+    src: url("fonts/X-SCALE_.TTF");
 }
 
 * {
@@ -16,6 +34,19 @@
     margin: 0;
     padding: 0;
     -webkit-tap-highlight-color: transparent;
+    font-family: "Robotech";
+}
+
+header h1 {
+    font-family: "Ethnocentric";
+}
+
+.primary {
+    color: var(--dourado);
+}
+
+.secondary {
+    color: var(--branco);
 }
 
 body {
@@ -51,7 +82,7 @@ header span {
 
 /* entrada */
 .entrada {
-    background: var(--grafite);
+    background-image: var(--panel-gradient);
     margin: 12px;
     border-radius: 12px;
     padding: 14px;
@@ -94,7 +125,7 @@ input:focus {
 }
 
 button.gerar {
-    background-image: linear-gradient(to right,  #4a8df9, #e000b7);
+    background-image: var(--button-gradient);
     color: var(--branco);
     border: none;
     border-radius: 8px;
@@ -126,7 +157,7 @@ button.gerar:active {
 }
 
 .card {
-    background: var(--grafite);
+    background-image: var(--panel-gradient);
     border-radius: 12px;
     padding: 14px;
 }
@@ -209,7 +240,7 @@ button.gerar:active {
 
 /* braço */
 .braco-card {
-    background: var(--grafite);
+    background-image: var(--panel-gradient);
     border-radius: 12px;
     padding: 14px;
 }
