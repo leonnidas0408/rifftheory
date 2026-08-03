@@ -1,20 +1,32 @@
+// draw.js
+// Camada de interação e desenho: controla a janela de trastes visível, aplica
+// presets de acorde ao braço, redesenha o canvas (desenharBraco) e trata os
+// cliques do usuário no braço (trata). Depende dos dados/funções de cálculo
+// definidos em util.js e main.js (estado, fretStart, NOTAS, FORMAS...).
+
+/** Desloca a janela de trastes visível (botões "‹ casa" / "casa ›"), limitada
+ *  entre a casa 0 (pestana) e a casa 15, e limpa o braço ao mudar de janela. */
 function moverJanela(delta) {
     fretStart = Math.max(0, Math.min(15, fretStart + delta));
     estado = estadoPadrao(fretStart);
     atualizarBraco();
 }
 
+/** Abafa todas as cordas, mantendo a janela de trastes atual (botão "limpar"). */
 function limparBraco() {
     estado = estadoPadrao(fretStart);
     atualizarBraco();
 }
 
-/** Carrega uma forma pré-cadastrada (chips de escala / campo harmônico). */
+/** Carrega uma forma pré-cadastrada (chips de escala / campo harmônico).
+ *  `key` é o nome do acorde (ex: "C", "Am") usado como chave em FORMAS.
+ *  Se não houver diagrama cadastrado para essa chave, apenas reseta o braço
+ *  na casa aberta (fretStart = 0). */
 function carregarPreset(key) {
     estado = estadoPadrao(0);
     if (FORMAS[key]) {
         const { c: casas, i: inicio } = FORMAS[key];
-        fretStart = inicio || 0;
+        fretStart = inicio || 0; // "i" define a janela (posição/pestana) recomendada para a forma
         casas.forEach(([corda, casa]) => {
             estado[corda] = { muted: false, fret: casa };
         });
@@ -24,6 +36,11 @@ function carregarPreset(key) {
     atualizarBraco();
 }
 
+/**
+ * Sincroniza a UI textual do braço (nome do acorde reconhecido, notas soando,
+ * rótulo da janela de trastes) com o estado atual e redesenha o canvas.
+ * Deve ser chamada sempre que `estado` ou `fretStart` mudam.
+ */
 function atualizarBraco() {
     const r = reconhecerAcorde();
     const nomeEl = document.getElementById("braco-nome");
@@ -35,6 +52,13 @@ function atualizarBraco() {
     desenharBraco(r);
 }
 
+/**
+ * Renderiza os "chips" do campo harmônico (graus I a VII) no card correspondente,
+ * a partir da escala calculada. Cada chip é clicável quando existe um diagrama
+ * de acorde cadastrado em FORMAS para aquele grau, permitindo carregar a forma
+ * no braço interativo. Escalas que não formam campo harmônico tradicional
+ * (não têm 7 notas) mostram uma mensagem explicativa em vez dos chips.
+ */
 function montarCampoHarmonico(nota, tipo) {
     const cont = document.getElementById("r-campo");
     cont.innerHTML = "";
@@ -56,6 +80,8 @@ function montarCampoHarmonico(nota, tipo) {
         num.className = "grau-num";
         num.textContent = g.romano;
 
+        // Diagramas em FORMAS só existem para tríades maiores ("C") e menores ("Am"),
+        // por isso a chave é montada como raiz+"m" apenas quando a qualidade é menor.
         const temDiagrama = !!FORMAS[g.raiz + (g.qualidade === "m" ? "m" : "")];
 
         const chip = document.createElement("button");
@@ -83,6 +109,16 @@ function montarCampoHarmonico(nota, tipo) {
     return campo;
 }
 
+/**
+ * Handler principal, chamado ao clicar em "GERAR" ou pressionar Enter no campo de busca.
+ * Fluxo:
+ *  1. Faz o parsing do texto digitado (parsear, em util.js); mostra erro se inválido.
+ *  2. Calcula e exibe as notas da escala e o estilo musical associado.
+ *  3. Monta o campo harmônico (chips de graus I-VII) quando aplicável.
+ *  4. Carrega automaticamente no braço interativo o primeiro acorde do campo
+ *     harmônico que tenha diagrama cadastrado (ou a primeira nota da escala
+ *     com diagrama, para escalas sem campo harmônico tradicional).
+ */
 function gerar() {
     const txt = document.getElementById("campo").value;
     const res = parsear(txt);
@@ -115,18 +151,28 @@ function gerar() {
                 primeiroComDiagrama.raiz +
                 (primeiroComDiagrama.qualidade === "m" ? "m" : "");
     } else {
+        // escalas sem campo harmônico (pentatônicas, blues etc.): usa a 1ª nota com diagrama
         inicial = notas.find((n) => FORMAS[n]) ?? null;
     }
     if (inicial) carregarPreset(inicial);
     else limparBraco();
 }
 
+/**
+ * Desenha o braço da guitarra no <canvas id="braco"> usando a Canvas API 2D.
+ * Recebe `reconhecido` (retorno de reconhecerAcorde) para colorir cada nota
+ * conforme sua função no acorde (fundamental, terça, quinta...) via corDoGrau.
+ * Redesenha tudo do zero a cada chamada (sem otimização incremental), o que é
+ * suficiente dado o tamanho pequeno do canvas e a baixa frequência de eventos.
+ */
 function desenharBraco(reconhecido) {
     const canvas = document.getElementById("braco");
     const ctx = canvas.getContext("2d");
     const W = canvas.width,
         H = canvas.height;
 
+    // C = cordas, F = casas visíveis; MX/MY = margens; UW/UH = área útil de desenho;
+    // dx/dy = espaçamento entre cordas/trastes dentro dessa área.
     const C = 6,
         F = 5;
     const MX = 36,
@@ -221,6 +267,9 @@ function desenharBraco(reconhecido) {
         ctx.fill();
     });
 
+    // Para cada uma das 6 cordas, desenha um dos três estados possíveis:
+    // abafada (X vermelho acima da pestana), solta/aberta (círculo verde com o nome
+    // da nota) ou pressionada numa casa (bolinha colorida conforme a função no acorde).
     for (let corda = 1; corda <= 6; corda++) {
         const st = estado[corda];
         const xi = C - corda;
@@ -276,6 +325,15 @@ function desenharBraco(reconhecido) {
     }
 }
 
+/**
+ * Handler de clique no canvas do braço (chamado a partir do listener em main.js).
+ * Converte a posição do clique (em coordenadas de tela) para coordenadas do
+ * canvas (considerando o escalonamento CSS x pixels reais) e delega a
+ * coordParaCasa (util.js) para descobrir qual corda/casa foi tocada.
+ * - Clique no "cabeçalho" da corda: alterna entre abafada -> solta -> abafada.
+ * - Clique numa casa: alterna entre tocada naquela casa e abafada (toggle);
+ *   clique na casa 0 é ignorado aqui (a corda solta só se ativa pelo cabeçalho).
+ */
 function trata(clientX, clientY) {
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width,
