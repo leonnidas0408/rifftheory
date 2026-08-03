@@ -4,11 +4,12 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
-  "scripts": {
-    "dev": "vite"
-  },
   "devDependencies": {
     "vite": "^8.2.0",
     "@rolldown/binding-win32-x64-msvc": "^1.2.2"
+  },
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite"
   }
 }
