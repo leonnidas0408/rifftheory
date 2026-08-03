@@ -2,9 +2,9 @@ import React from "react";
 import Header from "./components/Header";
 import NotaEEscala from "./components/NotaEEscala";
 import Resultado from "./components/Resultado";
-import RiffTheoryTuner from "./components/RiffTheoryTuner";
+import RiffTheoryTuner from "./components/pages/RiffTheoryTuner";
 import SidebarPages from "./components/SidebarPages";
-import PaginaDeEscala from "./components/PaginaDeEscala";
+import PaginaDeEscala from "./components/pages/PaginaDeEscala";
 
 export default function App() {
     return (
