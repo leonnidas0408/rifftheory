@@ -1,6 +1,6 @@
 import React from "react";
 import { limparBraco, moverJanela } from "../draw";
-import Braco from "./braco";
+import Braco from "./Braco";
 
 export default function Resultado() {
     return (

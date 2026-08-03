@@ -4,6 +4,7 @@
     --carvao: #000203;
     --grafite: #00070c;
     --dourado: #4a8df9;
+    --dourado-dark: #001c49;
     --dourado2: #300a39;
     --dourado2-bright: #c800f5;
     --branco: #f0f0f0;
@@ -12,6 +13,55 @@
     --verde: #4caf76;
     --button-gradient: linear-gradient(to right,  #4a8df9, #e000b7);
     --panel-gradient: linear-gradient(var(--grafite), var(--carvao));
+    --selected-gradient: linear-gradient(to right,var(--dourado-dark), var(--grafite))
+}
+
+.sidebar {
+    width: 64px;
+    height: 100%;
+    position: fixed;
+    height: 100%;
+}
+
+.icon-button {
+    width: 128px;
+    height: 64px;
+    background-color: var(--grafite);
+    border-style: none;
+    border-radius: 10px;
+    display: block;
+    margin: 5px;
+    margin-left: 8px;
+    transition: 0.25s;
+    display: flex;
+    justify-content: right;
+    padding-right: 10px;
+    align-items: center;
+    color: var(--branco);
+    overflow: hidden;
+}
+
+.icon-button.selected {
+    background-image: var(--selected-gradient);
+}
+
+.icon-button.selected .empty {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: left;
+}
+
+.icon-button.selected .indicator {
+    width: 5px;
+    height: 100%;
+    background-color: var(--dourado);
+    border-radius: 10px;
+}
+
+.icon-button:hover {
+    width: 140px;
+    transition: 0.25s;
 }
 
 @font-face {
