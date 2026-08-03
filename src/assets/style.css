@@ -16,6 +16,13 @@
     --selected-gradient: linear-gradient(to right,var(--dourado-dark), var(--grafite))
 }
 
+html {
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
 .sidebar {
     width: 64px;
     height: 100%;
