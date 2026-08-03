@@ -1,7 +1,7 @@
 # Riff Theory 🎸
 ### Aplicativo de violão e guitarra tudo em um
 <div align="center">
-  <img src="src/assets/icon.jpg" width="256" height="256">
+  <img src="/public/icon.jpg" width="256" height="256">
   <p>Riff Theory é capaz de te ajudar em todos os seus sonhos guitarreiros.</p>
 </div>
 
