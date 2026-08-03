@@ -6,7 +6,7 @@ import Resultado from "./components/resultado";
 export default function App() {
     return (
         <div>
-            <Header title="Riff Theory" span="Escalas · Campo harmônico · Braço interativo" icon="src/assets/icon.jpg"/>
+            <Header title="Riff Theory" span="Escalas · Campo harmônico · Braço interativo" icon="./assets/icon.jpg"/>
             <NotaEEscala/>
             <Resultado/>
         </div>
