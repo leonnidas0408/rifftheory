@@ -1,37 +1,68 @@
+import * as util from "./util";
+import ESCALAS from "./assets/constants/ESCALAS.json";
+import ESTILOS from "./assets/constants/ESTILOS.json";
+import FORMAS from "./assets/constants/FORMAS.json";
+import FORMULAS from "./assets/constants/FORMULAS.json";
+import NOTAS from "./assets/constants/NOTAS.json";
+import ROMANOS from "./assets/constants/ROMANOS.json";
+
+const OPEN_MIDI = {
+    6: 40, // Mi (E2) - corda mais grave
+    5: 45, // Lá (A2)
+    4: 50, // Ré (D3)
+    3: 55, // Sol (G3)
+    2: 59, // Si (B3)
+    1: 64  // Mi (E4) - corda mais aguda
+}; // E2 A2 D3 G3 B3 E4
+
+let estado = {
+    1: { muted: true, fret: 0 },
+    2: { muted: true, fret: 0 },
+    3: { muted: true, fret: 0 },
+    4: { muted: true, fret: 0 },
+    5: { muted: true, fret: 0 },
+    6: { muted: true, fret: 0 },
+};
+const C = 6,
+    F = 5,
+    MX = 36,
+    MY = 34;
+
+window.fretStart = 0; // primeira casa da janela visível (0 = a partir da pestana)
 // draw.js
 // Camada de interação e desenho: controla a janela de trastes visível, aplica
 // presets de acorde ao braço, redesenha o canvas (desenharBraco) e trata os
 // cliques do usuário no braço (trata). Depende dos dados/funções de cálculo
-// definidos em util.js e main.js (estado, fretStart, NOTAS, FORMAS...).
+// definidos em util.js e main.js (estado, window.fretStart, NOTAS, FORMAS...).
 
 /** Desloca a janela de trastes visível (botões "‹ casa" / "casa ›"), limitada
  *  entre a casa 0 (pestana) e a casa 15, e limpa o braço ao mudar de janela. */
-function moverJanela(delta) {
-    fretStart = Math.max(0, Math.min(15, fretStart + delta));
-    estado = estadoPadrao(fretStart);
+export function moverJanela(delta) {
+    window.fretStart = Math.max(0, Math.min(15, window.fretStart + delta));
+    estado = util.estadoPadrao(window.fretStart);
     atualizarBraco();
 }
 
 /** Abafa todas as cordas, mantendo a janela de trastes atual (botão "limpar"). */
-function limparBraco() {
-    estado = estadoPadrao(fretStart);
+export function limparBraco() {
+    estado = util.estadoPadrao(window.fretStart);
     atualizarBraco();
 }
 
 /** Carrega uma forma pré-cadastrada (chips de escala / campo harmônico).
  *  `key` é o nome do acorde (ex: "C", "Am") usado como chave em FORMAS.
  *  Se não houver diagrama cadastrado para essa chave, apenas reseta o braço
- *  na casa aberta (fretStart = 0). */
-function carregarPreset(key) {
-    estado = estadoPadrao(0);
+ *  na casa aberta (window.fretStart = 0). */
+export function carregarPreset(key) {
+    estado = util.estadoPadrao(0);
     if (FORMAS[key]) {
         const { c: casas, i: inicio } = FORMAS[key];
-        fretStart = inicio || 0; // "i" define a janela (posição/pestana) recomendada para a forma
+        window.fretStart = inicio || 0; // "i" define a janela (posição/pestana) recomendada para a forma
         casas.forEach(([corda, casa]) => {
             estado[corda] = { muted: false, fret: casa };
         });
     } else {
-        fretStart = 0;
+        window.fretStart = 0;
     }
     atualizarBraco();
 }
@@ -39,16 +70,16 @@ function carregarPreset(key) {
 /**
  * Sincroniza a UI textual do braço (nome do acorde reconhecido, notas soando,
  * rótulo da janela de trastes) com o estado atual e redesenha o canvas.
- * Deve ser chamada sempre que `estado` ou `fretStart` mudam.
+ * Deve ser chamada sempre que `estado` ou `window.fretStart` mudam.
  */
-function atualizarBraco() {
-    const r = reconhecerAcorde();
+export function atualizarBraco() {
+    const r = util.reconhecerAcorde();
     const nomeEl = document.getElementById("braco-nome");
     const notasEl = document.getElementById("braco-notas");
     nomeEl.textContent = r.label ?? (r.notas.length ? "Não identificado" : "—");
     notasEl.textContent = r.notas.length ? r.notas.join(" · ") : "";
     document.getElementById("braco-janela").textContent =
-        fretStart === 0 ? "Aberta" : `${fretStart}ª–${fretStart + 5}ª casa`;
+        window.fretStart === 0 ? "Aberta" : `${window.fretStart}ª–${window.fretStart + 5}ª casa`;
     desenharBraco(r);
 }
 
@@ -59,10 +90,10 @@ function atualizarBraco() {
  * no braço interativo. Escalas que não formam campo harmônico tradicional
  * (não têm 7 notas) mostram uma mensagem explicativa em vez dos chips.
  */
-function montarCampoHarmonico(nota, tipo) {
+export function montarCampoHarmonico(nota, tipo) {
     const cont = document.getElementById("r-campo");
     cont.innerHTML = "";
-    const campo = calcCampoHarmonico(nota, tipo);
+    const campo = util.calcCampoHarmonico(nota, tipo);
 
     if (!campo) {
         cont.innerHTML =
@@ -119,9 +150,9 @@ function montarCampoHarmonico(nota, tipo) {
  *     harmônico que tenha diagrama cadastrado (ou a primeira nota da escala
  *     com diagrama, para escalas sem campo harmônico tradicional).
  */
-function gerar() {
+export function gerar() {
     const txt = document.getElementById("campo").value;
-    const res = parsear(txt);
+    const res = util.parsear(txt);
     if (!res) {
         document.getElementById("erro").textContent =
             "⚠ inválido. Ex: C maior | Am | G blues | F# menor_harmonica";
@@ -130,7 +161,7 @@ function gerar() {
     document.getElementById("erro").textContent = "";
 
     const [nota, tipo] = res;
-    const notas = calcEscala(nota, tipo);
+    const notas = util.calcEscala(nota, tipo);
 
     document.getElementById("r-escala").textContent = notas.join(" · ");
     document.getElementById("r-estilo").textContent =
@@ -160,12 +191,12 @@ function gerar() {
 
 /**
  * Desenha o braço da guitarra no <canvas id="braco"> usando a Canvas API 2D.
- * Recebe `reconhecido` (retorno de reconhecerAcorde) para colorir cada nota
+ * Recebe `reconhecido` (retorno de util.reconhecerAcorde) para colorir cada nota
  * conforme sua função no acorde (fundamental, terça, quinta...) via corDoGrau.
  * Redesenha tudo do zero a cada chamada (sem otimização incremental), o que é
  * suficiente dado o tamanho pequeno do canvas e a baixa frequência de eventos.
  */
-function desenharBraco(reconhecido) {
+export function desenharBraco(reconhecido) {
     const canvas = document.getElementById("braco");
     const ctx = canvas.getContext("2d");
     const W = canvas.width,
@@ -195,7 +226,7 @@ function desenharBraco(reconhecido) {
     // marcadores de casa (inlays) nos trastes 3,5,7,9,12...
     ctx.fillStyle = "rgba(240,240,240,0.10)";
     for (let i = 0; i < F; i++) {
-        const fretAbs = fretStart + i + 1;
+        const fretAbs = window.fretStart + i + 1;
         const mod = fretAbs % 12;
         const y = MY + (i + 0.5) * dy;
         if ([3, 5, 7, 9].includes(mod)) {
@@ -213,17 +244,17 @@ function desenharBraco(reconhecido) {
     }
 
     // indicador da casa inicial da janela
-    if (fretStart > 0) {
+    if (window.fretStart > 0) {
         ctx.fillStyle = "#C9933A";
         ctx.font = "bold 11px Courier New";
         ctx.textAlign = "right";
-        ctx.fillText(fretStart + "ª", MX - 8, MY + dy * 0.65);
+        ctx.fillText(window.fretStart + "ª", MX - 8, MY + dy * 0.65);
     }
 
-    // trastes (linhas horizontais) — a primeira é a pestana/nut quando fretStart=0
+    // trastes (linhas horizontais) — a primeira é a pestana/nut quando window.fretStart=0
     for (let i = 0; i <= F; i++) {
         const y = MY + i * dy;
-        const ehNut = i === 0 && fretStart === 0;
+        const ehNut = i === 0 && window.fretStart === 0;
         ctx.strokeStyle = ehNut ? "#F0F0F0" : "#4a4a4a";
         ctx.lineWidth = ehNut ? 4 : 1.4;
         ctx.beginPath();
@@ -255,7 +286,7 @@ function desenharBraco(reconhecido) {
     Object.entries(porCasa).forEach(([casaStr, cordas]) => {
         if (cordas.length < 3) return;
         const casa = +casaStr;
-        const rel = casa - fretStart;
+        const rel = casa - window.fretStart;
         if (rel < 0 || rel > F) return;
         const y = MY + rel * dy;
         const xis = cordas.map((c) => C - c);
@@ -308,7 +339,7 @@ function desenharBraco(reconhecido) {
             continue;
         }
 
-        const rel = st.fret - fretStart;
+        const rel = st.fret - window.fretStart;
         if (rel < 0 || rel > F) continue; // fora da janela visível, não desenha (mas ainda soa)
         const y = MY + rel * dy;
         const cor = root !== null ? corDoGrau(root, pc) : "#C9933A";
@@ -334,7 +365,8 @@ function desenharBraco(reconhecido) {
  * - Clique numa casa: alterna entre tocada naquela casa e abafada (toggle);
  *   clique na casa 0 é ignorado aqui (a corda solta só se ativa pelo cabeçalho).
  */
-function trata(clientX, clientY) {
+export function trata(clientX, clientY) {
+    const canvas = document.getElementById("braco");
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width,
         scaleY = canvas.height / rect.height;
@@ -345,7 +377,7 @@ function trata(clientX, clientY) {
     const dx = UW / (C - 1),
         dy = UH / F;
 
-    const alvo = coordParaCasa(x, y, C, MX, MY, dx, dy, F);
+    const alvo = util.coordParaCasa(x, y, C, MX, MY, dx, dy, F);
     if (!alvo) return;
     const st = estado[alvo.corda];
 

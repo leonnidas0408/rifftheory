@@ -1,0 +1,309 @@
+/* Paleta de cores do tema "escuro/dourado" usada em todo o app */
+:root {
+    --preto: #0d0d0d;
+    --carvao: #1a1a1a;
+    --grafite: #2a2a2a;
+    --dourado: #c9933a;
+    --dourado2: #e8b44a;
+    --branco: #f0f0f0;
+    --cinza: #888888;
+    --vermelho: #d94f3d;
+    --verde: #4caf76;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: var(--preto);
+    color: var(--branco);
+    font-family: "Segoe UI", Arial, sans-serif;
+    min-height: 100dvh;
+}
+
+/* header */
+header {
+    background: var(--carvao);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    color: var(--dourado);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+header span {
+    font-size: 11px;
+    color: var(--cinza);
+}
+
+/* entrada */
+.entrada {
+    background: var(--grafite);
+    margin: 12px;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.entrada label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dourado);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.row {
+    display: flex;
+    gap: 8px;
+}
+
+input[type="text"] {
+    flex: 1;
+    background: var(--carvao);
+    border: 1.5px solid var(--dourado);
+    color: var(--branco);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 15px;
+    outline: none;
+    font-family: "Courier New", monospace;
+}
+
+input::placeholder {
+    color: var(--cinza);
+    font-size: 13px;
+}
+
+input:focus {
+    border-color: var(--dourado2);
+}
+
+button.gerar {
+    background: var(--dourado);
+    color: var(--preto);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+button.gerar:active {
+    background: var(--dourado2);
+}
+
+.erro {
+    color: var(--vermelho);
+    font-size: 12px;
+    margin-top: 8px;
+    min-height: 16px;
+}
+
+/* resultado */
+.resultado {
+    margin: 0 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card {
+    background: var(--grafite);
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.card-titulo {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dourado);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.card-valor {
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    color: var(--branco);
+    line-height: 1.6;
+}
+
+.card-valor.italic {
+    font-style: italic;
+    color: #aaaaaa;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+/* acordes chips */
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.chip {
+    background: var(--carvao);
+    border: 1.5px solid var(--grafite);
+    color: var(--branco);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-family: "Courier New", monospace;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.chip.ativo {
+    border-color: var(--dourado);
+    color: var(--dourado);
+    background: #2a2000;
+}
+
+.chip.indisponivel {
+    opacity: 0.45;
+    cursor: default;
+}
+
+/* campo harmônico (graus) */
+.campo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.grau-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.grau-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dourado);
+    font-family: "Courier New", monospace;
+}
+
+/* braço */
+.braco-card {
+    background: var(--grafite);
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.braco-titulo {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dourado);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.braco-dica {
+    font-size: 11px;
+    color: var(--cinza);
+    margin-bottom: 10px;
+}
+
+.braco-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 6px;
+    gap: 8px;
+}
+
+#braco-nome {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dourado2);
+    font-family: "Courier New", monospace;
+    line-height: 1.1;
+}
+
+#braco-notas {
+    font-size: 12px;
+    color: var(--cinza);
+    font-family: "Courier New", monospace;
+    margin-top: 2px;
+}
+
+canvas#braco {
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+    background: var(--carvao);
+    cursor: pointer;
+    touch-action: manipulation;
+    max-width: 100%;
+}
+
+.braco-controles {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.braco-controles button {
+    background: var(--carvao);
+    border: 1.5px solid var(--grafite);
+    color: var(--branco);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: "Courier New", monospace;
+    transition: all 0.15s;
+}
+
+.braco-controles button:active {
+    border-color: var(--dourado);
+    color: var(--dourado);
+}
+
+.braco-controles button.limpar {
+    color: var(--vermelho);
+    border-color: #4a2a25;
+}
+
+#braco-janela {
+    font-size: 12px;
+    color: var(--cinza);
+    min-width: 88px;
+    text-align: center;
+}
+
+/* rodape */
+footer {
+    text-align: center;
+    padding: 12px;
+    color: #444;
+    font-size: 10px;
+}

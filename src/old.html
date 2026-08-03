@@ -1,0 +1,92 @@
+<!--
+    Riff Theory — PWA mobile-first para estudo de escalas, campo harmônico e
+    braço interativo de guitarra.
+    Estrutura do arquivo:
+      1. <style>            - tema visual (variáveis de cor em :root) e layout
+      2. <body>
+         - .entrada         - campo de busca (nota + escala) e botão "GERAR"
+         - .resultado       - cards de resultado: escala, campo harmônico, estilo
+         - .braco-card      - braço interativo (canvas) com controles de janela
+      3. scripts             - util.js, draw.js, resources.js, main.js (nessa ordem)
+      4. <script type="application/json"> no final - "banco de dados" estático do
+         app (notas, escalas, estilos, numerais romanos, diagramas de acordes e
+         fórmulas), lido em runtime por getResource() (resources.js)
+-->
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="theme-color" content="#0D0D0D" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="apple-mobile-web-app-title" content="Riff Theory" />
+        <title>Riff Theory</title>
+        <link rel="manifest" href="manifest.json" />
+        <link rel="apple-touch-icon" href="assets/icon-512.png" />
+        <link rel="stylesheet" href="assets/style.css">
+    </head>
+
+    <body>
+        /* Convertido
+        <header>
+            <h1>🎸 Riff Theory</h1>
+            <App></App>
+            <span>Escalas · Campo harmônico · Braço interativo</span>
+        </header>
+        */
+
+        
+
+        
+
+        <footer>Riff Theory · escalas · campo harmônico · braço interativo</footer>
+
+        <!--
+            Ordem de carregamento: util.js e draw.js só DEFINEM funções (não executam
+            nada de imediato), resources.js define getResource(); main.js é `defer`
+            então roda depois que o HTML (incluindo os blocos JSON abaixo) já existe
+            no DOM — é ele quem efetivamente lê os recursos e inicializa o app.
+        -->
+        <script src="util.js"></script>
+        <script src="draw.js"></script>
+        <script src="resources.js"></script>
+        <script src="index.js" defer></script>
+
+        <!-- RECURSOS: "banco de dados" estático do app, lido via getResource() (resources.js) -->
+        <!-- As 12 notas cromáticas, em ordem, usadas como referência de índice em todo o cálculo -->
+        <script id="NOTAS" type="application/json">
+            
+        </script>
+        <!-- Tipos de escala -> intervalos em semitons a partir da fundamental (grau 0) -->
+        <script id="ESCALAS" type="application/json">
+            
+        </script>
+        <!-- Tipos de escala -> estilos musicais associados (texto exibido no card "Estilo musical") -->
+        <script id="ESTILOS" type="application/json">
+            
+        </script>
+        <!-- Numerais romanos dos graus do campo harmônico (I a VII) -->
+        <script id="ROMANOS" type="application/json">
+            
+        </script>
+        <!--
+            Diagramas de acordes pré-cadastrados usados pelo braço interativo (carregarPreset).
+            Cada entrada: "c" = lista de [corda, casa] a pressionar; "p" = casa da pestana
+            (null se não há pestana / acorde aberto); "i" = casa inicial da janela visível
+            recomendada ao carregar essa forma.
+        -->
+        <script id="FORMAS" type="application/json">
+            
+        </script>
+        <!--
+            Fórmulas de acorde (nome do sufixo -> intervalos em semitons a partir da
+            fundamental), usadas por reconhecerAcorde() (util.js) para identificar o
+            acorde formado pelas notas soando no braço interativo.
+        -->
+        <script id="FORMULAS" type="application/json">
+           
+        </script>
+    </body>
+</html>

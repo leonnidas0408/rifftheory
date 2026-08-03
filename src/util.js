@@ -9,7 +9,42 @@
  * Aceita tanto forma "colada" (ex: "Am" -> nota A, tipo menor) quanto "separada por espaço"
  * (ex: "C maior"). Retorna null se a nota ou o tipo de escala não forem reconhecidos.
  */
-function parsear(txt) {
+import ESCALAS from "./assets/constants/ESCALAS.json";
+import ESTILOS from "./assets/constants/ESTILOS.json";
+import FORMAS from "./assets/constants/FORMAS.json";
+import FORMULAS from "./assets/constants/FORMULAS.json";
+import NOTAS from "./assets/constants/NOTAS.json";
+import ROMANOS from "./assets/constants/ROMANOS.json";
+
+const OPEN_MIDI = {
+    6: 40, // Mi (E2) - corda mais grave
+    5: 45, // Lá (A2)
+    4: 50, // Ré (D3)
+    3: 55, // Sol (G3)
+    2: 59, // Si (B3)
+    1: 64  // Mi (E4) - corda mais aguda
+}; // E2 A2 D3 G3 B3 E4
+
+const SIN = {
+    "m": "menor",
+    "min": "menor",
+    "maj": "maior",
+    "pent": "pentatonica_menor",
+    "harm": "menor_harmonica",
+    "mel": "menor_melodica",
+    "": "maior"
+};
+let estado = {
+    1: { muted: true, fret: 0 },
+    2: { muted: true, fret: 0 },
+    3: { muted: true, fret: 0 },
+    4: { muted: true, fret: 0 },
+    5: { muted: true, fret: 0 },
+    6: { muted: true, fret: 0 },
+};
+window.fretStart = 0;
+
+export function parsear(txt) {
     const p = txt.trim().toLowerCase().split(/\s+/);
     if (!p.length) return null;
     const raw = p[0];
@@ -35,7 +70,7 @@ function parsear(txt) {
  * Cada intervalo é somado ao índice cromático da fundamental e o resultado é levado
  * de volta ao intervalo 0-11 com módulo 12, mapeando para o nome da nota em NOTAS.
  */
-function calcEscala(nota, tipo) {
+export function calcEscala(nota, tipo) {
     const i = NOTAS.indexOf(nota);
     return ESCALAS[tipo].map((p) => NOTAS[(i + p) % 12]);
 }
@@ -49,7 +84,7 @@ function calcEscala(nota, tipo) {
  * blues, tons inteiros, cromática, diminuta, aumentada) não formam um campo
  * harmônico tradicional por terças, então retornam null.
  */
-function calcCampoHarmonico(nota, tipo) {
+export function calcCampoHarmonico(nota, tipo) {
     const intervalos = ESCALAS[tipo];
     const n = intervalos.length;
     if (n !== 7) return null;
@@ -104,7 +139,7 @@ function calcCampoHarmonico(nota, tipo) {
  * O parâmetro `inicio` não é usado no corpo da função (mantido pela assinatura
  * da chamada em draw.js), o estado inicial é sempre o mesmo.
  */
-function estadoPadrao(inicio) {
+export function estadoPadrao(inicio) {
     const muteInicial = true; // por padrão nenhuma corda soa até o usuário tocar
     const novo = {};
     for (let c = 1; c <= 6; c++) novo[c] = { muted: muteInicial, fret: 0 };
@@ -124,7 +159,7 @@ function estadoPadrao(inicio) {
  * Retorna { label, notas, rootPc } onde label é o nome do acorde (ex: "C", "Am/E")
  * ou null se nenhuma fórmula bater com as notas soantes.
  */
-function reconhecerAcorde() {
+export function reconhecerAcorde() {
     const soantes = [];
     for (const cordaStr in estado) {
         const st = estado[cordaStr];
@@ -179,7 +214,7 @@ function reconhecerAcorde() {
  * fundamental (root) do acorde reconhecido — dá destaque visual (fundamental
  * em dourado, terças em verde, quintas/oitavas em branco, resto em vermelho).
  */
-function corDoGrau(root, pc) {
+export function corDoGrau(root, pc) {
     const intervalo = (((pc - root) % 12) + 12) % 12;
     if (intervalo === 0) return "#C9933A"; // fundamental
     if (intervalo === 3 || intervalo === 4) return "#4CAF76"; // 3ª menor ou maior
@@ -195,12 +230,12 @@ function corDoGrau(root, pc) {
  * - Caso contrário, arredonda para a casa mais próxima dentro da janela visível.
  * Retorna null se o clique caiu fora da área das 6 cordas.
  */
-function coordParaCasa(x, y, C, MX, MY, dx, dy, F) {
+export function coordParaCasa(x, y, C, MX, MY, dx, dy, F) {
     const xi = Math.round((x - MX) / dx);
     if (xi < 0 || xi > C - 1) return null;
     const corda = C - xi; // cordas desenhadas da mais grave (esquerda) à mais aguda (direita)
     if (y < MY - 8) return { corda, header: true };
     let i = Math.round((y - MY) / dy);
     i = Math.max(0, Math.min(F, i));
-    return { corda, header: false, fret: fretStart + i };
+    return { corda, header: false, fret: window.fretStart + i };
 }
