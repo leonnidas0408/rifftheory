@@ -41,6 +41,10 @@ header h1 {
     font-family: "Ethnocentric";
 }
 
+header img {
+    mix-blend-mode: screen;
+}
+
 .primary {
     color: var(--dourado);
 }
