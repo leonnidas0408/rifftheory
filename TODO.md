@@ -5,7 +5,9 @@ As tarefas estão agrupadas por nível de prioridade e seguem, dentro de cada gr
 sugerida de implementação (1 → 5) indicada no mapa.
 
 ---
-
+<details>
+      <summary>🔴 Prioridade máxima</summary>
+      
 ## 🔴 Prioridade máxima — base essencial e rápida de entregar
 > Estrutura fundamental para o app não afastar quem está começando; validar com uso real antes de expandir.
 
@@ -20,9 +22,13 @@ sugerida de implementação (1 → 5) indicada no mapa.
 - [ ] **Testes com músicos**: validar com guitarristas, alunos e músicos de igreja antes de
       ampliar o escopo; ajuda a descobrir o que realmente faz diferença no dia a dia e a corrigir
       prioridades com base em uso real (não só em suposição).
+</details>
 
 ---
 
+<details>
+      <summary>🟠 Prioridade alta</summary>
+      
 ## 🟠 Prioridade alta — valor imediato para o usuário tocar melhor
 
 ### 2. Entregar utilidade imediata
@@ -36,7 +42,14 @@ sugerida de implementação (1 → 5) indicada no mapa.
       usuário avançar sem se perder em excesso de informação (sensação de caminho claro, melhora
       retenção).
 
+</details>
+
 ---
+
+
+<details>
+      <summary>🟡 Prioridade média</summary>
+      
 
 ## 🟡 Prioridade média — núcleo harmônico do app
 
@@ -52,7 +65,14 @@ sugerida de implementação (1 → 5) indicada no mapa.
       fortalecendo o uso prático da teoria no estudo e no improviso. Funciona melhor depois que o
       campo harmônico estiver bem definido.
 
+</details>
+
 ---
+
+
+<details>
+      <summary>🟣 Prioridade média-alta</summary>
+      
 
 ## 🟣 Prioridade média-alta — recursos de criação e improviso
 
@@ -66,7 +86,14 @@ sugerida de implementação (1 → 5) indicada no mapa.
       trazendo riqueza musical e opções mais criativas. Faz mais sentido depois do básico
       consolidado.
 
+</details>
+
 ---
+
+
+<details>
+      <summary>🟢 Prioridade de especializaçao</summary>
+      
 
 ## 🟢 Prioridade de especialização — para aprofundar o app
 
@@ -81,7 +108,14 @@ sugerida de implementação (1 → 5) indicada no mapa.
       complementa o guia de timbres e a sonoridade por estilo. Útil para músicos mais dedicados,
       fase posterior.
 
+</details>
+
 ---
+
+
+<details>
+      <summary>🔵 Prioridade avançada</summary>
+      
 
 ## 🔵 Prioridade avançada — profundidade e expansão
 
@@ -95,6 +129,8 @@ sugerida de implementação (1 → 5) indicada no mapa.
       crescer por módulos sem travar o lançamento — boa estratégia para transformar o app em
       plataforma completa.
 
+</details>
+
 ---
 
 ## Ordem sugerida de implementação (resumo)
@@ -105,15 +141,3 @@ sugerida de implementação (1 → 5) indicada no mapa.
 5. **Adicionar camadas de especialização** — estilo, timbre, equipamento, conteúdo avançado
 
 ---
-
-## Notas técnicas (estado atual do código)
-O projeto já cobre boa parte do item 3 (teoria principal):
-- `util.js` → `calcEscala`, `calcCampoHarmonico`, `reconhecerAcorde` (motor de teoria musical)
-- `draw.js` → braço interativo (canvas), presets de acorde, geração de resultado (`gerar`)
-- `index.html` → dados estáticos (`NOTAS`, `ESCALAS`, `ESTILOS`, `FORMAS`, `FORMULAS`)
-- `sw.js` / `manifest.json` → suporte a PWA/offline
-
-Pontos ainda **não implementados** e que aparecem no mapa mental (bons candidatos aos próximos
-commits): sistema de sugestões automáticas, trilha de aprendizado gradual, harmonia aplicada
-(progressões), relação escala-acorde, improvisação guiada, arpejos, sonoridade por estilo, guia
-de timbres, ajustes de equipamento, conteúdo para avançados e "tirar música de ouvido".
