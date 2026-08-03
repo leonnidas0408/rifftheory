@@ -1,8 +1,8 @@
 /* Paleta de cores do tema "escuro/dourado" usada em todo o app */
 :root {
-    --preto: #040404;
-    --carvao: #030303;
-    --grafite: #0a0a0e;
+    --preto: #000000;
+    --carvao: #000203;
+    --grafite: #00070c;
     --dourado: #4a8df9;
     --dourado2: #300a39;
     --dourado2-bright: #c800f5;
@@ -11,7 +11,7 @@
     --vermelho: #d94f3d;
     --verde: #4caf76;
     --button-gradient: linear-gradient(to right,  #4a8df9, #e000b7);
-    --panel-gradient: linear-gradient(var(--grafite), var(--preto));
+    --panel-gradient: linear-gradient(var(--grafite), var(--carvao));
 }
 
 @font-face {
