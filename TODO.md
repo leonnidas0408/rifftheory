@@ -92,7 +92,7 @@ sugerida de implementação (1 → 5) indicada no mapa.
 
 
 <details>
-      <summary>🟢 Prioridade de especializaçao</summary>
+      <summary>🟢 Prioridade de especialização</summary>
       
 
 ## 🟢 Prioridade de especialização — para aprofundar o app
