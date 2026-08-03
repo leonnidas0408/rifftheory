@@ -3,8 +3,8 @@
     --preto: #0d0d0d;
     --carvao: #1a1a1a;
     --grafite: #2a2a2a;
-    --dourado: #c9933a;
-    --dourado2: #e8b44a;
+    --dourado: #4a8df9;
+    --dourado2: #300a39;
     --branco: #f0f0f0;
     --cinza: #888888;
     --vermelho: #d94f3d;
@@ -94,8 +94,8 @@ input:focus {
 }
 
 button.gerar {
-    background: var(--dourado);
-    color: var(--preto);
+    background-image: linear-gradient(to right,  #4a8df9, #e000b7);
+    color: var(--branco);
     border: none;
     border-radius: 8px;
     padding: 10px 16px;
@@ -177,7 +177,7 @@ button.gerar:active {
 .chip.ativo {
     border-color: var(--dourado);
     color: var(--dourado);
-    background: #2a2000;
+    background: #2a0022;
 }
 
 .chip.indisponivel {

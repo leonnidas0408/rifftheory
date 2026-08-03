@@ -215,8 +215,8 @@ export function desenharBraco(reconhecido) {
 
     // fundo em degradê (efeito "madeira" sutil)
     const fundo = ctx.createLinearGradient(0, 0, 0, H);
-    fundo.addColorStop(0, "#20180f");
-    fundo.addColorStop(1, "#150f0a");
+    fundo.addColorStop(0, "#1c0f20");
+    fundo.addColorStop(1, "#150a15");
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = fundo;
     ctx.beginPath();
@@ -245,7 +245,7 @@ export function desenharBraco(reconhecido) {
 
     // indicador da casa inicial da janela
     if (window.fretStart > 0) {
-        ctx.fillStyle = "#C9933A";
+        ctx.fillStyle = "#3a67c9";
         ctx.font = "bold 11px Courier New";
         ctx.textAlign = "right";
         ctx.fillText(window.fretStart + "ª", MX - 8, MY + dy * 0.65);
@@ -342,7 +342,7 @@ export function desenharBraco(reconhecido) {
         const rel = st.fret - window.fretStart;
         if (rel < 0 || rel > F) continue; // fora da janela visível, não desenha (mas ainda soa)
         const y = MY + rel * dy;
-        const cor = root !== null ? corDoGrau(root, pc) : "#C9933A";
+        const cor = root !== null ? corDoGrau(root, pc) : "#3a71c9";
 
         ctx.fillStyle = cor;
         ctx.beginPath();

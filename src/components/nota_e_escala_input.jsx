@@ -8,7 +8,7 @@ export default function NotaEEscala() {
             <div className="row">
                 <input type="text" id="campo" placeholder="Ex: C maior | Am | G blues | F# menor" autoComplete="off"
                     autoCorrect="off" spellCheck="false"/>
-                <button className="gerar" onClick={gerar}>GERAR ▶</button>
+                <button className="gerar" onClick={gerar}>GERAR →</button>
             </div>
             <div className="erro" id="erro"></div>
         </div>
