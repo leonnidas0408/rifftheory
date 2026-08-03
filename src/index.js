@@ -62,12 +62,7 @@ const C = 6,
     F = 5,
     MX = 36,
     MY = 34;
-
-// Qualquer clique no canvas é traduzido em corda/casa por trata() (draw.js),
-// que por sua vez usa coordParaCasa() (util.js) para o cálculo geométrico.
-canvas.addEventListener("click", (e) => trata(e.clientX, e.clientY)); // trata em draw.js
-//
-
+    
 // Permite gerar o resultado apertando Enter no campo de busca, sem precisar clicar no botão.
 document.getElementById("campo").addEventListener("keydown", (e) => {
     if (e.key === "Enter") gerar(); // gerar em draw.js

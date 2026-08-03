@@ -34,7 +34,7 @@ const SIN = {
     "mel": "menor_melodica",
     "": "maior"
 };
-let estado = {
+window.estado = {
     1: { muted: true, fret: 0 },
     2: { muted: true, fret: 0 },
     3: { muted: true, fret: 0 },
@@ -133,11 +133,11 @@ export function calcCampoHarmonico(nota, tipo) {
 }
 
 /**
- * Cria um estado "limpo" para as 6 cordas do braço: todas abafadas (muted=true)
+ * Cria um window.estado "limpo" para as 6 cordas do braço: todas abafadas (muted=true)
  * e na casa 0. É usado ao trocar de janela de trastes, ao limpar o braço e
  * como base antes de aplicar uma forma pré-cadastrada (FORMAS).
  * O parâmetro `inicio` não é usado no corpo da função (mantido pela assinatura
- * da chamada em draw.js), o estado inicial é sempre o mesmo.
+ * da chamada em draw.js), o window.estado inicial é sempre o mesmo.
  */
 export function estadoPadrao(inicio) {
     const muteInicial = true; // por padrão nenhuma corda soa até o usuário tocar
@@ -147,7 +147,7 @@ export function estadoPadrao(inicio) {
 }
 
 /**
- * Reconhece o acorde formado pelo estado atual do braço (variável global `estado`).
+ * Reconhece o acorde formado pelo window.estado atual do braço (variável global `window.estado`).
  * Estratégia:
  *  1. Reúne as cordas que estão soando (não abafadas) com sua nota MIDI real.
  *  2. Reduz para classes de altura (pitch class, 0-11) e obtém as notas distintas.
@@ -161,8 +161,8 @@ export function estadoPadrao(inicio) {
  */
 export function reconhecerAcorde() {
     const soantes = [];
-    for (const cordaStr in estado) {
-        const st = estado[cordaStr];
+    for (const cordaStr in window.estado) {
+        const st = window.estado[cordaStr];
         if (st.muted) continue;
         const midi = OPEN_MIDI[cordaStr] + st.fret;
         soantes.push({ corda: +cordaStr, midi, pc: ((midi % 12) + 12) % 12 });

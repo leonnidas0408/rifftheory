@@ -15,7 +15,7 @@ const OPEN_MIDI = {
     1: 64  // Mi (E4) - corda mais aguda
 }; // E2 A2 D3 G3 B3 E4
 
-let estado = {
+window.estado = {
     1: { muted: true, fret: 0 },
     2: { muted: true, fret: 0 },
     3: { muted: true, fret: 0 },
@@ -33,19 +33,19 @@ window.fretStart = 0; // primeira casa da janela visível (0 = a partir da pesta
 // Camada de interação e desenho: controla a janela de trastes visível, aplica
 // presets de acorde ao braço, redesenha o canvas (desenharBraco) e trata os
 // cliques do usuário no braço (trata). Depende dos dados/funções de cálculo
-// definidos em util.js e main.js (estado, window.fretStart, NOTAS, FORMAS...).
+// definidos em util.js e main.js (window.estado, window.fretStart, NOTAS, FORMAS...).
 
 /** Desloca a janela de trastes visível (botões "‹ casa" / "casa ›"), limitada
  *  entre a casa 0 (pestana) e a casa 15, e limpa o braço ao mudar de janela. */
 export function moverJanela(delta) {
     window.fretStart = Math.max(0, Math.min(15, window.fretStart + delta));
-    estado = util.estadoPadrao(window.fretStart);
+    window.estado = util.estadoPadrao(window.fretStart);
     atualizarBraco();
 }
 
 /** Abafa todas as cordas, mantendo a janela de trastes atual (botão "limpar"). */
 export function limparBraco() {
-    estado = util.estadoPadrao(window.fretStart);
+    window.estado = util.estadoPadrao(window.fretStart);
     atualizarBraco();
 }
 
@@ -54,12 +54,12 @@ export function limparBraco() {
  *  Se não houver diagrama cadastrado para essa chave, apenas reseta o braço
  *  na casa aberta (window.fretStart = 0). */
 export function carregarPreset(key) {
-    estado = util.estadoPadrao(0);
+    window.estado = util.estadoPadrao(0);
     if (FORMAS[key]) {
         const { c: casas, i: inicio } = FORMAS[key];
         window.fretStart = inicio || 0; // "i" define a janela (posição/pestana) recomendada para a forma
         casas.forEach(([corda, casa]) => {
-            estado[corda] = { muted: false, fret: casa };
+            window.estado[corda] = { muted: false, fret: casa };
         });
     } else {
         window.fretStart = 0;
@@ -69,11 +69,12 @@ export function carregarPreset(key) {
 
 /**
  * Sincroniza a UI textual do braço (nome do acorde reconhecido, notas soando,
- * rótulo da janela de trastes) com o estado atual e redesenha o canvas.
- * Deve ser chamada sempre que `estado` ou `window.fretStart` mudam.
+ * rótulo da janela de trastes) com o window.estado atual e redesenha o canvas.
+ * Deve ser chamada sempre que `window.estado` ou `window.fretStart` mudam.
  */
 export function atualizarBraco() {
     const r = util.reconhecerAcorde();
+    console.log(r);
     const nomeEl = document.getElementById("braco-nome");
     const notasEl = document.getElementById("braco-notas");
     nomeEl.textContent = r.label ?? (r.notas.length ? "Não identificado" : "—");
@@ -280,7 +281,7 @@ export function desenharBraco(reconhecido) {
     // pestana automática: quando 3+ cordas soam na mesma casa, desenha a barra
     const porCasa = {};
     for (let corda = 1; corda <= 6; corda++) {
-        const st = estado[corda];
+        const st = window.estado[corda];
         if (!st.muted && st.fret > 0) (porCasa[st.fret] ??= []).push(corda);
     }
     Object.entries(porCasa).forEach(([casaStr, cordas]) => {
@@ -298,11 +299,11 @@ export function desenharBraco(reconhecido) {
         ctx.fill();
     });
 
-    // Para cada uma das 6 cordas, desenha um dos três estados possíveis:
+    // Para cada uma das 6 cordas, desenha um dos três window.estados possíveis:
     // abafada (X vermelho acima da pestana), solta/aberta (círculo verde com o nome
     // da nota) ou pressionada numa casa (bolinha colorida conforme a função no acorde).
     for (let corda = 1; corda <= 6; corda++) {
-        const st = estado[corda];
+        const st = window.estado[corda];
         const xi = C - corda;
         const x = MX + xi * dx;
 
@@ -342,7 +343,7 @@ export function desenharBraco(reconhecido) {
         const rel = st.fret - window.fretStart;
         if (rel < 0 || rel > F) continue; // fora da janela visível, não desenha (mas ainda soa)
         const y = MY + rel * dy;
-        const cor = root !== null ? corDoGrau(root, pc) : "#3a71c9";
+        const cor = root !== null ? util.corDoGrau(root, pc) : "#3a71c9";
 
         ctx.fillStyle = cor;
         ctx.beginPath();
@@ -379,7 +380,7 @@ export function trata(clientX, clientY) {
 
     const alvo = util.coordParaCasa(x, y, C, MX, MY, dx, dy, F);
     if (!alvo) return;
-    const st = estado[alvo.corda];
+    const st = window.estado[alvo.corda];
 
     if (alvo.header) {
         if (st.muted) {
