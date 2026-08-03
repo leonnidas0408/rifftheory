@@ -9,6 +9,6 @@
   "theme_color": "#0D0D0D",
   "orientation": "portrait",
   "icons": [
-    { "src": "icon.jpg", "sizes": "1254x1254", "type": "image/png" }
+    { "src": "icon.jpg", "sizes": "1254x1254", "type": "image/jpg" }
   ]
 }
