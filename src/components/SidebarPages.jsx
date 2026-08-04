@@ -18,7 +18,7 @@ export default function SidebarPages({ pages, defaultPage }) {
             <div style={{
                 marginLeft: "155px"
             }}>
-                {pages[page]}
+                {pages[page][0]}
             </div>
         </div>
     )

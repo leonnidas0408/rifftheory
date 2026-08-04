@@ -289,25 +289,23 @@ export default function RiffTheoryTuner() {
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
 
         .rt-root {
-          --bg: #171310;
-          --panel: #221c17;
-          --panel-2: #2b241d;
-          --brass: #e8a33d;
-          --brass-dim: #a97a35;
+          --bg: #101317;
+          --panel: #171c22;
+          --panel-2: #1d242b;
+          --brass: #3d7fe8;
+          --brass-dim: #3577a9;
           --green: #7fd858;
-          --amber: #e8a33d;
+          --amber: #3d90e8;
           --red: #e2543f;
-          --cream: #f2e9dc;
-          --muted: #8a7d6c;
-          --line: #3a3229;
+          --cream: #dce6f2;
+          --muted: #776c8a;
+          --line: #38293a;
 
           min-height: 100vh;
           width: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
-          background:
-            radial-gradient(circle at 50% -10%, #2a231b 0%, var(--bg) 55%);
           font-family: 'Inter', sans-serif;
           color: var(--cream);
           padding: 32px 16px;
@@ -394,7 +392,7 @@ export default function RiffTheoryTuner() {
         }
 
         .rt-instrument-btn.active {
-          background: linear-gradient(180deg, #3a2f1e, #2c2416);
+          background: linear-gradient(180deg, #1e243a, #16162c);
           border-color: var(--brass);
           color: var(--brass);
           box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
@@ -477,7 +475,7 @@ export default function RiffTheoryTuner() {
           padding: 14px;
           border-radius: 10px;
           border: 1px solid var(--line);
-          background: linear-gradient(180deg, #3a2f1e, #241d15);
+          background: linear-gradient(180deg, #1e2a3a, #151924);
           color: var(--brass);
           font-family: 'Inter', sans-serif;
           font-weight: 600;
@@ -623,9 +621,9 @@ function VUGauge({ angle, inTune, color }) {
       <defs>
         <linearGradient id="rt-arc-grad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#e2543f" />
-          <stop offset="40%" stopColor="#e8a33d" />
+          <stop offset="40%" stopColor="#3db8e8" />
           <stop offset="50%" stopColor="#7fd858" />
-          <stop offset="60%" stopColor="#e8a33d" />
+          <stop offset="60%" stopColor="#3da4e8" />
           <stop offset="100%" stopColor="#e2543f" />
         </linearGradient>
       </defs>
@@ -633,7 +631,7 @@ function VUGauge({ angle, inTune, color }) {
       {/* Arco de fundo */}
       <path
         d={`M ${toXY(-45, r).x} ${toXY(-45, r).y} A ${r} ${r} 0 0 1 ${toXY(45, r).x} ${toXY(45, r).y}`}
-        stroke="#3a3229"
+        stroke="#29313a"
         strokeWidth="10"
         fill="none"
         strokeLinecap="round"
@@ -656,13 +654,13 @@ function VUGauge({ angle, inTune, color }) {
           <g key={t}>
             <line
               x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y}
-              stroke={t === 0 ? "#7fd858" : "#8a7d6c"}
+              stroke={t === 0 ? "#7fd858" : "#6c7a8a"}
               strokeWidth={t === 0 ? 3 : 1.5}
             />
             <text
               x={toXY(deg, r + 24).x}
               y={toXY(deg, r + 24).y}
-              fill="#8a7d6c"
+              fill="#6c798a"
               fontSize="10"
               fontFamily="'IBM Plex Mono', monospace"
               textAnchor="middle"
@@ -682,7 +680,7 @@ function VUGauge({ angle, inTune, color }) {
           strokeLinecap="round"
         />
       </g>
-      <circle cx={cx} cy={cy} r="7" fill={color} stroke="#171310" strokeWidth="2" />
+      <circle cx={cx} cy={cy} r="7" fill={color} stroke="#141017" strokeWidth="2" />
       {inTune && <circle cx={cx} cy={cy} r="14" fill="none" stroke={color} strokeWidth="1.5" opacity="0.5" />}
     </svg>
   );

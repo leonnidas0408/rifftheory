@@ -54,6 +54,8 @@ html {
 
 .icon-button.selected {
     background-image: var(--selected-gradient);
+    width: 140px;
+    transition: 0.25s;
 }
 
 .icon-button.selected .empty {
@@ -71,7 +73,7 @@ html {
 }
 
 .icon-button:hover {
-    width: 140px;
+    background-image: var(--selected-gradient);
     transition: 0.25s;
 }
 
