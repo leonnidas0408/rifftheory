@@ -3,12 +3,15 @@ import IconButton from "./IconButton";
 
 export default function SidebarPages({ pages, defaultPage }) {
     const [page, setPage] = useState(defaultPage);
+    const [hidden, setHidden] = useState(true);
+
     return (
         <div>
-            <div className="sidebar">
+            <IconButton label="Toggle" icon="/x.png" onClick={() => setHidden(!hidden)}/>
+            <div className={`sidebar${hidden ? " hidden" : ""}`}>
                 {
                     Object.entries(pages).map(([key, item]) => (
-                        <IconButton onClick={() => setPage(key)} label={key} selected={page === key}/>
+                        <IconButton onClick={() => setPage(key)} label={key} icon={item[1]} selected={page === key}/>
                     ))
                 }
             </div>

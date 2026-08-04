@@ -11,8 +11,8 @@ export default function App() {
         <div>
             <Header title="Riff Theory" span="Escalas · Campo harmônico · Braço interativo" icon="/icon.jpg"/>
             <SidebarPages pages={{
-                "Escalas": <PaginaDeEscala/>,
-                "Afinador": <RiffTheoryTuner/>
+                "Escalas": [<PaginaDeEscala/>, "/musical_note.png"],
+                "Afinador": [<RiffTheoryTuner/>, "/musical_note.png"]
             }} defaultPage="Escalas"/>
         </div>
     )
