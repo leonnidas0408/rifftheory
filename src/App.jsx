@@ -8,6 +8,7 @@ import PaginaDeEscala from "./components/pages/PaginaDeEscala";
 import BottomBar from "./components/BottomBarPages";
 import Home from "./components/pages/Home";
 import SidebarPages from "./components/SidebarPages";
+import Metronomo from "./components/pages/Metronomo";
 
 export default function App() {
     const [page, setPage] = useState("Início");
@@ -22,7 +23,11 @@ export default function App() {
         },
         "Afinador": {
             "page": <RiffTheoryTuner setPage={setPage}/>,
-            "icon": "/musical_note.png"
+            "icon": "/audio.png"
+        },
+        "Metrônomo": {
+            "page": <Metronomo setPage={setPage}/>,
+            "icon": "/audio.png"
         }
     }
     const defaultPage = "Início";

@@ -11,6 +11,7 @@ export default function Home({ setPage }) {
                 <DramaticCTA actions={["CRIE", "ESTUDE", "EVOLUA"]}/>
                 <span>Digite uma nota e uma escala para gerar acordes e visualizar tudo direto no braço da guitarra.</span>
                 <button className="highlight" onClick={() => setPage("Escalas")}>Explorar escalas →</button>
+                <button className="highlight" onClick={() => setPage("Metrônomo")}>Metrônomo →</button>
             </PrettyPanel>
         </div>
     )
