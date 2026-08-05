@@ -1,10 +1,7 @@
 import { React, useState } from "react";
 import IconButton from "./IconButton";
 
-export default function BottomBar({pageData, defaultPage}) {
-    const [page, setPage] = useState(defaultPage);
-    const [hidden, setHidden] = useState(true);
-
+export default function BottomBar({page, setPage, pageData, defaultPage}) {
     return (
         <div>
             <div>

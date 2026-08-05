@@ -5,7 +5,9 @@
     --grafite: #00070c;
     --dourado: #4a8df9;
     --dourado-dark: #001c49;
+    --dourado-darker: #0f131a;
     --dourado2: #300a39;
+    --dourado3: #190f1c;
     --dourado2-bright: #c800f5;
     --branco: #f0f0f0;
     --cinza: #888888;
@@ -13,7 +15,17 @@
     --verde: #4caf76;
     --button-gradient: linear-gradient(to right,  #4a8df9, #e000b7);
     --panel-gradient: linear-gradient(var(--grafite), var(--carvao));
-    --selected-gradient: linear-gradient(to top,var(--dourado-dark), var(--grafite))
+    --selected-gradient: linear-gradient(to top,var(--dourado-dark), var(--grafite));
+    --pretty-gradient: linear-gradient(45deg, var(--dourado3), var(--preto), var(--dourado-darker));
+    --border: 1px solid var(--grafite);
+    --glow-gradient: linear-gradient(to right, var(--grafite), var(--dourado), var(--grafite));
+}
+
+.cta-separator {
+    width: 32px;
+    height: 1px;
+    background-color: var(--cinza);
+    margin: 10px;
 }
 
 html {
@@ -34,16 +46,27 @@ html {
     display: none;
 }
 
+.pretty-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: var(--border);
+    border-image: var(--glow-gradient) 1;
+    background-image: var(--pretty-gradient);
+    padding: 25px;
+    margin: 10px;
+}
+
 .bottom-bar {
     width: 100%;
     height: 84px;
     position: fixed;
     bottom: 0px;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-around;
     background-color: var(--preto);
     padding: 5px;
-    border: 1px solid var(--grafite);
+    border: var(--border);
 }
 
 .icon-button {
@@ -211,7 +234,7 @@ input:focus {
     border-color: var(--dourado2);
 }
 
-button.gerar {
+button.highlight {
     background-image: var(--button-gradient);
     color: var(--branco);
     border: none;

@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 import Header from "./components/Header";
 import NotaEEscala from "./components/NotaEEscala";
 import Resultado from "./components/Resultado";
@@ -8,20 +8,22 @@ import BottomBar from "./components/BottomBarPages";
 import Home from "./components/pages/Home";
 
 export default function App() {
+    const [page, setPage] = useState("Início");
+
     return (
         <div>
             <Header title="Riff Theory" span="Escalas · Campo harmônico · Braço interativo" icon="/icon.jpg"/>
-            <BottomBar pageData={{
+            <BottomBar page={page} setPage={setPage} pageData={{
                 "Início": {
-                    "page": <Home/>,
+                    "page": <Home setPage={setPage}/>,
                     "icon": "/home.png"
                 },
                 "Escalas": {
-                    "page": <PaginaDeEscala/>,
+                    "page": <PaginaDeEscala setPage={setPage}/>,
                     "icon": "/musical_note.png"
                 },
                 "Afinador": {
-                    "page": <RiffTheoryTuner/>,
+                    "page": <RiffTheoryTuner setPage={setPage}/>,
                     "icon": "/musical_note.png"
                 }
             }} defaultPage="Início"/>

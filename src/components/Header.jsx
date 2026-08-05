@@ -1,15 +1,11 @@
 import React from "react";
+import DramaticTitle from "./DramaticTitle";
 
 export default function Header({ title, span, icon }) {
-    let split = title.split(" ");
     return (
         <header>
             <img src={icon} width={128} height={128}></img>
-            {
-                split.map((item, index) => (
-                    <h1 className={index % 2 == 0 ? "primary" : "secondary"}>{item}</h1>
-                ))
-            }
+            <DramaticTitle title={title}/>
             <span>{span}</span>
         </header>
     )
