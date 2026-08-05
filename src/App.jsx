@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import { isMobile, IsMobile } from "react-device-detect";
+import { isDesktop } from "react-device-detect";
 import Header from "./components/Header";
 import NotaEEscala from "./components/NotaEEscala";
 import Resultado from "./components/Resultado";
@@ -31,7 +31,7 @@ export default function App() {
         <div>
             <Header title="Riff Theory" span="Escalas · Campo harmônico · Braço interativo" icon="/icon.jpg"/>
             {
-                isMobile ?
+                isDesktop ?
                 <SidebarPages page={page} setPage={setPage} pageData={pageData} defaultPage={defaultPage}/>
                 : <BottomBar page={page} setPage={setPage} pageData={pageData} defaultPage={defaultPage}/>
             }
