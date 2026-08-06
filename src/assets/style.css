@@ -52,13 +52,23 @@ html {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    border: var(--border);
-    border-image: var(--glow-gradient) 1;
-    background-image: var(--pretty-gradient);
+
     padding: 25px;
     margin: 10px;
-}
 
+    border: 1px solid rgba(74,141,249,.35);
+    border-radius: 22px;
+
+    background: var(--pretty-gradient);
+
+    box-shadow:
+        0 0 20px rgba(74,141,249,.10),
+        inset 0 1px 0 rgba(255,255,255,.05);
+
+    overflow: hidden;
+
+    transition: .25s ease;
+}
 .bottom-bar {
     width: 100%;
     height: 84px;
