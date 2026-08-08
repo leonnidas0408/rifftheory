@@ -2,8 +2,13 @@ import React from "react";
 import PrettyPanel from "../PrettyPanel";
 import Braco from "../Braco";
 import ChordSearch from "../ChordSearch";
+import { obterUsoSemanal, obterTotalHorasSemana } from "../../utils/usageStats";
 
 export default function Home({ setPage }) {
+    const usoSemanal = obterUsoSemanal();
+    const totalHoras = obterTotalHorasSemana();
+    const maxMinutos = Math.max(...usoSemanal.map((d) => d.minutos), 1);
+
     return (
         <div style={{
             width: "100%",
@@ -170,7 +175,7 @@ export default function Home({ setPage }) {
                         <strong style={{
                             fontSize: "22px"
                         }}>
-                            0h
+                            {totalHoras.toFixed(1)}h
                         </strong>
                     </div>
 
@@ -186,12 +191,12 @@ export default function Home({ setPage }) {
                         boxSizing: "border-box"
                     }}>
 
-                        {[35, 60, 45, 80, 55, 70, 90].map((height, index) => (
+                        {usoSemanal.map((dia, index) => (
                             <div
                                 key={index}
                                 style={{
                                     width: "11%",
-                                    height: `${height}%`,
+                                    height: `${(dia.minutos / maxMinutos) * 100}%`,
                                     borderRadius: "6px 6px 2px 2px",
                                     background: "var(--dourado, #4a8df9)",
                                     opacity: "0.85"
@@ -208,13 +213,9 @@ export default function Home({ setPage }) {
                         fontSize: "12px",
                         opacity: 0.65
                     }}>
-                        <span>Seg</span>
-                        <span>Ter</span>
-                        <span>Qua</span>
-                        <span>Qui</span>
-                        <span>Sex</span>
-                        <span>Sáb</span>
-                        <span>Dom</span>
+                        {usoSemanal.map((dia, index) => (
+                            <span key={index}>{dia.label}</span>
+                        ))}
                     </div>
 
                 </PrettyPanel>
