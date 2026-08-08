@@ -180,7 +180,7 @@ body {
 
 /* header */
 header {
-    background: var(--carvao);
+    background: transparent;
     padding: 14px 16px;
     display: flex;
     align-items: center;

@@ -99,18 +99,37 @@ export function carregarPreset(key) {
  * Sincroniza a UI textual do braço (nome do acorde reconhecido, notas soando,
  * rótulo da janela de trastes) com o window.estado atual e redesenha o canvas.
  * Deve ser chamada sempre que `window.estado` ou `window.fretStart` mudam.
+ *
+ * OBS: os elementos "braco-nome", "braco-notas" e "braco-janela" são opcionais
+ * — nem toda tela que usa o <Braco /> precisa desse texto auxiliar. Por isso
+ * cada getElementById é checado antes de setar textContent, evitando
+ * "Cannot read properties of null" quando esses elementos não existem ainda
+ * (ex: no primeiro useEffect, antes do resto da Home terminar de montar) ou
+ * simplesmente não existem na página. Isso NÃO afeta desenharBraco(r), que
+ * sempre roda.
  */
 export function atualizarBraco() {
     const r = util.reconhecerAcorde();
     console.log(r);
+
     const nomeEl = document.getElementById("braco-nome");
+    if (nomeEl) {
+        nomeEl.textContent = r.label ?? (r.notas.length ? "Não identificado" : "—");
+    }
+
     const notasEl = document.getElementById("braco-notas");
-    nomeEl.textContent = r.label ?? (r.notas.length ? "Não identificado" : "—");
-    notasEl.textContent = r.notas.length ? r.notas.join(" · ") : "";
-    document.getElementById("braco-janela").textContent =
-        window.fretStart === 0
-            ? "Aberta"
-            : `${window.fretStart + 1}ª–${window.fretStart + F}ª casa`;
+    if (notasEl) {
+        notasEl.textContent = r.notas.length ? r.notas.join(" · ") : "";
+    }
+
+    const janelaEl = document.getElementById("braco-janela");
+    if (janelaEl) {
+        janelaEl.textContent =
+            window.fretStart === 0
+                ? "Aberta"
+                : `${window.fretStart + 1}ª–${window.fretStart + F}ª casa`;
+    }
+
     desenharBraco(r);
 }
 

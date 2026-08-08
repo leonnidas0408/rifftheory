@@ -1,9 +1,13 @@
-// main.js
-// Ponto de entrada da aplicação: carrega os dados estáticos (escalas, formas de
-// acorde etc.) embutidos no HTML, inicializa o estado global do braço interativo
-// e liga os eventos de UI (clique no canvas, tecla Enter no campo de busca).
-// As funções chamadas aqui (gerar, atualizarBraco, trata...) estão em draw.js,
+// index.js
+// Ponto de entrada legado: carrega os dados estáticos (escalas, formas de
+// acorde etc.) embutidos no HTML e liga o evento de tecla Enter no campo de busca,
+// quando esse campo existir no DOM.
+// As funções chamadas aqui (gerar...) estão em draw.js,
 // e as funções de cálculo (parsear, calcEscala...) estão em util.js.
+//
+// OBS: a inicialização do braço (canvas #braco) NÃO acontece mais aqui.
+// Isso agora é responsabilidade do Braco.jsx (React), que chama
+// atualizarBraco() via useEffect depois que o canvas é montado.
 
 // getResource em resources.js — lê e faz JSON.parse dos blocos <script type="application/json">
 // definidos no final do index.html, mantendo os dados fora do código JS.
@@ -54,22 +58,15 @@ let estado = {
 };
 let fretStart = 0; // primeira casa da janela visível (0 = a partir da pestana)
 
-// --- interação: clicar numa corda (abre/abafa) ou numa casa (dedilha) ---
-const canvas = document.getElementById("braco");
-// C = número de cordas, F = número de casas visíveis por vez na janela do braço,
-// MX/MY = margens (em px do canvas) onde a grade de trastes/cordas começa a ser desenhada.
-const C = 6,
-    F = 5,
-    MX = 36,
-    MY = 34;
-    
 // Permite gerar o resultado apertando Enter no campo de busca, sem precisar clicar no botão.
-document.getElementById("campo").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") gerar(); // gerar em draw.js
-});
-
-// desenha o braço vazio (todas mudas) já na carga da página
-atualizarBraco(); // atualizarBraco em draw.js
+// Guarda com if para não quebrar caso o React ainda não tenha montado o elemento #campo
+// (evita "Cannot read properties of null (reading 'addEventListener')").
+const campoEl = document.getElementById("campo");
+if (campoEl) {
+    campoEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") gerar(); // gerar em draw.js
+    });
+}
 
 // Registra o service worker (sw.js) para permitir uso offline (PWA).
 // Falha silenciosamente (ex: rodando em file:// ou navegador sem suporte).
