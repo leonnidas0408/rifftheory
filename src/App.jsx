@@ -39,7 +39,7 @@ export default function App() {
 
     return (
         <div>
-            <Header title="Riff Theory" span="Escalas · Campo harmônico · Braço interativo" icon="/icon.jpg"/>
+            <Header/>
             <NavbarAdapter page={page} setPage={setPage} pageData={pageData} defaultPage={defaultPage}/>
         </div>
     )

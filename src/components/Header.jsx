@@ -1,12 +1,10 @@
 import React from "react";
-import DramaticTitle from "./DramaticTitle";
 
-export default function Header({ title, span, icon }) {
+export default function Header() {
     return (
-        <header>
-            <img src={icon} width={128} height={128}></img>
-            <DramaticTitle title={title}/>
-            <span>{span}</span>
+        <header style={{ flexDirection: "column", alignItems: "flex-start", gap: "2px" }}>
+            <h2 style={{ fontFamily: "inherit", fontSize: "22px" }}>Olá, músico 👋</h2>
+            <span>Bora evoluir hoje?</span>
         </header>
     )
 }

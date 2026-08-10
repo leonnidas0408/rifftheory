@@ -3,11 +3,13 @@ import PrettyPanel from "../PrettyPanel";
 import Braco from "../Braco";
 import ChordSearch from "../ChordSearch";
 import { obterUsoSemanal, obterTotalHorasSemana } from "../../utils/usageStats";
+import { obterAcessosRecentes } from "../../utils/recentAccess";
 
 export default function Home({ setPage }) {
     const usoSemanal = obterUsoSemanal();
     const totalHoras = obterTotalHorasSemana();
     const maxMinutos = Math.max(...usoSemanal.map((d) => d.minutos), 1);
+    const acessosRecentes = obterAcessosRecentes();
 
     return (
         <div style={{
@@ -27,45 +29,41 @@ export default function Home({ setPage }) {
             </div>
 
 
-            {/* BANNERS */}
-            <PrettyPanel>
-                <div style={{
-                    height: "150px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    textAlign: "center"
-                }}>
-                    <div>
-                        <h2 style={{ margin: "0 0 8px" }}>
-                            Banners
-                        </h2>
-
-                        <span>
-                            Novidades, dicas e conteúdos do Riff Theory
-                        </span>
-                    </div>
-                </div>
-            </PrettyPanel>
+            {/* BANNER */}
+            <div style={{
+                width: "100%",
+                borderRadius: "22px",
+                overflow: "hidden",
+                border: "1px solid rgba(74,141,249,.35)",
+                boxShadow: "0 0 20px rgba(74,141,249,.10)",
+                margin: "10px 10px 0"
+            }}>
+                <img
+                    src="/banner-hero.png"
+                    alt="Riff Theory — Crie, estude, evolua"
+                    style={{
+                        width: "100%",
+                        display: "block",
+                        objectFit: "cover"
+                    }}
+                />
+            </div>
 
 
             {/* 3 PILARES */}
-            <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                gap: "16px",
-                marginTop: "18px"
-            }}>
+            <div className="pilares-grid">
 
                 <PrettyPanel>
-                    <h3>🎙 Afinador</h3>
+                    <div className="feature-icon feature-icon-blue">🎙</div>
+                    <h3 style={{ fontSize: "17px" }}>Afinador</h3>
 
-                    <span>
-                        Afine seus instrumentos
+                    <span style={{ opacity: 0.65, fontSize: "13px" }}>
+                        Afine seus instrumentos pelo microfone
                     </span>
 
                     <button
                         className="highlight"
+                        style={{ marginTop: "auto", alignSelf: "flex-start" }}
                         onClick={() => setPage("Afinador")}
                     >
                         Abrir →
@@ -74,14 +72,16 @@ export default function Home({ setPage }) {
 
 
                 <PrettyPanel>
-                    <h3>⏱ Metrônomo</h3>
+                    <div className="feature-icon feature-icon-purple">⏱</div>
+                    <h3 style={{ fontSize: "17px" }}>Metrônomo</h3>
 
-                    <span>
-                        Treine seu tempo
+                    <span style={{ opacity: 0.65, fontSize: "13px" }}>
+                        Marque o tempo e treine sua precisão
                     </span>
 
                     <button
                         className="highlight"
+                        style={{ marginTop: "auto", alignSelf: "flex-start" }}
                         onClick={() => setPage("Metrônomo")}
                     >
                         Abrir →
@@ -90,14 +90,16 @@ export default function Home({ setPage }) {
 
 
                 <PrettyPanel>
-                    <h3>🎸 Escalas</h3>
+                    <div className="feature-icon feature-icon-blue">🎸</div>
+                    <h3 style={{ fontSize: "17px" }}>Escalas</h3>
 
-                    <span>
-                        Crie escalas e acordes
+                    <span style={{ opacity: 0.65, fontSize: "13px" }}>
+                        Crie escalas, acordes e progressões
                     </span>
 
                     <button
                         className="highlight"
+                        style={{ marginTop: "auto", alignSelf: "flex-start" }}
                         onClick={() => setPage("Escalas")}
                     >
                         Abrir →
@@ -145,12 +147,7 @@ export default function Home({ setPage }) {
 
 
             {/* ESTATÍSTICAS */}
-            <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                gap: "18px",
-                marginTop: "18px"
-            }}>
+            <div className="stats-grid">
 
 
                 {/* SEMANAS DE USO */}
@@ -329,38 +326,68 @@ export default function Home({ setPage }) {
                         gap: "10px"
                     }}>
 
-                        <div style={{
-                            padding: "14px",
-                            borderRadius: "10px",
-                            background: "rgba(255,255,255,0.04)",
-                            display: "flex",
-                            justifyContent: "space-between"
-                        }}>
-                            <span>
-                                🎸 Nenhum acesso recente
-                            </span>
+                        {acessosRecentes.length === 0 ? (
+                            <>
+                                <div style={{
+                                    padding: "14px",
+                                    borderRadius: "10px",
+                                    background: "rgba(255,255,255,0.04)",
+                                    display: "flex",
+                                    justifyContent: "space-between"
+                                }}>
+                                    <span>
+                                        🎸 Nenhum acesso recente
+                                    </span>
 
-                            <span style={{ opacity: 0.5 }}>
-                                —
-                            </span>
-                        </div>
+                                    <span style={{ opacity: 0.5 }}>
+                                        —
+                                    </span>
+                                </div>
 
 
-                        <div style={{
-                            padding: "14px",
-                            borderRadius: "10px",
-                            background: "rgba(255,255,255,0.04)",
-                            display: "flex",
-                            justifyContent: "space-between"
-                        }}>
-                            <span>
-                                🔎 Seus acordes e escalas aparecerão aqui
-                            </span>
+                                <div style={{
+                                    padding: "14px",
+                                    borderRadius: "10px",
+                                    background: "rgba(255,255,255,0.04)",
+                                    display: "flex",
+                                    justifyContent: "space-between"
+                                }}>
+                                    <span>
+                                        🔎 Seus acordes e escalas aparecerão aqui
+                                    </span>
 
-                            <span style={{ opacity: 0.5 }}>
-                                —
-                            </span>
-                        </div>
+                                    <span style={{ opacity: 0.5 }}>
+                                        —
+                                    </span>
+                                </div>
+                            </>
+                        ) : (
+                            acessosRecentes.map((acesso, index) => (
+                                <a
+                                    key={index}
+                                    href={acesso.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        padding: "14px",
+                                        borderRadius: "10px",
+                                        background: "rgba(255,255,255,0.04)",
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        textDecoration: "none",
+                                        color: "inherit"
+                                    }}
+                                >
+                                    <span>
+                                        🎸 {acesso.title}
+                                    </span>
+
+                                    <span style={{ opacity: 0.5, fontSize: "12px" }}>
+                                        {acesso.source}
+                                    </span>
+                                </a>
+                            ))
+                        )}
 
                     </div>
 

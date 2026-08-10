@@ -5,6 +5,7 @@
 
 import React from "react";
 import PrettyPanel from "./PrettyPanel";
+import { registrarAcessoCifra } from "../utils/recentAccess";
 
 export default function ChordResults({ resultados }) {
     if (!resultados || resultados.length === 0) {
@@ -46,6 +47,7 @@ export default function ChordResults({ resultados }) {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="highlight"
+                            onClick={() => registrarAcessoCifra(r)}
                             style={{
                                 textDecoration: "none",
                                 padding: "8px 14px",
