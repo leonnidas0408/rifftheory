@@ -191,12 +191,12 @@ export default function Home({ setPage }) {
                         {usoSemanal.map((dia, index) => (
                             <div
                                 key={index}
+                                className="stat-bar"
                                 style={{
                                     width: "11%",
                                     height: `${(dia.minutos / maxMinutos) * 100}%`,
                                     borderRadius: "6px 6px 2px 2px",
-                                    background: "var(--dourado, #4a8df9)",
-                                    opacity: "0.85"
+                                    opacity: "0.9"
                                 }}
                             />
                         ))}
@@ -237,7 +237,7 @@ export default function Home({ setPage }) {
                         padding: "25px"
                     }}>
 
-                        <div style={{
+                        <div className="stat-ring-glow" style={{
                             width: "150px",
                             height: "150px",
                             borderRadius: "50%",
@@ -328,16 +328,19 @@ export default function Home({ setPage }) {
 
                         {acessosRecentes.length === 0 ? (
                             <>
-                                <div style={{
+                                <div className="recent-item" style={{
                                     padding: "14px",
                                     borderRadius: "10px",
                                     background: "rgba(255,255,255,0.04)",
                                     display: "flex",
+                                    alignItems: "center",
+                                    gap: "12px",
                                     justifyContent: "space-between"
                                 }}>
-                                    <span>
-                                        🎸 Nenhum acesso recente
-                                    </span>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                        <div className="recent-icon">🎸</div>
+                                        <span>Nenhum acesso recente</span>
+                                    </div>
 
                                     <span style={{ opacity: 0.5 }}>
                                         —
@@ -345,16 +348,19 @@ export default function Home({ setPage }) {
                                 </div>
 
 
-                                <div style={{
+                                <div className="recent-item" style={{
                                     padding: "14px",
                                     borderRadius: "10px",
                                     background: "rgba(255,255,255,0.04)",
                                     display: "flex",
+                                    alignItems: "center",
+                                    gap: "12px",
                                     justifyContent: "space-between"
                                 }}>
-                                    <span>
-                                        🔎 Seus acordes e escalas aparecerão aqui
-                                    </span>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                        <div className="recent-icon">🔎</div>
+                                        <span>Seus acordes e escalas aparecerão aqui</span>
+                                    </div>
 
                                     <span style={{ opacity: 0.5 }}>
                                         —
@@ -368,19 +374,23 @@ export default function Home({ setPage }) {
                                     href={acesso.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    className="recent-item"
                                     style={{
                                         padding: "14px",
                                         borderRadius: "10px",
                                         background: "rgba(255,255,255,0.04)",
                                         display: "flex",
+                                        alignItems: "center",
+                                        gap: "12px",
                                         justifyContent: "space-between",
                                         textDecoration: "none",
                                         color: "inherit"
                                     }}
                                 >
-                                    <span>
-                                        🎸 {acesso.title}
-                                    </span>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                        <div className="recent-icon">🎸</div>
+                                        <span>{acesso.title}</span>
+                                    </div>
 
                                     <span style={{ opacity: 0.5, fontSize: "12px" }}>
                                         {acesso.source}

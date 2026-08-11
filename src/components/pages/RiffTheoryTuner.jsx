@@ -289,17 +289,17 @@ export default function RiffTheoryTuner() {
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
 
         .rt-root {
-          --bg: #101317;
-          --panel: #171c22;
-          --panel-2: #1d242b;
-          --brass: #3d7fe8;
-          --brass-dim: #3577a9;
-          --green: #7fd858;
-          --amber: #3d90e8;
-          --red: #e2543f;
-          --cream: #dce6f2;
-          --muted: #776c8a;
-          --line: #38293a;
+          --bg: var(--carvao, #000203);
+          --panel: #05070d;
+          --panel-2: #0a0e18;
+          --brass: var(--dourado, #4a8df9);
+          --brass-dim: #2f5fb0;
+          --green: var(--verde, #4caf76);
+          --amber: #e0a23d;
+          --red: var(--vermelho, #d94f3d);
+          --cream: var(--branco, #f0f0f0);
+          --muted: var(--cinza, #888888);
+          --line: rgba(74,141,249,.18);
 
           min-height: 100vh;
           width: 100%;
@@ -315,12 +315,13 @@ export default function RiffTheoryTuner() {
         .rt-panel {
           width: 100%;
           max-width: 460px;
-          background: linear-gradient(180deg, var(--panel-2), var(--panel));
-          border-radius: 18px;
-          border: 1px solid var(--line);
+          background: var(--pretty-gradient, linear-gradient(45deg, #190f1c, #000, #0f131a));
+          border-radius: 26px;
+          border: 1px solid rgba(74,141,249,.35);
           box-shadow:
-            0 30px 60px -20px rgba(0,0,0,0.6),
-            inset 0 1px 0 rgba(255,255,255,0.04);
+            0 20px 50px rgba(0,0,0,.55),
+            0 0 40px rgba(74,141,249,.18),
+            inset 0 1px 0 rgba(255,255,255,.05);
           padding: 28px 26px 24px;
           box-sizing: border-box;
         }
@@ -333,10 +334,10 @@ export default function RiffTheoryTuner() {
         }
 
         .rt-title {
-          font-family: 'Oswald', sans-serif;
+          font-family: "Ethnocentric", sans-serif;
           font-weight: 700;
-          letter-spacing: 0.04em;
-          font-size: 20px;
+          letter-spacing: 0.06em;
+          font-size: 15px;
           text-transform: uppercase;
           color: var(--cream);
         }
@@ -413,11 +414,12 @@ export default function RiffTheoryTuner() {
         .rt-note {
           font-family: 'Oswald', sans-serif;
           font-weight: 700;
-          font-size: 76px;
+          font-size: clamp(48px, 16vw, 76px);
           line-height: 1;
           letter-spacing: -0.01em;
-          transition: color 0.2s ease;
+          transition: color 0.2s ease, text-shadow 0.2s ease;
           color: var(--cream);
+          text-shadow: 0 0 22px currentColor;
         }
 
         .rt-octave {
@@ -514,9 +516,44 @@ export default function RiffTheoryTuner() {
           text-align: center;
           line-height: 1.5;
         }
+
+        @media (max-width: 480px) {
+          .rt-root {
+            padding: 16px 10px;
+          }
+          .rt-panel {
+            padding: 22px 16px 18px;
+            border-radius: 20px;
+          }
+          .rt-instrument-btn {
+            font-size: 11px;
+            padding: 8px 2px;
+          }
+        }
+        .rt-panel.in-tune {
+          animation: rtInTunePulse 1.1s ease-in-out infinite;
+        }
+
+        @keyframes rtInTunePulse {
+          0%, 100% {
+            box-shadow:
+              0 20px 50px rgba(0,0,0,.55),
+              0 0 40px rgba(74,141,249,.18),
+              inset 0 1px 0 rgba(255,255,255,.05);
+            border-color: rgba(74,141,249,.35);
+          }
+          50% {
+            box-shadow:
+              0 20px 50px rgba(0,0,0,.55),
+              0 0 55px rgba(76,175,118,.45),
+              inset 0 1px 0 rgba(255,255,255,.05);
+            border-color: rgba(76,175,118,.6);
+          }
+        }
+
       `}</style>
 
-      <div className="rt-panel">
+      <div className={`rt-panel${inTune ? " in-tune" : ""}`}>
         <div className="rt-header">
           <div className="rt-title">
             RIFF THEORY <span>TUNER</span>
