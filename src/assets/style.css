@@ -246,11 +246,18 @@ html::-webkit-scrollbar-thumb:hover {
 .feature-icon-blue {
     background: rgba(74,141,249,.15);
     box-shadow: 0 0 22px rgba(74,141,249,.28);
+    color: var(--dourado, #4a8df9);
 }
 
 .feature-icon-purple {
     background: rgba(200,0,245,.15);
     box-shadow: 0 0 22px rgba(200,0,245,.28);
+    color: var(--dourado2-bright, #c800f5);
+}
+
+.feature-icon svg {
+    width: 24px;
+    height: 24px;
 }
 
 .stat-bar {

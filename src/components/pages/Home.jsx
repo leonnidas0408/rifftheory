@@ -54,7 +54,14 @@ export default function Home({ setPage }) {
             <div className="pilares-grid">
 
                 <PrettyPanel>
-                    <div className="feature-icon feature-icon-blue">🎙</div>
+                    <div className="feature-icon feature-icon-blue">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8fb8ff" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M4 15a8 8 0 0 1 16 0" />
+                            <line x1="4" y1="15" x2="20" y2="15" />
+                            <line x1="12" y1="15" x2="16" y2="8" />
+                            <circle cx="12" cy="15" r="1.4" fill="#8fb8ff" stroke="none" />
+                        </svg>
+                    </div>
                     <h3 style={{ fontSize: "17px" }}>Afinador</h3>
 
                     <span style={{ opacity: 0.65, fontSize: "13px" }}>
@@ -72,7 +79,13 @@ export default function Home({ setPage }) {
 
 
                 <PrettyPanel>
-                    <div className="feature-icon feature-icon-purple">⏱</div>
+                    <div className="feature-icon feature-icon-purple">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d68fff" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M7 20h10l-2.2-14.5a1 1 0 0 0-1-.5H10.2a1 1 0 0 0-1 .85L7 20Z" />
+                            <line x1="12" y1="18" x2="15.5" y2="8" />
+                            <circle cx="12" cy="18" r="1.3" fill="#d68fff" stroke="none" />
+                        </svg>
+                    </div>
                     <h3 style={{ fontSize: "17px" }}>Metrônomo</h3>
 
                     <span style={{ opacity: 0.65, fontSize: "13px" }}>
@@ -90,7 +103,17 @@ export default function Home({ setPage }) {
 
 
                 <PrettyPanel>
-                    <div className="feature-icon feature-icon-blue">🎸</div>
+                    <div className="feature-icon feature-icon-blue">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8fb8ff" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="4" y="5" width="16" height="14" rx="1.5" />
+                            <line x1="4" y1="9.6" x2="20" y2="9.6" />
+                            <line x1="4" y1="14.3" x2="20" y2="14.3" />
+                            <line x1="9" y1="5" x2="9" y2="19" />
+                            <line x1="14" y1="5" x2="14" y2="19" />
+                            <circle cx="11.5" cy="12" r="1" fill="#8fb8ff" stroke="none" />
+                            <circle cx="16.5" cy="16.9" r="1" fill="#8fb8ff" stroke="none" />
+                        </svg>
+                    </div>
                     <h3 style={{ fontSize: "17px" }}>Escalas</h3>
 
                     <span style={{ opacity: 0.65, fontSize: "13px" }}>
