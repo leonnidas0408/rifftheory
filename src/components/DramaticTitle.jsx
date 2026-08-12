@@ -10,7 +10,7 @@ export default function DramaticTitle({ title }) {
         }}>
             {
                 split.map((item, index) => (
-                    <h1 className={index % 2 == 0 ? "primary" : "secondary"}>{item}</h1>
+                     <h1 key={index} className={index % 2 == 0 ? "primary" : "secondary"}>{item}</h1>
                 ))
             }
         </div>

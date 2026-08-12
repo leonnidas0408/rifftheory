@@ -1,0 +1,440 @@
+.spotify-tab {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+
+    padding: 24px 28px 60px;
+
+    color: var(--branco, #f0f0f0);
+}
+
+.spotify-tab-deslogado {
+    align-items: flex-start;
+
+    gap: 14px;
+
+    max-width: 360px;
+}
+
+.spotify-tab-deslogado p {
+    color: var(--cinza, #888);
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.spotify-tab-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+
+    gap: 14px;
+}
+
+.spotify-tab-header h2 {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    background: linear-gradient(120deg, #4a8df9, #c800f5);
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+}
+
+.spotify-tab-busca {
+    display: flex;
+
+    gap: 8px;
+}
+
+.spotify-tab-busca input {
+    min-width: 220px;
+
+    padding: 8px 12px;
+
+    border: 1px solid rgba(74, 141, 249, 0.25);
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: var(--branco, #f0f0f0);
+
+    font-size: 12px;
+}
+
+.spotify-tab-busca input:focus {
+    outline: none;
+
+    border-color: rgba(74, 141, 249, 0.6);
+}
+
+.spotify-tab-busca button {
+    padding: 8px 14px;
+
+    border: 1px solid rgba(74, 141, 249, 0.3);
+    border-radius: 8px;
+
+    background: rgba(74, 141, 249, 0.12);
+
+    color: var(--branco, #f0f0f0);
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.spotify-tab-busca button:hover:not(:disabled) {
+    background: rgba(74, 141, 249, 0.22);
+    border-color: rgba(74, 141, 249, 0.55);
+}
+
+.spotify-tab-busca button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.spotify-tab-erro {
+    padding: 8px 12px;
+
+    border: 1px solid rgba(255, 107, 107, 0.35);
+    border-radius: 8px;
+
+    background: rgba(255, 107, 107, 0.08);
+
+    color: #ff6b6b;
+
+    font-size: 12px;
+}
+
+.spotify-tab-player-atual {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 14px;
+
+    border: 1px solid rgba(74, 141, 249, 0.25);
+    border-radius: 14px;
+
+    background: rgba(5, 7, 12, 0.6);
+
+    box-shadow: 0 0 24px rgba(74, 141, 249, 0.06);
+}
+
+.spotify-tab-player-capa {
+    width: 56px;
+    height: 56px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: linear-gradient(135deg, #4a8df9, #c800f5);
+}
+
+.spotify-tab-player-capa img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.spotify-tab-player-capa-placeholder {
+    color: white;
+    font-size: 22px;
+}
+
+.spotify-tab-player-info {
+    min-width: 0;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.spotify-tab-player-info strong {
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-tab-player-info span {
+    color: var(--cinza, #888);
+    font-size: 11px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-tab-player-controles {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.spotify-tab-player-controles button {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(74, 141, 249, 0.14);
+
+    color: var(--branco, #f0f0f0);
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.spotify-tab-player-controles button:hover {
+    background: rgba(74, 141, 249, 0.28);
+    transform: scale(1.06);
+}
+
+.spotify-tab-secao h3 {
+    margin: 0 0 10px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: var(--cinza, #888);
+
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.spotify-tab-lista-faixas {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.spotify-tab-item-faixa {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 8px;
+
+    border-radius: 8px;
+
+    transition: background 0.15s ease;
+}
+
+.spotify-tab-item-faixa:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.spotify-tab-item-capa {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    border-radius: 6px;
+
+    overflow: hidden;
+
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.spotify-tab-item-capa img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.spotify-tab-item-capa-redonda {
+    border-radius: 50%;
+}
+
+.spotify-tab-item-info {
+    min-width: 0;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.spotify-tab-item-info strong {
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-tab-item-info span {
+    font-size: 10px;
+    color: var(--cinza, #888);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-tab-item-faixa button {
+    width: 26px;
+    height: 26px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(74, 141, 249, 0.16);
+
+    color: var(--branco, #f0f0f0);
+
+    font-size: 10px;
+
+    cursor: pointer;
+}
+
+.spotify-tab-item-faixa button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.spotify-tab-lista-artistas {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 14px;
+
+    margin-top: 12px;
+}
+
+.spotify-tab-item-artista {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 6px;
+
+    width: 74px;
+
+    font-size: 10px;
+
+    text-align: center;
+}
+
+.spotify-tab-item-artista .spotify-tab-item-capa {
+    width: 56px;
+    height: 56px;
+}
+
+.spotify-tab-grid-playlists {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+
+    gap: 12px;
+}
+
+.spotify-tab-card-playlist {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    padding: 10px;
+
+    border: 1px solid rgba(74, 141, 249, 0.18);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.02);
+
+    color: var(--branco, #f0f0f0);
+
+    font-size: 11px;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.spotify-tab-card-playlist:hover {
+    background: rgba(74, 141, 249, 0.08);
+    border-color: rgba(74, 141, 249, 0.4);
+}
+
+.spotify-tab-card-playlist.selecionada {
+    border-color: rgba(200, 0, 245, 0.5);
+    background: rgba(200, 0, 245, 0.08);
+}
+
+.spotify-tab-card-playlist span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-tab-card-capa {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 6px;
+
+    background: linear-gradient(135deg, #4a8df9, #c800f5);
+}
+
+.spotify-tab-card-capa img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.spotify-tab-card-capa-placeholder {
+    color: white;
+    font-size: 20px;
+}
