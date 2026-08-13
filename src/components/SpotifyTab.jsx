@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import SpotifyLogin from "./SpotifyLogin";
+import SpotifyEmbedPlayer from "./SpotifyEmbedPlayer";
 
 import {
     adicionarListener,
@@ -16,6 +17,7 @@ import {
     obterFaixasPlaylist,
     tocarFaixas,
     tocarContexto,
+    buscarSpotifyPublico,
 } from "../utils/spotifyApi";
 
 import "./SpotifyTab.css";
@@ -40,6 +42,16 @@ export default function SpotifyTab({ token }) {
     const [dispositivoPronto, setDispositivoPronto] = useState(
         Boolean(obterDeviceId())
     );
+
+    // Estado da busca pública (sem login), usado só quando não há token.
+    const [buscaPublica, setBuscaPublica] = useState("");
+    const [resultadosPublicos, setResultadosPublicos] = useState({
+        faixas: [],
+        artistas: [],
+    });
+    const [buscandoPublico, setBuscandoPublico] = useState(false);
+    const [erroPublico, setErroPublico] = useState("");
+    const [faixaEmbedUri, setFaixaEmbedUri] = useState(null);
 
     // Escuta o mesmo player global usado pelo MiniPlayer,
     // então os controles ficam sincronizados em todo o app.
@@ -124,6 +136,26 @@ export default function SpotifyTab({ token }) {
         }
     }
 
+    async function handleBuscarPublico(evento) {
+        evento.preventDefault();
+
+        if (!buscaPublica.trim()) {
+            return;
+        }
+
+        setBuscandoPublico(true);
+        setErroPublico("");
+
+        try {
+            const dados = await buscarSpotifyPublico(buscaPublica);
+            setResultadosPublicos(dados);
+        } catch (error) {
+            setErroPublico(error.message);
+        } finally {
+            setBuscandoPublico(false);
+        }
+    }
+
     async function handleAbrirPlaylist(playlist) {
         setPlaylistSelecionada(playlist);
         setErro("");
@@ -176,11 +208,77 @@ export default function SpotifyTab({ token }) {
         return (
             <div className="spotify-tab spotify-tab-deslogado">
                 <p>
-                    Conecte sua conta do Spotify para buscar músicas, ver
-                    suas playlists e controlar a reprodução por aqui.
+                    Conecte sua conta do Spotify para ver suas playlists e
+                    controlar a reprodução por aqui. Ou busque e ouça
+                    músicas sem precisar entrar:
                 </p>
 
                 <SpotifyLogin onTokenChange={() => {}} />
+
+                <form
+                    className="spotify-tab-busca"
+                    onSubmit={handleBuscarPublico}
+                >
+                    <input
+                        type="text"
+                        placeholder="Buscar músicas ou artistas..."
+                        value={buscaPublica}
+                        onChange={(evento) =>
+                            setBuscaPublica(evento.target.value)
+                        }
+                    />
+
+                    <button type="submit" disabled={buscandoPublico}>
+                        {buscandoPublico ? "Buscando..." : "Buscar"}
+                    </button>
+                </form>
+
+                {erroPublico && (
+                    <div className="spotify-tab-erro">{erroPublico}</div>
+                )}
+
+                {faixaEmbedUri && (
+                    <SpotifyEmbedPlayer spotifyUri={faixaEmbedUri} />
+                )}
+
+                {resultadosPublicos.faixas.length > 0 && (
+                    <div className="spotify-tab-lista-faixas">
+                        {resultadosPublicos.faixas.map((faixa) => (
+                            <div
+                                className="spotify-tab-item-faixa"
+                                key={faixa.id}
+                            >
+                                <div className="spotify-tab-item-capa">
+                                    {faixa.album?.images?.[2]?.url ? (
+                                        <img
+                                            src={faixa.album.images[2].url}
+                                            alt={faixa.name}
+                                        />
+                                    ) : null}
+                                </div>
+
+                                <div className="spotify-tab-item-info">
+                                    <strong>{faixa.name}</strong>
+                                    <span>
+                                        {faixa.artists
+                                            ?.map((a) => a.name)
+                                            .join(", ")}
+                                    </span>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setFaixaEmbedUri(faixa.uri)
+                                    }
+                                    aria-label={`Tocar ${faixa.name}`}
+                                >
+                                    ▶
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         );
     }

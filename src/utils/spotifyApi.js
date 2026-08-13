@@ -97,3 +97,34 @@ export async function tocarContexto(contextUri, deviceId, token, faixaUri) {
         }
     );
 }
+
+// Busca pública (sem login) — usada quando não há token de usuário.
+// Devolve o mesmo formato { faixas, artistas } que buscarSpotify,
+// pra quem consome poder tratar os dois casos do mesmo jeito.
+export async function buscarSpotifyPublico(query, tipos = ["track", "artist"]) {
+    if (!query?.trim()) {
+        return { faixas: [], artistas: [] };
+    }
+
+    const parametros = new URLSearchParams({
+        q: query,
+        type: tipos.join(","),
+    });
+
+    const resposta = await fetch(`/api/spotify-search?${parametros.toString()}`);
+    const dados = await resposta.json().catch(() => null);
+
+    if (!resposta.ok) {
+        const mensagem =
+            dados?.error?.message ||
+            dados?.error ||
+            `Erro na busca pública (${resposta.status})`;
+
+        throw new Error(mensagem);
+    }
+
+    return {
+        faixas: dados?.tracks?.items || [],
+        artistas: dados?.artists?.items || [],
+    };
+}
