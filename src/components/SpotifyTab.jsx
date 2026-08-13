@@ -119,7 +119,7 @@ export default function SpotifyTab({ token }) {
     async function handleBuscar(evento) {
         evento.preventDefault();
 
-        if (!token || !busca.trim()) {
+        if (!busca.trim()) {
             return;
         }
 
@@ -127,10 +127,22 @@ export default function SpotifyTab({ token }) {
         setErro("");
 
         try {
-            const dados = await buscarSpotify(busca, token);
+            const dados = token
+                ? await buscarSpotify(busca, token)
+                : await buscarSpotifyPublico(busca);
             setResultados(dados);
         } catch (error) {
-            setErro(error.message);
+            // Token existe mas não está na allowlist (403) — cai pra busca pública
+            if (token && error.message.includes("403")) {
+                try {
+                    const dados = await buscarSpotifyPublico(busca);
+                    setResultados(dados);
+                } catch (erroPublico) {
+                    setErro(erroPublico.message);
+                }
+            } else {
+                setErro(error.message);
+            }
         } finally {
             setBuscando(false);
         }
