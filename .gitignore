@@ -1,1 +1,21 @@
+# dependências
 node_modules
+
+# build
+dist
+dist-ssr
+
+# env (nunca commitar!)
+.env
+.env.*
+!.env.example
+
+# arquivos locais
+*.local
+
+# sistema / editores
+.DS_Store
+Thumbs.db
+.idea
+.vscode/*
+!.vscode/extensions.json
