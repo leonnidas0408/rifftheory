@@ -5,6 +5,11 @@ node_modules
 dist
 dist-ssr
 
+# skills locais (ferramentas de dev)
+.agents/
+.claude/skills/
+skills-lock.json
+
 # env (nunca commitar!)
 .env
 .env.*

@@ -438,3 +438,87 @@
     color: white;
     font-size: 20px;
 }
+
+.spotify-tab-erro-playlists {
+    padding: 12px 14px;
+
+    border: 1px solid rgba(255, 171, 64, 0.35);
+    border-radius: 10px;
+
+    background: rgba(255, 171, 64, 0.08);
+}
+
+.spotify-tab-erro-playlists p {
+    margin: 0 0 10px;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.spotify-tab-acoes-403 {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+.spotify-tab-acoes-403 a,
+.spotify-tab-acoes-403 button {
+    padding: 7px 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    color: var(--branco, #f0f0f0);
+
+    font-size: 11px;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease;
+}
+
+.spotify-tab-acoes-403 a:hover,
+.spotify-tab-acoes-403 button:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.spotify-tab-embed {
+    margin-top: 4px;
+}
+
+.spotify-tab-embed-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    margin-bottom: 6px;
+}
+
+.spotify-tab-embed-topo span {
+    font-size: 12px;
+    font-weight: 600;
+
+    color: var(--cinza, #888);
+}
+
+.spotify-tab-embed-topo button {
+    padding: 4px 8px;
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: var(--branco, #f0f0f0);
+
+    font-size: 11px;
+
+    cursor: pointer;
+}

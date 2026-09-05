@@ -20,6 +20,13 @@ import {
     buscarSpotifyPublico,
 } from "../utils/spotifyApi";
 
+import {
+    iniciarLoginSpotify,
+    removerTokenSpotify,
+} from "../utils/spotifyAuth";
+
+import { isMobile } from "react-device-detect";
+
 import "./SpotifyTab.css";
 
 export default function SpotifyTab({ token }) {
@@ -52,6 +59,8 @@ export default function SpotifyTab({ token }) {
     const [buscandoPublico, setBuscandoPublico] = useState(false);
     const [erroPublico, setErroPublico] = useState("");
     const [faixaEmbedUri, setFaixaEmbedUri] = useState(null);
+    const [embedUri, setEmbedUri] = useState(null);
+    const [playlistsRestritas, setPlaylistsRestritas] = useState(false);
 
     // Escuta o mesmo player global usado pelo MiniPlayer,
     // então os controles ficam sincronizados em todo o app.
@@ -101,6 +110,11 @@ export default function SpotifyTab({ token }) {
             } catch (error) {
                 if (ativo) {
                     setErro(error.message);
+                    setPlaylistsRestritas(
+                        /403|forbidden|insufficient client scope/i.test(
+                            error.message
+                        )
+                    );
                 }
             } finally {
                 if (ativo) {
@@ -177,6 +191,11 @@ export default function SpotifyTab({ token }) {
             setFaixasPlaylist(faixas);
         } catch (error) {
             setErro(error.message);
+            setPlaylistsRestritas(
+                /403|forbidden|insufficient client scope/i.test(
+                    error.message
+                )
+            );
         }
     }
 
@@ -214,6 +233,32 @@ export default function SpotifyTab({ token }) {
         } catch (error) {
             setErro(error.message);
         }
+    }
+
+    function handlePlayOuEmbed(faixaUri) {
+        if (!isMobile && dispositivoPronto) {
+            handleTocarFaixa(faixaUri);
+        } else {
+            setEmbedUri(faixaUri);
+        }
+    }
+
+    function handlePlaylistOuEmbed(faixa) {
+        if (!isMobile && dispositivoPronto) {
+            handleTocarPlaylist(playlistSelecionada, faixa.uri);
+        } else {
+            setEmbedUri(faixa.uri);
+        }
+    }
+
+    function fecharEmbed() {
+        setEmbedUri(null);
+    }
+
+    function reconectarSpotify() {
+        removerTokenSpotify();
+
+        iniciarLoginSpotify();
     }
 
     if (!token) {
@@ -323,6 +368,39 @@ export default function SpotifyTab({ token }) {
                 <div className="spotify-tab-erro">{erro}</div>
             )}
 
+            {playlistsRestritas && (
+                <div className="spotify-tab-erro-playlists">
+                    <p>
+                        As playlists não carregaram (erro 403). Isso costuma
+                        acontecer quando o login é antigo e as permissões ficaram
+                        desatualizadas, ou quando a conta não está autorizada no
+                        painel do Spotify. Reconecte a conta ou abra direto no
+                        app do Spotify:
+                    </p>
+
+                    <div className="spotify-tab-acoes-403">
+                        <a
+                            href={
+                                playlistSelecionada
+                                    ? `https://open.spotify.com/playlist/${playlistSelecionada.id}`
+                                    : "https://open.spotify.com"
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Abrir no app do Spotify
+                        </a>
+
+                        <button
+                            type="button"
+                            onClick={reconectarSpotify}
+                        >
+                            Reconectar conta
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {faixaAtual && (
                 <div className="spotify-tab-player-atual">
                     <div className="spotify-tab-player-capa">
@@ -371,6 +449,24 @@ export default function SpotifyTab({ token }) {
                 </div>
             )}
 
+            {embedUri && (
+                <section className="spotify-tab-embed">
+                    <div className="spotify-tab-embed-topo">
+                        <span>Player rápido</span>
+
+                        <button
+                            type="button"
+                            onClick={fecharEmbed}
+                            aria-label="Fechar player"
+                        >
+                            ✕
+                        </button>
+                    </div>
+
+                    <SpotifyEmbedPlayer spotifyUri={embedUri} />
+                </section>
+            )}
+
             {(resultados.faixas.length > 0 ||
                 resultados.artistas.length > 0) && (
                 <section className="spotify-tab-secao">
@@ -407,9 +503,11 @@ export default function SpotifyTab({ token }) {
                                     <button
                                         type="button"
                                         onClick={() =>
-                                            handleTocarFaixa(faixa.uri)
+                                            handlePlayOuEmbed(faixa.uri)
                                         }
-                                        disabled={!dispositivoPronto}
+                                        disabled={
+                                            !dispositivoPronto && !isMobile
+                                        }
                                         aria-label={`Tocar ${faixa.name}`}
                                     >
                                         ▶
@@ -519,12 +617,11 @@ export default function SpotifyTab({ token }) {
                                 <button
                                     type="button"
                                     onClick={() =>
-                                        handleTocarPlaylist(
-                                            playlistSelecionada,
-                                            faixa.uri
-                                        )
+                                        handlePlaylistOuEmbed(faixa)
                                     }
-                                    disabled={!dispositivoPronto}
+                                    disabled={
+                                        !dispositivoPronto && !isMobile
+                                    }
                                     aria-label={`Tocar ${faixa.name}`}
                                 >
                                     ▶
