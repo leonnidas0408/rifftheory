@@ -40,7 +40,7 @@
     font-size: 20px;
     font-weight: 700;
 
-    background: linear-gradient(120deg, #4a8df9, #c800f5);
+    background: linear-gradient(120deg, #4a8df9, #5d737e);
 
     -webkit-background-clip: text;
     background-clip: text;
@@ -145,7 +145,7 @@
 
     border-radius: 10px;
 
-    background: linear-gradient(135deg, #4a8df9, #c800f5);
+    background: linear-gradient(135deg, #5d737e, #30292f);
 }
 
 .spotify-tab-player-capa img {
@@ -402,8 +402,8 @@
 }
 
 .spotify-tab-card-playlist.selecionada {
-    border-color: rgba(200, 0, 245, 0.5);
-    background: rgba(200, 0, 245, 0.08);
+    border-color: rgba(74, 141, 249, 0.5);
+    background: rgba(74, 141, 249, 0.08);
 }
 
 .spotify-tab-card-playlist span {
@@ -424,7 +424,7 @@
 
     border-radius: 6px;
 
-    background: linear-gradient(135deg, #4a8df9, #c800f5);
+    background: linear-gradient(135deg, #5d737e, #30292f);
 }
 
 .spotify-tab-card-capa img {

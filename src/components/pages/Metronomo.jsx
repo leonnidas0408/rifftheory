@@ -186,9 +186,9 @@ export default function Metronomo() {
                 }
 
                 @keyframes metroPulseAccent {
-                    0%   { box-shadow: 0 0 0 0 rgba(200,0,245,.65); transform: scale(1); }
-                    40%  { box-shadow: 0 0 0 22px rgba(200,0,245,0); transform: scale(1.06); }
-                    100% { box-shadow: 0 0 0 22px rgba(200,0,245,0); transform: scale(1); }
+                    0%   { box-shadow: 0 0 0 0 rgba(93,115,126,.75); transform: scale(1); }
+                    40%  { box-shadow: 0 0 0 22px rgba(93,115,126,0); transform: scale(1.06); }
+                    100% { box-shadow: 0 0 0 22px rgba(93,115,126,0); transform: scale(1); }
                 }
 
                 .metro-ring-inner {
@@ -243,8 +243,8 @@ export default function Metronomo() {
                 }
 
                 .metro-beat-dot.active.accent {
-                    background: #c800f5;
-                    box-shadow: 0 0 14px rgba(200,0,245,.85);
+                    background: #5d737e;
+                    box-shadow: 0 0 14px rgba(93,115,126,.85);
                 }
 
                 .metro-bpm-controls {
@@ -282,7 +282,7 @@ export default function Metronomo() {
                     -webkit-appearance: none;
                     height: 4px;
                     border-radius: 4px;
-                    background: linear-gradient(to right, #4a8df9, #e000b7);
+                    background: linear-gradient(to right, #4a8df9, #5d737e);
                     outline: none;
                 }
 
@@ -332,7 +332,7 @@ export default function Metronomo() {
                     padding: 16px;
                     border-radius: 14px;
                     border: none;
-                    background: linear-gradient(to right, #4a8df9, #e000b7);
+                    background: linear-gradient(to right, #4a8df9, #5d737e);
                     color: var(--branco, #f0f0f0);
                     font-size: 15px;
                     font-weight: 700;

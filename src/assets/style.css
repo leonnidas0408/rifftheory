@@ -3,20 +3,22 @@
    ========================================================= */
 
 :root {
-    --preto: #000000;
-    --carvao: #000203;
-    --grafite: #00070c;
+    --preto: #02111b;
+    --carvao: #04141e;
+    --grafite: #0a1922;
 
-    --dourado: #4a8df9;
-    --dourado-dark: #001c49;
-    --dourado-darker: #0f131a;
+    --dourado: #5d737e;
+    --dourado-dark: #16242e;
+    --dourado-darker: #0e171e;
 
-    --dourado2: #300a39;
-    --dourado3: #190f1c;
-    --dourado2-bright: #c800f5;
+    --dourado2: #30292f;
+    --dourado3: #171218;
+    --dourado2-bright: #30292f;
 
-    --branco: #f0f0f0;
-    --cinza: #888888;
+    --destaque: #4a8df9;
+
+    --branco: #fcfcfc;
+    --cinza: #9aaab4;
 
     --vermelho: #d94f3d;
     --verde: #4caf76;
@@ -24,7 +26,7 @@
     --button-gradient: linear-gradient(
         to right,
         #4a8df9,
-        #e000b7
+        #5d737e
     );
 
     --panel-gradient: linear-gradient(
@@ -60,7 +62,7 @@
     --radius-lg: 22px;
 
     --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.45);
-    --shadow-glow: 0 0 24px rgba(74, 141, 249, 0.14);
+    --shadow-glow: 0 0 24px rgba(93, 115, 126, 0.16);
 
     --ease: cubic-bezier(0.22, 0.9, 0.32, 1);
 
@@ -95,24 +97,24 @@ html::-webkit-scrollbar-track {
 }
 
 html::-webkit-scrollbar-thumb {
-    background: rgba(74, 141, 249, 0.35);
+    background: rgba(93, 115, 126, 0.35);
     border-radius: 8px;
 }
 
 html::-webkit-scrollbar-thumb:hover {
-    background: rgba(74, 141, 249, 0.6);
+    background: rgba(93, 115, 126, 0.6);
 }
 
 body {
     background:
         radial-gradient(
             circle at 20% 0%,
-            rgba(74, 141, 249, 0.06),
+            rgba(93, 115, 126, 0.09),
             transparent 45%
         ),
         radial-gradient(
             circle at 100% 20%,
-            rgba(200, 0, 245, 0.05),
+            rgba(48, 41, 47, 0.35),
             transparent 40%
         ),
         var(--preto);
@@ -394,8 +396,8 @@ header img {
     background:
         linear-gradient(
             135deg,
-            #4a8df9,
-            #c800f5
+            #5d737e,
+            #30292f
         );
 
     color: white;
@@ -790,10 +792,10 @@ header img {
 
 .feature-icon-purple {
     background:
-        rgba(200, 0, 245, 0.15);
+        rgba(93, 115, 126, 0.15);
 
     box-shadow:
-        0 0 22px rgba(200, 0, 245, 0.28);
+        0 0 22px rgba(93, 115, 126, 0.28);
 
     color:
         var(--dourado2-bright);
@@ -1022,7 +1024,7 @@ input:focus-visible {
         var(--dourado2-bright);
 
     box-shadow:
-        0 0 0 3px rgba(200, 0, 245, 0.18);
+        0 0 0 3px rgba(74, 141, 249, 0.18);
 }
 
 input:focus {
