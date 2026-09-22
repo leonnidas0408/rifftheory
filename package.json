@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "@vitejs/plugin-react": "^6.0.5",
+    "react": "^19.2.8",
+    "react-device-detect": "^2.2.3",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "pdf-parse": "^1.1.1",
+    "rolldown": "^1.2.2",
+    "vite": "^8.2.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:knowledge": "node scripts/build-knowledge.mjs"
+  }
+}
