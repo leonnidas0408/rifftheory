@@ -4,7 +4,7 @@
 // (src/utils/cifras.js) e delega a exibição para ChordResults.
 
 import React, { useState } from "react";
-import { buscarCifras } from "../utils/cifras";
+import { buscarCifras } from "../../utils/cifras";
 import ChordResults from "./ChordResults";
 
 export default function ChordSearch() {

@@ -1,4 +1,25 @@
 {
+  "name": "rifftheory",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">\r   <img src=\"/public/icon.jpg\" width=\"256\" height=\"256\">\r   <p>Riff Theory é capaz de te ajudar em todos os seus sonhos guitarreiros.</p>\r </div>",
+  "homepage": "https://github.com/leonnidas0408/rifftheory#readme",
+  "bugs": {
+    "url": "https://github.com/leonnidas0408/rifftheory/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leonnidas0408/rifftheory.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:knowledge": "node scripts/build-knowledge.mjs"
+  },
   "dependencies": {
     "@vitejs/plugin-react": "^6.0.5",
     "react": "^19.2.8",
@@ -8,12 +29,6 @@
   "devDependencies": {
     "pdf-parse": "^1.1.1",
     "rolldown": "^1.2.2",
-    "vite": "^8.2.0"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "build:knowledge": "node scripts/build-knowledge.mjs"
+    "vite": "^8.3.1"
   }
 }
