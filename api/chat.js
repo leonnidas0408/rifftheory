@@ -18,7 +18,7 @@ const { readFileSync } = require("fs");
 const path = require("path");
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 
 const MAX_TRECHOS_CONTEXTO = 4;
 const MAX_MENSAGENS_HISTORICO = 12; // limita o tamanho do payload enviado
