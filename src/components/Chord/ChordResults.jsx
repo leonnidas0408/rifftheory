@@ -4,8 +4,8 @@
 // reproduz o conteúdo da cifra em si, só ajuda a encontrar e abrir a fonte.
 
 import React from "react";
-import PrettyPanel from "./PrettyPanel";
-import { registrarAcessoCifra } from "../utils/recentAccess";
+import PrettyPanel from "../PrettyPanel";
+import { registrarAcessoCifra } from "../../utils/recentAccess";
 
 export default function ChordResults({ resultados }) {
     if (!resultados || resultados.length === 0) {
