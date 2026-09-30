@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import Barra from "../Barra";
 
 /* ------------------------------------------------------------------ *
  *  RIFF THEORY TUNER — versão web (React + Web Audio API)
@@ -284,280 +285,190 @@ export default function RiffTheoryTuner() {
   const needleAngle = (clampedCents / 50) * 45; // -45deg .. +45deg
 
   return (
-    <div className="rt-root">
+    <div className="pagina">
+      <Barra titulo="Afinador" />
+      <div className="rt-root">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
-
         .rt-root {
-          --bg: var(--carvao, #000203);
-          --panel: #05070d;
-          --panel-2: #0a0e18;
-          --brass: var(--dourado, #4a8df9);
-          --brass-dim: #2f5fb0;
-          --green: var(--verde, #4caf76);
-          --amber: #e0a23d;
-          --red: var(--vermelho, #d94f3d);
-          --cream: var(--branco, #f0f0f0);
-          --muted: var(--cinza, #888888);
-          --line: rgba(74,141,249,.18);
+          --green: #8ff0b6;
+          --amber: #ffd166;
+          --red: #ff9a8c;
+          --cream: #ffffff;
+          --muted: #cfe0f7;
 
-          min-height: 100vh;
           width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Inter', sans-serif;
-          color: var(--cream);
-          padding: 32px 16px;
-          box-sizing: border-box;
         }
 
         .rt-panel {
+          position: relative;
           width: 100%;
-          max-width: 460px;
-          background: var(--pretty-gradient, linear-gradient(45deg, #190f1c, #000, #0f131a));
-          border-radius: 26px;
-          border: 1px solid rgba(74,141,249,.35);
-          box-shadow:
-            0 20px 50px rgba(0,0,0,.55),
-            0 0 40px rgba(74,141,249,.18),
-            inset 0 1px 0 rgba(255,255,255,.05);
-          padding: 28px 26px 24px;
-          box-sizing: border-box;
+          max-width: 760px;
+          margin: 8px auto 0;
+          padding: 34px 40px 30px;
+          border-radius: 22px;
+          color: #fff;
+          background:
+            radial-gradient(circle at 18px 18px, rgba(255,255,255,.85) 0 5px, transparent 5.5px),
+            radial-gradient(circle at calc(100% - 18px) 18px, rgba(255,255,255,.85) 0 5px, transparent 5.5px),
+            radial-gradient(circle at 18px calc(100% - 18px), rgba(255,255,255,.85) 0 5px, transparent 5.5px),
+            radial-gradient(circle at calc(100% - 18px) calc(100% - 18px), rgba(255,255,255,.85) 0 5px, transparent 5.5px),
+            #4a6d99;
+          transition: box-shadow .2s ease;
+        }
+
+        .rt-panel.in-tune {
+          box-shadow: 0 0 0 3px #8ff0b6;
         }
 
         .rt-header {
           display: flex;
-          align-items: baseline;
-          justify-content: space-between;
-          margin-bottom: 22px;
-        }
-
-        .rt-title {
-          font-family: "Ethnocentric", sans-serif;
-          font-weight: 700;
-          letter-spacing: 0.06em;
-          font-size: 15px;
-          text-transform: uppercase;
-          color: var(--cream);
-        }
-
-        .rt-title span {
-          color: var(--brass);
+          justify-content: flex-end;
+          margin-bottom: 14px;
         }
 
         .rt-ref-select {
           display: flex;
           align-items: center;
-          gap: 6px;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 12px;
+          gap: 8px;
+          font-size: 14px;
           color: var(--muted);
         }
 
         .rt-ref-select select {
-          background: var(--bg);
-          border: 1px solid var(--line);
-          color: var(--cream);
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 12px;
-          border-radius: 6px;
-          padding: 4px 6px;
+          background: rgba(255,255,255,.16);
+          color: #fff;
+          border: 0;
+          border-radius: 999px;
+          padding: 6px 12px;
+          font-size: 14px;
+        }
+
+        .rt-ref-select select option {
+          color: #183055;
         }
 
         .rt-instruments {
           display: flex;
-          gap: 6px;
-          margin-bottom: 22px;
+          justify-content: center;
+          gap: 8px;
+          margin-bottom: 8px;
         }
 
         .rt-instrument-btn {
-          flex: 1;
-          background: var(--bg);
-          border: 1px solid var(--line);
-          color: var(--muted);
-          font-family: 'Inter', sans-serif;
-          font-weight: 500;
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.03em;
-          padding: 9px 4px;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: all 0.15s ease;
-        }
-
-        .rt-instrument-btn:hover {
-          border-color: var(--brass-dim);
-          color: var(--cream);
+          padding: 8px 18px;
+          border-radius: 999px;
+          background: rgba(255,255,255,.14);
+          color: #fff;
+          font-size: 15px;
+          font-weight: 600;
         }
 
         .rt-instrument-btn.active {
-          background: linear-gradient(180deg, #1e243a, #16162c);
-          border-color: var(--brass);
-          color: var(--brass);
-          box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+          background: #fff;
+          color: #1f4f8f;
         }
 
         .rt-gauge-wrap {
-          position: relative;
           width: 100%;
-          aspect-ratio: 2 / 1.15;
-          margin-bottom: 6px;
+          max-width: 460px;
+          height: 190px;
+          margin: 8px auto 0;
         }
 
         .rt-note-display {
           text-align: center;
-          margin-top: -8px;
+          margin-top: 4px;
         }
 
         .rt-note {
-          font-family: 'Oswald', sans-serif;
+          font-size: 64px;
           font-weight: 700;
-          font-size: clamp(48px, 16vw, 76px);
           line-height: 1;
-          letter-spacing: -0.01em;
-          transition: color 0.2s ease, text-shadow 0.2s ease;
-          color: var(--cream);
-          text-shadow: 0 0 22px currentColor;
         }
 
         .rt-octave {
-          font-family: 'IBM Plex Mono', monospace;
           font-size: 24px;
-          vertical-align: super;
+          margin-left: 4px;
+          vertical-align: sub;
           color: var(--muted);
-          margin-left: 2px;
         }
 
         .rt-freq {
-          font-family: 'IBM Plex Mono', monospace;
+          margin-top: 6px;
           font-size: 15px;
           color: var(--muted);
-          margin-top: 4px;
         }
 
         .rt-status {
           text-align: center;
-          font-family: 'Inter', sans-serif;
-          font-weight: 600;
-          font-size: 14px;
-          letter-spacing: 0.12em;
-          margin-top: 10px;
-          transition: color 0.2s ease;
+          margin: 10px 0 16px;
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: 1px;
         }
 
         .rt-string-row {
           display: flex;
           justify-content: center;
+          flex-wrap: wrap;
           gap: 8px;
-          margin-top: 18px;
+          margin-bottom: 22px;
         }
 
         .rt-string-chip {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 12px;
-          padding: 6px 10px;
-          border-radius: 7px;
-          border: 1px solid var(--line);
-          color: var(--muted);
-          background: var(--bg);
-          transition: all 0.15s ease;
+          min-width: 52px;
+          padding: 8px 12px;
+          border-radius: 999px;
+          text-align: center;
+          background: rgba(255,255,255,.14);
+          font-size: 15px;
+          font-weight: 600;
         }
 
         .rt-string-chip.active {
-          border-color: var(--green);
-          color: var(--green);
-          background: rgba(127, 216, 88, 0.08);
+          background: #8ff0b6;
+          color: #14432a;
         }
 
         .rt-footswitch {
+          display: block;
           width: 100%;
-          margin-top: 22px;
-          padding: 14px;
-          border-radius: 10px;
-          border: 1px solid var(--line);
-          background: linear-gradient(180deg, #1e2a3a, #151924);
-          color: var(--brass);
-          font-family: 'Inter', sans-serif;
-          font-weight: 600;
-          font-size: 14px;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          cursor: pointer;
-          transition: all 0.15s ease;
-          box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .rt-footswitch:hover {
-          border-color: var(--brass);
+          max-width: 320px;
+          margin: 0 auto;
+          padding: 15px;
+          border-radius: 999px;
+          background: #fff;
+          color: #1f4f8f;
+          font-size: 16px;
+          font-weight: 700;
         }
 
         .rt-footswitch.on {
-          background: linear-gradient(180deg, #2f4a24, #223318);
-          color: var(--green);
-          border-color: var(--green);
+          background: #ff9a8c;
+          color: #5a1810;
         }
 
         .rt-error {
           margin-top: 14px;
-          font-family: 'Inter', sans-serif;
-          font-size: 12px;
-          color: var(--red);
           text-align: center;
-          line-height: 1.5;
+          font-size: 14px;
+          color: #ffd0c9;
         }
 
         .rt-hint {
-          margin-top: 10px;
-          font-family: 'Inter', sans-serif;
-          font-size: 11px;
-          color: var(--muted);
+          margin-top: 14px;
           text-align: center;
-          line-height: 1.5;
+          font-size: 14px;
+          color: var(--muted);
         }
 
-        @media (max-width: 480px) {
-          .rt-root {
-            padding: 16px 10px;
-          }
-          .rt-panel {
-            padding: 22px 16px 18px;
-            border-radius: 20px;
-          }
-          .rt-instrument-btn {
-            font-size: 11px;
-            padding: 8px 2px;
-          }
+        @media (max-width: 600px) {
+          .rt-panel { padding: 30px 20px 24px; }
         }
-        .rt-panel.in-tune {
-          animation: rtInTunePulse 1.1s ease-in-out infinite;
-        }
-
-        @keyframes rtInTunePulse {
-          0%, 100% {
-            box-shadow:
-              0 20px 50px rgba(0,0,0,.55),
-              0 0 40px rgba(74,141,249,.18),
-              inset 0 1px 0 rgba(255,255,255,.05);
-            border-color: rgba(74,141,249,.35);
-          }
-          50% {
-            box-shadow:
-              0 20px 50px rgba(0,0,0,.55),
-              0 0 55px rgba(76,175,118,.45),
-              inset 0 1px 0 rgba(255,255,255,.05);
-            border-color: rgba(76,175,118,.6);
-          }
-        }
-
       `}</style>
 
       <div className={`rt-panel${inTune ? " in-tune" : ""}`}>
         <div className="rt-header">
-          <div className="rt-title">
-            RIFF THEORY <span>TUNER</span>
-          </div>
           <div className="rt-ref-select">
             <span>A4</span>
             <select
@@ -636,6 +547,7 @@ export default function RiffTheoryTuner() {
           </div>
         )}
       </div>
+      </div>
     </div>
   );
 }
@@ -668,7 +580,7 @@ function VUGauge({ angle, inTune, color }) {
       {/* Arco de fundo */}
       <path
         d={`M ${toXY(-45, r).x} ${toXY(-45, r).y} A ${r} ${r} 0 0 1 ${toXY(45, r).x} ${toXY(45, r).y}`}
-        stroke="#29313a"
+        stroke="rgba(255,255,255,0.22)"
         strokeWidth="10"
         fill="none"
         strokeLinecap="round"
@@ -691,13 +603,13 @@ function VUGauge({ angle, inTune, color }) {
           <g key={t}>
             <line
               x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y}
-              stroke={t === 0 ? "#7fd858" : "#6c7a8a"}
+              stroke={t === 0 ? "#8ff0b6" : "rgba(255,255,255,0.75)"}
               strokeWidth={t === 0 ? 3 : 1.5}
             />
             <text
               x={toXY(deg, r + 24).x}
               y={toXY(deg, r + 24).y}
-              fill="#6c798a"
+              fill="rgba(255,255,255,0.8)"
               fontSize="10"
               fontFamily="'IBM Plex Mono', monospace"
               textAnchor="middle"
@@ -717,7 +629,7 @@ function VUGauge({ angle, inTune, color }) {
           strokeLinecap="round"
         />
       </g>
-      <circle cx={cx} cy={cy} r="7" fill={color} stroke="#141017" strokeWidth="2" />
+      <circle cx={cx} cy={cy} r="7" fill={color} stroke="#4a6d99" strokeWidth="2" />
       {inTune && <circle cx={cx} cy={cy} r="14" fill="none" stroke={color} strokeWidth="1.5" opacity="0.5" />}
     </svg>
   );

@@ -1,6 +1,4 @@
 import * as util from "./util";
-import ESCALAS from "./assets/constants/ESCALAS.json";
-import ESTILOS from "./assets/constants/ESTILOS.json";
 import FORMAS from "./assets/constants/FORMAS.json";
 import NOTAS from "./assets/constants/NOTAS.json";
 
@@ -13,23 +11,27 @@ const OPEN_MIDI = {
     1: 64  // Mi (E4) - corda mais aguda
 }; // E2 A2 D3 G3 B3 E4
 
-// Paleta inspirada na referência (Riff Theory): fundo transparente (o braço
-// fica integrado ao fundo da página), roxo para a tônica, azul para as
-// demais notas tocadas, trastes com efeito metálico/prateado.
+// Paleta do layout claro: braço de madeira sobre o painel azul-claro, tônica
+// em branco e demais notas em azul.
 const CORES = {
-    trasteNut: "#F8F8F8",
-    corda: "rgba(148,163,184,0.6)",
-    inlay: "rgba(255,255,255,0.08)",
-    labelCasa: "rgba(226,232,240,0.55)",
-    tonica: "#a855f7",
-    tonicaGlow: "rgba(168,85,247,0.65)",
-    notaAtiva: "#3b82f6",
-    notaAtivaGlow: "rgba(59,130,246,0.55)",
-    aberta: "#4CAF76",
-    muted: "#f0554c",
-    headstockA: "#2b1b12",
-    headstockB: "#3d2817",
+    trasteNut: "#f4ecd8",
+    corda: "rgba(232,238,246,0.9)",
+    inlay: "rgba(255,255,255,0.32)",
+    labelCasa: "#5d7597",
+    tonica: "#ffffff",
+    tonicaTexto: "#1f4f8f",
+    tonicaGlow: "rgba(255,255,255,0.75)",
+    notaAtiva: "#2f6fe0",
+    notaAtivaGlow: "rgba(47,111,224,0.55)",
+    aberta: "#2f6fe0",
+    muted: "#d2453a",
+    etiqueta: "#1f4f8f",
+    madeiraA: "#8a5a3c",
+    madeiraB: "#6a3f27",
 };
+
+// Exibe o nome da nota dentro das bolinhas (botão "Mostrar notas").
+window.mostrarNotas = false;
 
 window.estado = {
     1: { muted: true, fret: 0 },
@@ -44,16 +46,15 @@ window.estado = {
 // interpretação do clique (trata), por isso precisam ser as mesmas.
 const C = 6,
     F = 12,
-    MX = 60,
+    MX = 20,
     MY = 38;
 
-// Largura reservada para o headstock (cabeça/tarraxas), desenhado só quando
-// window.fretStart === 0. NECK_X substitui MX como margem esquerda real do
-// grid de trastes — assim o espaçamento entre casas (dx) fica igual em
-// qualquer janela, só "empurrado" pra direita. Se o headstock ficar cortado,
-// aumente a largura (width) do <canvas> em pelo menos HEAD_W px.
-const HEAD_W = 90;
-const NECK_X = MX + HEAD_W;
+// Largura reservada à esquerda do braço para o nome das cordas e para os
+// marcadores de corda solta/abafada. NECK_X substitui MX como margem esquerda
+// real do grid de trastes — assim o espaçamento entre casas (dx) fica igual em
+// qualquer janela.
+const LABEL_W = 64;
+const NECK_X = MX + LABEL_W;
 
 window.fretStart = 0; // primeira casa da janela visível (0 = a partir da pestana)
 // draw.js
@@ -77,14 +78,14 @@ export function limparBraco() {
     atualizarBraco();
 }
 
-/** Carrega uma forma pré-cadastrada (chips de escala / campo harmônico).
- *  `key` é o nome do acorde (ex: "C", "Am") usado como chave em FORMAS.
- *  Se não houver diagrama cadastrado para essa chave, apenas reseta o braço
- *  na casa aberta (window.fretStart = 0). */
+/** Carrega uma forma no braço. `key` pode ser o nome do acorde (ex: "C", "Am")
+ *  usado como chave em FORMAS, ou uma forma pronta { c, i } (ver utils/acordes.js).
+ *  Se não houver forma, apenas reseta o braço na casa aberta (window.fretStart = 0). */
 export function carregarPreset(key) {
     window.estado = util.estadoPadrao(window.fretStart);
-    if (FORMAS[key]) {
-        const { c: casas, i: inicio } = FORMAS[key];
+    const forma = typeof key === "string" ? FORMAS[key] : key;
+    if (forma) {
+        const { c: casas, i: inicio } = forma;
         window.fretStart = inicio || 0; // "i" define a janela (posição/pestana) recomendada para a forma
         casas.forEach(([corda, casa]) => {
             window.estado[corda] = { muted: false, fret: casa };
@@ -134,180 +135,33 @@ export function atualizarBraco() {
 }
 
 /**
- * Renderiza os "chips" do campo harmônico (graus I a VII) no card correspondente,
- * a partir da escala calculada. Cada chip é clicável quando existe um diagrama
- * de acorde cadastrado em FORMAS para aquele grau, permitindo carregar a forma
- * no braço interativo. Escalas que não formam campo harmônico tradicional
- * (não têm 7 notas) mostram uma mensagem explicativa em vez dos chips.
+ * Fundo do braço: tampo de madeira com veios sutis (determinísticos, para o
+ * desenho não "tremer" a cada redesenho).
  */
-export function montarCampoHarmonico(nota, tipo) {
-    const cont = document.getElementById("r-campo");
-    cont.innerHTML = "";
-    const campo = util.calcCampoHarmonico(nota, tipo);
+function desenharMadeira(ctx, UW, UH) {
+    const x = NECK_X;
+    const y = MY - 10;
+    const h = UH + 20;
 
-    if (!campo) {
-        cont.innerHTML =
-            '<div class="card-valor italic">Campo harmônico automático disponível para escalas de 7 notas (esta escala tem ' +
-            ESCALAS[tipo].length +
-            ").</div>";
-        return null;
-    }
-
-    campo.forEach((g, idx) => {
-        const item = document.createElement("div");
-        item.className = "grau-item";
-
-        const num = document.createElement("div");
-        num.className = "grau-num";
-        num.textContent = g.romano;
-
-        // Diagramas em FORMAS só existem para tríades maiores ("C") e menores ("Am"),
-        // por isso a chave é montada como raiz+"m" apenas quando a qualidade é menor.
-        const temDiagrama = !!FORMAS[g.raiz + (g.qualidade === "m" ? "m" : "")];
-
-        const chip = document.createElement("button");
-        chip.className =
-            "chip" +
-            (idx === 0 ? " ativo" : "") +
-            (temDiagrama ? "" : " indisponivel");
-        chip.textContent = g.simbolo;
-
-        if (temDiagrama) {
-            chip.onclick = () => {
-                cont
-                    .querySelectorAll(".chip")
-                    .forEach((c) => c.classList.remove("ativo"));
-                chip.classList.add("ativo");
-                carregarPreset(g.raiz + (g.qualidade === "m" ? "m" : ""));
-            };
-        }
-
-        item.appendChild(num);
-        item.appendChild(chip);
-        cont.appendChild(item);
-    });
-
-    return campo;
-}
-
-/**
- * Handler principal, chamado ao clicar em "GERAR" ou pressionar Enter no campo de busca.
- * Fluxo:
- *  1. Faz o parsing do texto digitado (parsear, em util.js); mostra erro se inválido.
- *  2. Calcula e exibe as notas da escala e o estilo musical associado.
- *  3. Monta o campo harmônico (chips de graus I-VII) quando aplicável.
- *  4. Carrega automaticamente no braço interativo o primeiro acorde do campo
- *     harmônico que tenha diagrama cadastrado (ou a primeira nota da escala
- *     com diagrama, para escalas sem campo harmônico tradicional).
- */
-export function gerar() {
-    const txt = document.getElementById("campo").value;
-    const res = util.parsear(txt);
-    if (!res) {
-        document.getElementById("erro").textContent =
-            "⚠ inválido. Ex: C maior | Am | G blues | F# menor_harmonica";
-        return;
-    }
-    document.getElementById("erro").textContent = "";
-
-    const [nota, tipo] = res;
-    const notas = util.calcEscala(nota, tipo);
-
-    document.getElementById("r-escala").textContent = notas.join(" · ");
-    document.getElementById("r-estilo").textContent =
-        ESTILOS[tipo] ?? "Vários estilos";
-
-    const campo = montarCampoHarmonico(nota, tipo);
-
-    document.getElementById("resultado").style.display = "flex";
-
-    // escolhe o primeiro grau com diagrama disponível pra abrir o braço
-    let inicial = null;
-    if (campo) {
-        const primeiroComDiagrama = campo.find(
-            (g) => FORMAS[g.raiz + (g.qualidade === "m" ? "m" : "")],
-        );
-        if (primeiroComDiagrama)
-            inicial =
-                primeiroComDiagrama.raiz +
-                (primeiroComDiagrama.qualidade === "m" ? "m" : "");
-    } else {
-        // escalas sem campo harmônico (pentatônicas, blues etc.): usa a 1ª nota com diagrama
-        inicial = notas.find((n) => FORMAS[n]) ?? null;
-    }
-    if (inicial) carregarPreset(inicial);
-    else limparBraco();
-}
-
-/**
- * Desenha o headstock (cabeça da guitarra) à esquerda da pestana, no estilo
- * "6 em linha" (tipo Fender): corpo em forma de raquete afunilando para uma
- * ponta arredondada, com 6 tarraxas metálicas alinhadas às cordas — cada uma
- * com um post (onde a corda enrola) e uma chave saindo para o lado.
- * Só é chamado quando window.fretStart === 0 (ver desenharBraco).
- */
-function desenharHeadstock(ctx, UH) {
-    const topY = MY - 22;
-    const botY = MY + UH + 22;
-    const tipX = NECK_X - HEAD_W;
-    const dy = UH / (C - 1);
+    const grad = ctx.createLinearGradient(0, y, 0, y + h);
+    grad.addColorStop(0, CORES.madeiraA);
+    grad.addColorStop(1, CORES.madeiraB);
 
     ctx.save();
-
-    // corpo do headstock (forma de raquete, afunilando pra ponta arredondada)
-    const grad = ctx.createLinearGradient(tipX, 0, NECK_X, 0);
-    grad.addColorStop(0, CORES.headstockA);
-    grad.addColorStop(1, CORES.headstockB);
-    ctx.fillStyle = grad;
-
     ctx.beginPath();
-    ctx.moveTo(NECK_X, MY - 6);
-    ctx.lineTo(NECK_X, MY + UH + 6);
-    ctx.quadraticCurveTo(tipX + HEAD_W * 0.55, botY, tipX + 16, botY - 12);
-    ctx.quadraticCurveTo(tipX - 4, MY + UH / 2, tipX + 16, topY + 12);
-    ctx.quadraticCurveTo(tipX + HEAD_W * 0.55, topY, NECK_X, MY - 6);
-    ctx.closePath();
+    ctx.roundRect(x, y, UW, h, 6);
+    ctx.fillStyle = grad;
     ctx.fill();
+    ctx.clip();
 
-    ctx.strokeStyle = "rgba(255,255,255,0.08)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // tarraxas: uma por corda, alinhada com a mesma linha (y) da corda no braço
-    const postX = tipX + HEAD_W * 0.3;
-    for (let i = 0; i < C; i++) {
-        const y = MY + i * dy;
-
-        // trecho da corda entre a pestana e o post da tarraxa
-        ctx.strokeStyle = CORES.corda;
+    for (let i = 0; i < 26; i++) {
+        const yy = y + (((i * 37) % 100) / 100) * h;
+        ctx.strokeStyle = i % 2 ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.10)";
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(NECK_X, y);
-        ctx.lineTo(postX, y);
+        ctx.moveTo(x, yy);
+        ctx.bezierCurveTo(x + UW * 0.3, yy + 3, x + UW * 0.6, yy - 3, x + UW, yy + 1);
         ctx.stroke();
-
-        // post metálico (onde a corda enrola)
-        const postGrad = ctx.createLinearGradient(postX - 4, 0, postX + 4, 0);
-        postGrad.addColorStop(0, "#fdfdfd");
-        postGrad.addColorStop(0.5, "#8b8b8b");
-        postGrad.addColorStop(1, "#fdfdfd");
-        ctx.fillStyle = postGrad;
-        ctx.beginPath();
-        ctx.arc(postX, y, 4, 0, Math.PI * 2);
-        ctx.fill();
-
-        // chave da tarraxa, saindo para a esquerda
-        ctx.strokeStyle = "#c9c9c9";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(postX - 4, y);
-        ctx.lineTo(postX - 14, y);
-        ctx.stroke();
-
-        ctx.fillStyle = "#e8e8e8";
-        ctx.beginPath();
-        ctx.arc(postX - 14, y, 2.5, 0, Math.PI * 2);
-        ctx.fill();
     }
 
     ctx.restore();
@@ -315,10 +169,9 @@ function desenharHeadstock(ctx, UH) {
 
 /**
  * Desenha o braço da guitarra no <canvas id="braco"> usando a Canvas API 2D.
- * Recebe `reconhecido` (retorno de util.reconhecerAcorde) para colorir cada nota
- * conforme sua função no acorde (fundamental, terça, quinta...) via corDoGrau.
- * Redesenha tudo do zero a cada chamada (sem otimização incremental), o que é
- * suficiente dado o tamanho pequeno do canvas e a baixa frequência de eventos.
+ * Recebe `reconhecido` (retorno de util.reconhecerAcorde) para destacar a
+ * tônica do acorde. Redesenha tudo do zero a cada chamada, o que é suficiente
+ * dado o tamanho pequeno do canvas e a baixa frequência de eventos.
  */
 export function desenharBraco(reconhecido) {
     const canvas = document.getElementById("braco");
@@ -326,9 +179,7 @@ export function desenharBraco(reconhecido) {
     const W = canvas.width,
         H = canvas.height;
 
-    // Área útil do braço. NECK_X (MX + HEAD_W) é a margem esquerda real —
-    // reserva espaço fixo pro headstock mesmo quando ele não está desenhado,
-    // assim dx/dy não mudam ao rolar a janela de trastes.
+    // Área útil do braço (NECK_X é a margem esquerda real).
     const UW = W - NECK_X - MX;
     const UH = H - (MY * 2);
 
@@ -336,57 +187,60 @@ export function desenharBraco(reconhecido) {
     const dx = UW / F;          // distância entre casas
     const dy = UH / (C - 1);    // distância entre cordas
 
-    // fundo transparente: só limpa o canvas, sem preencher retângulo — o
-    // braço fica integrado à cor de fundo da própria página (definida no
-    // CSS do container do canvas).
     ctx.clearRect(0, 0, W, H);
 
-    // headstock (cabeça/tarraxas) — só faz sentido na posição aberta,
-    // onde a pestana real (casa 0) está visível.
-    if (window.fretStart === 0) {
-        desenharHeadstock(ctx, UH);
+    desenharMadeira(ctx, UW, UH);
+
+    // nome de cada corda (E B G D A E, da mais aguda para a mais grave)
+    for (let i = 0; i < C; i++) {
+        const y = MY + i * dy;
+        const nome = NOTAS[OPEN_MIDI[C - i] % 12];
+
+        ctx.fillStyle = CORES.etiqueta;
+        ctx.beginPath();
+        ctx.arc(MX + 12, y, 11, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 12px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(nome, MX + 12, y);
     }
 
-    // marcadores de casa (inlays) nos trastes 3,5,7,9,12...
-    ctx.fillStyle = CORES.inlay;
+    // marcadores de casa (inlays) e numeração de todas as casas
     for (let i = 0; i < F; i++) {
         const fretAbs = window.fretStart + i + 1;
         const mod = fretAbs % 12;
         const x = NECK_X + (i + 0.5) * dx;
+        const y = MY + UH / 2;
+
+        ctx.fillStyle = CORES.inlay;
         if ([3, 5, 7, 9].includes(mod)) {
             ctx.beginPath();
-            ctx.arc(x, MY + UH / 2, 4, 0, Math.PI * 2);
+            ctx.arc(x, y, 5, 0, Math.PI * 2);
             ctx.fill();
         } else if (mod === 0) {
-            const y = MY + UH / 2;
-
             ctx.beginPath();
-            ctx.arc(x - 12, y, 4, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.arc(x + 12, y, 4, 0, Math.PI * 2);
+            ctx.arc(x - 12, y, 5, 0, Math.PI * 2);
+            ctx.arc(x + 12, y, 5, 0, Math.PI * 2);
             ctx.fill();
         }
 
-        // números da casa abaixo do braço, como na referência (só nas
-        // posições de inlay, pra não poluir)
-        if ([3, 5, 7, 9, 12].includes(mod) || (mod === 0 && fretAbs > 0)) {
-            ctx.fillStyle = CORES.labelCasa;
-            ctx.font = "10px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "top";
-            ctx.fillText(String(fretAbs), x, MY + UH + 10);
-            ctx.fillStyle = CORES.inlay;
-        }
+        ctx.fillStyle = CORES.labelCasa;
+        ctx.font = "13px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(String(fretAbs), x, MY + UH + 16);
     }
 
     // indicador da casa inicial da janela
     if (window.fretStart > 0) {
-        ctx.fillStyle = "#3a67c9";
+        ctx.fillStyle = CORES.etiqueta;
         ctx.font = "bold 11px Courier New";
         ctx.textAlign = "right";
-        ctx.fillText(window.fretStart + "ª", NECK_X - 8, MY + dy * 0.65);
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText(window.fretStart + "ª", NECK_X - 8, MY - 14);
     }
 
     // trastes metálicos (braço deitado)
@@ -402,26 +256,26 @@ export function desenharBraco(reconhecido) {
             ctx.lineWidth = 8;
 
             ctx.beginPath();
-            ctx.moveTo(x, MY);
-            ctx.lineTo(x, MY + UH);
+            ctx.moveTo(x, MY - 10);
+            ctx.lineTo(x, MY + UH + 10);
             ctx.stroke();
 
         } else {
 
             // sombra
-            ctx.strokeStyle = "#151515";
+            ctx.strokeStyle = "rgba(0,0,0,0.35)";
             ctx.lineWidth = 3;
 
             ctx.beginPath();
-            ctx.moveTo(x + 1, MY);
-            ctx.lineTo(x + 1, MY + UH);
+            ctx.moveTo(x + 1, MY - 10);
+            ctx.lineTo(x + 1, MY + UH + 10);
             ctx.stroke();
 
             // metal
             const grad = ctx.createLinearGradient(x - 2, 0, x + 2, 0);
             grad.addColorStop(0, "#fdfdfd");
             grad.addColorStop(0.25, "#d9d9d9");
-            grad.addColorStop(0.5, "#8b8b8b");
+            grad.addColorStop(0.5, "#9a9a9a");
             grad.addColorStop(0.75, "#d9d9d9");
             grad.addColorStop(1, "#ffffff");
 
@@ -429,13 +283,13 @@ export function desenharBraco(reconhecido) {
             ctx.lineWidth = 2;
 
             ctx.beginPath();
-            ctx.moveTo(x, MY);
-            ctx.lineTo(x, MY + UH);
+            ctx.moveTo(x, MY - 10);
+            ctx.lineTo(x, MY + UH + 10);
             ctx.stroke();
         }
     }
 
-    // cordas horizontais (mais grossas nas graves, translúcidas e uniformes)
+    // cordas horizontais (topo = 6ª corda, Mi grave; mais grossas nas graves)
     for (let i = 0; i < C; i++) {
         const corda = C - i;
         const y = MY + i * dy;
@@ -481,7 +335,7 @@ export function desenharBraco(reconhecido) {
         const y1 = MY + Math.min(...ys) * dy;
         const y2 = MY + Math.max(...ys) * dy;
 
-        ctx.fillStyle = "rgba(168,85,247,0.22)";
+        ctx.fillStyle = "rgba(255,255,255,0.28)";
 
         ctx.beginPath();
         ctx.roundRect(
@@ -534,11 +388,13 @@ export function desenharBraco(reconhecido) {
             ctx.arc(NECK_X - 25, y, 8, 0, Math.PI * 2);
             ctx.stroke();
 
-            ctx.fillStyle = CORES.aberta;
-            ctx.font = "bold 8px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText(nomeNota, NECK_X - 25, y);
+            if (window.mostrarNotas) {
+                ctx.fillStyle = CORES.aberta;
+                ctx.font = "bold 8px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(nomeNota, NECK_X - 25, y);
+            }
 
             continue;
         }
@@ -553,13 +409,8 @@ export function desenharBraco(reconhecido) {
         // clicado.
         const x = NECK_X + (rel - 0.5) * dx;
 
-        // cor: tônica em roxo, demais notas ativas em azul — igual à
-        // legenda da referência. Se houver info de grau (corDoGrau),
-        // ela ainda prevalece para notas que não são a tônica.
-        let cor = ehTonica ? CORES.tonica : CORES.notaAtiva;
-        if (root !== null && !ehTonica) {
-            cor = util.corDoGrau(root, pc) ?? CORES.notaAtiva;
-        }
+        // tônica em branco, demais notas em azul
+        const cor = ehTonica ? CORES.tonica : CORES.notaAtiva;
 
         // halo/glow sutil atrás da nota
         ctx.save();
@@ -572,11 +423,13 @@ export function desenharBraco(reconhecido) {
         ctx.fill();
         ctx.restore();
 
-        ctx.fillStyle = "#0D0D0D";
-        ctx.font = "bold 9px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(nomeNota, x, y);
+        if (window.mostrarNotas) {
+            ctx.fillStyle = ehTonica ? CORES.tonicaTexto : "#ffffff";
+            ctx.font = "bold 9px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(nomeNota, x, y);
+        }
 
     }
 }

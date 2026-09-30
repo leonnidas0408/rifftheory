@@ -1,4 +1,4 @@
-// src/components/ChordResults.jsx
+// src/components/Chord/ChordResults.jsx
 // Lista de resultados da busca de cifras. Cada resultado aponta para a
 // fonte original (Cifra Club, Vagalume, Google) — o Riff Theory nunca
 // reproduz o conteúdo da cifra em si, só ajuda a encontrar e abrir a fonte.
@@ -11,51 +11,29 @@ export default function ChordResults({ resultados }) {
     if (!resultados || resultados.length === 0) {
         return (
             <PrettyPanel>
-                <span style={{ opacity: 0.65 }}>
-                    Nenhum resultado encontrado.
-                </span>
+                <span className="subtitulo">Nenhum resultado encontrado.</span>
             </PrettyPanel>
         );
     }
 
     return (
-        <div style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-            marginTop: "14px"
-        }}>
+        <div className="lista-resultados">
             {resultados.map((r, i) => (
                 <PrettyPanel key={i}>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: "12px"
-                    }}>
+                    <div className="resultado-cifra">
                         <div>
-                            <div style={{ fontWeight: 700 }}>
-                                {r.title}
-                            </div>
-                            <div style={{ fontSize: "12px", opacity: 0.65 }}>
-                                Fonte: {r.source}
-                            </div>
+                            <strong>{r.title}</strong>
+                            <div className="fonte">Fonte: {r.source}</div>
                         </div>
 
                         <a
                             href={r.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="highlight"
+                            className="link-botao"
                             onClick={() => registrarAcessoCifra(r)}
-                            style={{
-                                textDecoration: "none",
-                                padding: "8px 14px",
-                                borderRadius: "8px",
-                                whiteSpace: "nowrap"
-                            }}
                         >
-                            Abrir →
+                            Abrir
                         </a>
                     </div>
                 </PrettyPanel>

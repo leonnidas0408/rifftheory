@@ -32,6 +32,8 @@ const SIN = {
     "pent": "pentatonica_menor",
     "harm": "menor_harmonica",
     "mel": "menor_melodica",
+    "menor_natural": "menor",
+    "jonio": "ionico",
     "": "maior"
 };
 window.estado = {
@@ -45,7 +47,13 @@ window.estado = {
 window.fretStart = 0;
 
 export function parsear(txt) {
-    const p = txt.trim().toLowerCase().split(/\s+/);
+    // remove acentos para aceitar "dórico", "eólio", "menor harmônica" etc.
+    const p = txt
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toLowerCase()
+        .split(/\s+/);
     if (!p.length) return null;
     const raw = p[0];
     // Detecta sustenido (#) logo após a letra da nota, ex: "f#" -> "F#"
@@ -207,19 +215,6 @@ export function reconhecerAcorde() {
         return { label, notas, rootPc: melhor.root };
     }
     return { label: null, notas, rootPc: null };
-}
-
-/**
- * Define a cor de uma nota no braço de acordo com sua função em relação à
- * fundamental (root) do acorde reconhecido — dá destaque visual (fundamental
- * em dourado, terças em verde, quintas/oitavas em branco, resto em vermelho).
- */
-export function corDoGrau(root, pc) {
-    const intervalo = (((pc - root) % 12) + 12) % 12;
-    if (intervalo === 0) return "#C9933A"; // fundamental
-    if (intervalo === 3 || intervalo === 4) return "#4CAF76"; // 3ª menor ou maior
-    if (intervalo === 6 || intervalo === 7 || intervalo === 8) return "#F0F0F0"; // 4ª/5ª/6ª aumentada
-    return "#D94F3D"; // demais graus (tensões, notas "de fora")
 }
 
 /**

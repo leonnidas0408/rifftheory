@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
+import Barra from "../Barra";
 
 /* ------------------------------------------------------------------ *
  *  METRÔNOMO — Web Audio API com scheduler de lookahead.
@@ -124,54 +125,38 @@ export default function Metronomo() {
     };
 
     return (
-        <div className="metro-wrap">
+        <div className="pagina">
+            <Barra titulo="Metrônomo" />
             <style>{`
-                .metro-wrap {
-                    width: 100%;
-                    max-width: 480px;
-                    margin: 40px auto;
-                    padding: 0 20px;
-                    box-sizing: border-box;
-                }
-
                 .metro-panel {
-                    background: var(--pretty-gradient, linear-gradient(45deg, #190f1c, #000, #0f131a));
-                    border: 1px solid rgba(74,141,249,.35);
-                    border-radius: 26px;
-                    padding: 36px 30px;
-                    box-shadow:
-                        0 20px 50px rgba(0,0,0,.55),
-                        0 0 40px rgba(74,141,249,.18),
-                        inset 0 1px 0 rgba(255,255,255,.05);
-                    text-align: center;
                     position: relative;
-                    overflow: hidden;
-                }
-
-                .metro-title {
-                    font-family: "Ethnocentric", sans-serif;
-                    font-size: 13px;
-                    letter-spacing: 3px;
-                    color: var(--cinza, #888);
-                    text-transform: uppercase;
-                    margin-bottom: 28px;
+                    max-width: 720px;
+                    width: 100%;
+                    margin: 8px auto 0;
+                    padding: 40px 34px 34px;
+                    text-align: center;
+                    border-radius: 22px;
+                    background:
+                        radial-gradient(circle at 18px 18px, #9db6da 0 5px, transparent 5.5px),
+                        radial-gradient(circle at calc(100% - 18px) 18px, #9db6da 0 5px, transparent 5.5px),
+                        radial-gradient(circle at 18px calc(100% - 18px), #9db6da 0 5px, transparent 5.5px),
+                        radial-gradient(circle at calc(100% - 18px) calc(100% - 18px), #9db6da 0 5px, transparent 5.5px),
+                        #e3eefc;
                 }
 
                 .metro-ring {
                     width: 220px;
                     height: 220px;
-                    margin: 0 auto 24px;
+                    margin: 0 auto 22px;
                     border-radius: 50%;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    position: relative;
-                    background: radial-gradient(circle, rgba(74,141,249,.10), transparent 70%);
-                    transition: box-shadow .08s ease, transform .08s ease;
+                    border: 2px solid #7ea3dd;
+                    color: var(--texto);
                 }
 
                 .metro-ring.pulse {
-                    box-shadow: 0 0 0 0 rgba(74,141,249,.6);
                     animation: metroPulse .18s ease-out;
                 }
 
@@ -180,71 +165,54 @@ export default function Metronomo() {
                 }
 
                 @keyframes metroPulse {
-                    0%   { box-shadow: 0 0 0 0 rgba(74,141,249,.55); transform: scale(1); }
-                    40%  { box-shadow: 0 0 0 18px rgba(74,141,249,0); transform: scale(1.04); }
-                    100% { box-shadow: 0 0 0 18px rgba(74,141,249,0); transform: scale(1); }
+                    0%   { box-shadow: 0 0 0 0 rgba(47,111,224,.45); }
+                    100% { box-shadow: 0 0 0 16px rgba(47,111,224,0); }
                 }
 
                 @keyframes metroPulseAccent {
-                    0%   { box-shadow: 0 0 0 0 rgba(93,115,126,.75); transform: scale(1); }
-                    40%  { box-shadow: 0 0 0 22px rgba(93,115,126,0); transform: scale(1.06); }
-                    100% { box-shadow: 0 0 0 22px rgba(93,115,126,0); transform: scale(1); }
+                    0%   { box-shadow: 0 0 0 0 rgba(31,79,143,.6); }
+                    100% { box-shadow: 0 0 0 22px rgba(31,79,143,0); }
                 }
 
                 .metro-ring-inner {
-                    width: 178px;
-                    height: 178px;
-                    border-radius: 50%;
-                    border: 1px solid rgba(74,141,249,.35);
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    justify-content: center;
-                    background: radial-gradient(circle at 30% 20%, rgba(74,141,249,.08), var(--carvao, #000203) 70%);
                 }
 
                 .metro-bpm {
-                    font-family: "Courier New", monospace;
-                    font-size: 52px;
+                    font-size: 64px;
                     font-weight: 700;
-                    color: var(--branco, #f0f0f0);
                     line-height: 1;
-                    text-shadow: 0 0 18px rgba(74,141,249,.5);
                 }
 
                 .metro-bpm-label {
-                    font-size: 11px;
-                    letter-spacing: 2px;
-                    color: var(--dourado, #4a8df9);
-                    text-transform: uppercase;
+                    font-size: 20px;
                     margin-top: 6px;
                 }
 
                 .metro-beats {
                     display: flex;
                     justify-content: center;
-                    gap: 10px;
-                    margin-bottom: 26px;
+                    gap: 16px;
+                    margin-bottom: 30px;
                 }
 
                 .metro-beat-dot {
-                    width: 12px;
-                    height: 12px;
+                    width: 18px;
+                    height: 18px;
                     border-radius: 50%;
-                    background: rgba(74,141,249,.15);
-                    border: 1px solid rgba(74,141,249,.3);
-                    transition: all .1s ease;
+                    background: #a4b9da;
+                    transition: background .1s ease, transform .1s ease;
                 }
 
                 .metro-beat-dot.active {
-                    background: var(--dourado, #4a8df9);
-                    box-shadow: 0 0 10px rgba(74,141,249,.8);
-                    transform: scale(1.3);
+                    background: var(--primaria);
+                    transform: scale(1.2);
                 }
 
                 .metro-beat-dot.active.accent {
-                    background: #5d737e;
-                    box-shadow: 0 0 14px rgba(93,115,126,.85);
+                    background: var(--primaria-escura);
                 }
 
                 .metro-bpm-controls {
@@ -252,25 +220,18 @@ export default function Metronomo() {
                     align-items: center;
                     justify-content: center;
                     gap: 18px;
-                    margin-bottom: 22px;
+                    margin-bottom: 24px;
                 }
 
                 .metro-bpm-btn {
-                    width: 44px;
-                    height: 44px;
+                    flex: none;
+                    width: 54px;
+                    height: 54px;
                     border-radius: 50%;
-                    border: 1.5px solid rgba(74,141,249,.4);
-                    background: var(--carvao, #000203);
-                    color: var(--dourado, #4a8df9);
-                    font-size: 20px;
-                    font-weight: 700;
-                    cursor: pointer;
-                    transition: all .15s ease;
-                }
-
-                .metro-bpm-btn:hover {
-                    border-color: var(--dourado, #4a8df9);
-                    box-shadow: 0 0 14px rgba(74,141,249,.4);
+                    background: #cfdcf0;
+                    color: var(--texto);
+                    font-size: 28px;
+                    line-height: 1;
                 }
 
                 .metro-bpm-btn:active {
@@ -280,95 +241,81 @@ export default function Metronomo() {
                 input[type="range"].metro-slider {
                     flex: 1;
                     -webkit-appearance: none;
-                    height: 4px;
-                    border-radius: 4px;
-                    background: linear-gradient(to right, #4a8df9, #5d737e);
+                    appearance: none;
+                    height: 5px;
+                    border-radius: 5px;
+                    background: #8ea6cb;
                     outline: none;
                 }
 
                 input[type="range"].metro-slider::-webkit-slider-thumb {
                     -webkit-appearance: none;
-                    width: 18px;
-                    height: 18px;
+                    width: 30px;
+                    height: 30px;
                     border-radius: 50%;
-                    background: var(--branco, #f0f0f0);
-                    border: 3px solid var(--dourado, #4a8df9);
+                    background: var(--primaria);
+                    border: 3px solid #fff;
                     cursor: pointer;
-                    box-shadow: 0 0 10px rgba(74,141,249,.6);
+                }
+
+                input[type="range"].metro-slider::-moz-range-thumb {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    background: var(--primaria);
+                    border: 3px solid #fff;
+                    cursor: pointer;
                 }
 
                 .metro-compasso-row {
                     display: flex;
                     justify-content: center;
                     gap: 8px;
-                    margin-bottom: 26px;
+                    margin-bottom: 22px;
                 }
 
                 .metro-compasso-btn {
-                    padding: 7px 14px;
-                    border-radius: 20px;
-                    border: 1.5px solid rgba(74,141,249,.3);
-                    background: transparent;
-                    color: var(--cinza, #888);
-                    font-family: "Courier New", monospace;
-                    font-size: 13px;
-                    cursor: pointer;
-                    transition: all .15s ease;
+                    padding: 8px 16px;
+                    border-radius: 999px;
+                    background: #d6e4f8;
+                    color: var(--primaria-escura);
+                    font-size: 15px;
+                    font-weight: 600;
                 }
 
                 .metro-compasso-btn.active {
-                    border-color: var(--dourado, #4a8df9);
-                    color: var(--dourado, #4a8df9);
-                    background: rgba(74,141,249,.1);
+                    background: var(--primaria-escura);
+                    color: #fff;
                 }
 
                 .metro-actions {
                     display: flex;
                     gap: 12px;
+                    max-width: 420px;
+                    margin: 0 auto;
                 }
 
                 .metro-play {
                     flex: 1;
-                    padding: 16px;
-                    border-radius: 14px;
-                    border: none;
-                    background: linear-gradient(to right, #4a8df9, #5d737e);
-                    color: var(--branco, #f0f0f0);
-                    font-size: 15px;
+                    padding: 15px;
+                    border-radius: 999px;
+                    background: var(--primaria-escura);
+                    color: #fff;
+                    font-size: 16px;
                     font-weight: 700;
-                    letter-spacing: .5px;
-                    cursor: pointer;
-                    transition: filter .15s ease, transform .15s ease;
-                    box-shadow: 0 0 26px rgba(74,141,249,.35);
-                }
-
-                .metro-play:hover {
-                    filter: brightness(1.1);
-                }
-
-                .metro-play:active {
-                    transform: scale(.97);
                 }
 
                 .metro-play.stop {
-                    background: linear-gradient(to right, #d94f3d, #300a39);
+                    background: var(--vermelho);
                 }
 
                 .metro-tap {
-                    padding: 16px 20px;
-                    border-radius: 14px;
-                    border: 1.5px solid rgba(74,141,249,.4);
-                    background: var(--carvao, #000203);
-                    color: var(--dourado, #4a8df9);
-                    font-size: 13px;
+                    padding: 15px 26px;
+                    border-radius: 999px;
+                    background: #cfdcf0;
+                    color: var(--primaria-escura);
+                    font-size: 16px;
                     font-weight: 700;
-                    letter-spacing: .5px;
-                    cursor: pointer;
-                    transition: all .15s ease;
-                }
-
-                .metro-tap:hover {
-                    box-shadow: 0 0 16px rgba(74,141,249,.35);
                 }
 
                 .metro-tap:active {
@@ -377,8 +324,6 @@ export default function Metronomo() {
             `}</style>
 
             <div className="metro-panel">
-                <div className="metro-title">Metrônomo</div>
-
                 <div className={`metro-ring${beatAtivo >= 0 ? " pulse" : ""}${beatAtivo === 0 ? " accent" : ""}`}
                      key={beatAtivo + "-" + (running ? "on" : "off")}
                 >

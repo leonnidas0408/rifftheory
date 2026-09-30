@@ -1,38 +1,45 @@
 import IconButton from "./IconButton";
-import DramaticTitle from "./DramaticTitle";
+import Icone from "./Icone";
+import Conteudo from "./Conteudo";
 
-export default function SidebarPages({
-    page,
-    setPage,
-    pageData,
-    defaultPage,
-}) {
+// Seções planejadas: aparecem no menu, mas ainda não têm página.
+const EM_BREVE = [
+    ["Teoria", "teoria"],
+    ["Riffs", "riffs"],
+    ["Tabelaturas", "tabelaturas"],
+];
+
+export default function SidebarPages({ page, setPage, pageData }) {
+    const itens = Object.entries(pageData).filter(
+        ([, item]) => item.icone && !item.soMobile
+    );
+
     return (
         <div>
-            <div className="sidebar">
-                <div className="sidebar-logo">
-                    <DramaticTitle title="Riff Theory" />
+            <aside className="sidebar">
+                <div className="sidebar-avatar">
+                    <Icone nome="conta" tamanho={56} />
                 </div>
 
-                {Object.entries(pageData).map(
-                    ([key, item]) => (
+                <nav>
+                    {itens.map(([chave, item]) => (
                         <IconButton
-                            key={key}
-                            onClick={() => setPage(key)}
-                            label={key}
-                            icon={item.icon}
-                            selected={page === key}
+                            key={chave}
+                            onClick={() => setPage(chave)}
+                            label={chave}
+                            icon={item.icone}
+                            selected={page === chave || (chave === "Início" && page === "Chatbot")}
                         />
-                    )
-                )}
-            </div>
+                    ))}
 
-            <div
-                style={{
-                    marginLeft: "220px",
-                }}
-            >
-                {pageData[page].page}
+                    {EM_BREVE.map(([nome, icone]) => (
+                        <IconButton key={nome} label={nome} icon={icone} disabled />
+                    ))}
+                </nav>
+            </aside>
+
+            <div className="area-lateral">
+                <Conteudo page={page} setPage={setPage} pageData={pageData} />
             </div>
         </div>
     );

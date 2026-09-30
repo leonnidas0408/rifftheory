@@ -1,9 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 
+import Barra from "../Barra";
+import Icone from "../Icone";
+
 import "./ChatbotTab.css";
+
+function horaAgora() {
+    return new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
 
 const MENSAGEM_BOAS_VINDAS = {
     autor: "bot",
+    hora: horaAgora(),
     texto:
         "E aí! Eu sou o assistente do Riff Theory. Pode perguntar sobre teoria " +
         "musical, escalas, acordes, harmonia, intervalos, técnica no violão/" +
@@ -28,7 +36,7 @@ export default function ChatbotTab() {
         const texto = entrada.trim();
         if (!texto || carregando) return;
 
-        const novaMensagemUsuario = { autor: "usuario", texto };
+        const novaMensagemUsuario = { autor: "usuario", texto, hora: horaAgora() };
         const historicoAtualizado = [...mensagens, novaMensagemUsuario];
 
         setMensagens(historicoAtualizado);
@@ -61,7 +69,7 @@ export default function ChatbotTab() {
 
             setMensagens((atual) => [
                 ...atual,
-                { autor: "bot", texto: dados.resposta },
+                { autor: "bot", texto: dados.resposta, hora: horaAgora() },
             ]);
         } catch (err) {
             setErro(
@@ -73,30 +81,57 @@ export default function ChatbotTab() {
         }
     }
 
+    function novaConversa() {
+        if (carregando) return;
+        setMensagens([{ ...MENSAGEM_BOAS_VINDAS, hora: horaAgora() }]);
+        setEntrada("");
+        setErro("");
+    }
+
     return (
-        <div className="chatbot-tab">
-            <div className="chatbot-header">
-                <h2>Chatbot de Teoria Musical</h2>
-                <p>
-                    Assistente com IA focado só em música e teoria musical.
-                </p>
+        <div className="pagina chatbot-tab">
+            <div className="chatbot-topo">
+                <div className="chatbot-barra">
+                    <Barra titulo="Riff Theory" />
+                </div>
+
+                <button
+                    className="chatbot-nova"
+                    onClick={novaConversa}
+                    aria-label="Nova conversa"
+                    title="Nova conversa"
+                >
+                    <Icone nome="lapis" tamanho={24} />
+                </button>
             </div>
 
             <div className="chatbot-mensagens">
                 {mensagens.map((mensagem, indice) => (
                     <div
                         key={indice}
-                        className={`chatbot-bolha chatbot-bolha-${mensagem.autor}`}
+                        className={`chatbot-linha chatbot-linha-${mensagem.autor}`}
                     >
-                        {mensagem.texto}
+                        <span className="chatbot-avatar">
+                            <Icone nome={mensagem.autor === "bot" ? "riffs" : "conta"} tamanho={22} />
+                        </span>
+
+                        <div className={`chatbot-bolha chatbot-bolha-${mensagem.autor}`}>
+                            <p>{mensagem.texto}</p>
+                            <time>{mensagem.hora}</time>
+                        </div>
                     </div>
                 ))}
 
                 {carregando && (
-                    <div className="chatbot-bolha chatbot-bolha-bot chatbot-digitando">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                    <div className="chatbot-linha chatbot-linha-bot">
+                        <span className="chatbot-avatar">
+                            <Icone nome="riffs" tamanho={22} />
+                        </span>
+                        <div className="chatbot-bolha chatbot-bolha-bot chatbot-digitando">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
                     </div>
                 )}
 
@@ -111,10 +146,15 @@ export default function ChatbotTab() {
                     value={entrada}
                     onChange={(e) => setEntrada(e.target.value)}
                     placeholder="Pergunte sobre escalas, acordes, harmonia..."
+                    aria-label="Mensagem"
                     disabled={carregando}
                 />
-                <button type="submit" disabled={carregando || !entrada.trim()}>
-                    Enviar
+                <button
+                    type="submit"
+                    aria-label="Enviar"
+                    disabled={carregando || !entrada.trim()}
+                >
+                    <Icone nome="enviar" tamanho={22} />
                 </button>
             </form>
         </div>

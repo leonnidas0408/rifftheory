@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
 
-import Header from "./components/Header";
-import NotaEEscala from "./components/NotaEEscala";
-import Resultado from "./components/Resultado";
-
 import RiffTheoryTuner from "./components/pages/RiffTheoryTuner";
 import PaginaDeEscala from "./components/pages/PaginaDeEscala";
 import Home from "./components/pages/Home";
 import Metronomo from "./components/pages/Metronomo";
-import ChatbotTab from "./components/ChatbotTab";
+import ChatbotTab from "./components/ChatbotTab/ChatbotTab";
 
 import NavbarAdapter from "./components/NavbarAdapter";
 
@@ -26,12 +22,8 @@ export default function App() {
 
     const pageData = {
         "Início": {
-            page: (
-                <Home
-                    setPage={setPage}
-                />
-            ),
-            icon: "/home.png",
+            page: <Home />,
+            icone: "inicio",
         },
 
         "Escalas": {
@@ -40,7 +32,8 @@ export default function App() {
                     setPage={setPage}
                 />
             ),
-            icon: "/musical_note.png",
+            icone: "escalas",
+            aba: "lista",
         },
 
         "Afinador": {
@@ -49,7 +42,9 @@ export default function App() {
                     setPage={setPage}
                 />
             ),
-            icon: "/audio.png",
+            icone: "nota",
+            aba: "nota",
+            soMobile: true,
         },
 
         "Metrônomo": {
@@ -58,14 +53,15 @@ export default function App() {
                     setPage={setPage}
                 />
             ),
-            icon: "/audio.png",
+            icone: "play",
+            aba: "play",
+            soMobile: true,
         },
 
         "Chatbot": {
             page: (
                 <ChatbotTab />
             ),
-            icon: "/chat.svg",
         },
     };
 
@@ -73,8 +69,6 @@ export default function App() {
 
     return (
         <div>
-            <Header />
-
             <NavbarAdapter
                 page={page}
                 setPage={setPage}
