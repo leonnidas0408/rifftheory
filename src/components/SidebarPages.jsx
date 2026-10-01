@@ -6,7 +6,7 @@ import Conteudo from "./Conteudo";
 const EM_BREVE = [
     ["Teoria", "teoria"],
     ["Riffs", "riffs"],
-    ["Tabelaturas", "tabelaturas"],
+    ["Tablaturas", "tablaturas"],
 ];
 
 export default function SidebarPages({ page, setPage, pageData }) {
