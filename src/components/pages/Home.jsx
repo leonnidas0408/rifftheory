@@ -1,31 +1,168 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PrettyPanel from "../PrettyPanel";
 import BracoInterativo from "../BracoInterativo";
 import ChordSearch from "../Chord/ChordSearch";
-import { obterUsoSemanal, obterTotalHorasSemana } from "../../utils/usageStats";
+import {
+    obterUsoSemanal,
+    obterTotalHorasSemana,
+    obterProgressoSemana,
+    registrarEvento,
+} from "../../utils/usageStats";
 import { obterAcessosRecentes } from "../../utils/recentAccess";
 
-export default function Home() {
+// Progressões para treinar sem digitar nada (cada uma vira uma trilha de acordes).
+const PROGRESSOES = [
+    ["C", "G", "Am", "F"],
+    ["Em", "C", "G", "D"],
+    ["Am", "F", "C", "G"],
+];
+
+function rolarPara(id) {
+    const reduzir = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(id)?.scrollIntoView({ behavior: reduzir ? "auto" : "smooth", block: "start" });
+}
+
+export default function Home({ setPage }) {
+    const [, atualizar] = useState(0);
+    const [trilha, setTrilha] = useState(null);
+    const [abrirEscolha, setAbrirEscolha] = useState(0);
+
+    // Reavalia os blocos de progresso sempre que um evento do funil é registrado.
+    useEffect(() => {
+        const aoEvento = () => atualizar((v) => v + 1);
+        window.addEventListener("rt:evento", aoEvento);
+        registrarEvento("home_viewed");
+        return () => window.removeEventListener("rt:evento", aoEvento);
+    }, []);
+
     const usoSemanal = obterUsoSemanal();
     const totalHoras = obterTotalHorasSemana();
     const maxMinutos = Math.max(...usoSemanal.map((d) => d.minutos), 1);
     const acessosRecentes = obterAcessosRecentes();
+    const progresso = obterProgressoSemana();
+    const semProgresso = progresso.acordes + progresso.musicas + progresso.sessoes === 0;
+
+    function focarBusca() {
+        rolarPara("comecar");
+        document.getElementById("busca-cifra")?.focus({ preventScroll: true });
+    }
+
+    function abrirAcordes() {
+        setAbrirEscolha((v) => v + 1);
+        rolarPara("secao-braco");
+    }
+
+    function iniciarTrilha(acordes) {
+        setTrilha({ acordes, k: Date.now() });
+        rolarPara("secao-braco");
+    }
+
+    function retomar(acorde) {
+        registrarEvento("return_session_opened", { acorde });
+        iniciarTrilha([acorde]);
+    }
 
     return (
         <div className="pagina">
-            <ChordSearch />
+            <section className="hero">
+                <h1>Toque a próxima música entendendo o que está no braço.</h1>
+                <p>
+                    Encontre uma cifra, veja os acordes no braço e descubra formas mais fáceis de
+                    tocar — sem alternar entre várias ferramentas.
+                </p>
+                <div className="hero-acoes">
+                    <button
+                        className="link-botao hero-cta"
+                        onClick={() => {
+                            registrarEvento("hero_cta_clicked", { cta: "musica" });
+                            focarBusca();
+                        }}
+                    >
+                        Começar com uma música
+                    </button>
+                    <button
+                        className="hero-secundaria"
+                        onClick={() => {
+                            registrarEvento("hero_cta_clicked", { cta: "acordes" });
+                            abrirAcordes();
+                        }}
+                    >
+                        Explorar acordes
+                    </button>
+                </div>
+            </section>
 
-            <BracoInterativo dica="Clique em uma nota para ver sua posição no braço e a escala selecionada." />
+            <div id="comecar" className="comecar">
+                <div className="comecar-topo">
+                    <h2>Escolha um ponto de partida</h2>
+                    <span className="subtitulo">Você pode mudar de caminho a qualquer momento.</span>
+                    <div className="braco-acoes">
+                        <button className="pilula ligada" onClick={focarBusca}>
+                            Quero tocar uma música
+                        </button>
+                        <button className="pilula" onClick={abrirAcordes}>
+                            Quero aprender um acorde
+                        </button>
+                        <button className="pilula" onClick={() => setPage?.("Escalas")}>
+                            Quero entender uma escala
+                        </button>
+                    </div>
+                </div>
+
+                <ChordSearch />
+
+                <div className="sugestoes">
+                    <span className="subtitulo">Ou treine uma progressão no braço:</span>
+                    {PROGRESSOES.map((acordes) => (
+                        <button
+                            key={acordes.join("-")}
+                            className="pilula"
+                            onClick={() => iniciarTrilha(acordes)}
+                        >
+                            {acordes.join(" – ")}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div id="secao-braco">
+                <BracoInterativo
+                    guiado
+                    acordeInicial="C"
+                    iniciarTrilha={trilha}
+                    abrirEscolha={abrirEscolha}
+                    onVerEscalas={() => setPage?.("Escalas")}
+                />
+            </div>
 
             <div className="grade-stats">
                 <PrettyPanel>
                     <div className="stats-topo">
                         <div>
-                            <h3>Semanas de uso</h3>
-                            <span className="subtitulo">Tempo de utilização</span>
+                            <h3>Progresso desta semana</h3>
+                            <span className="subtitulo">O que você descobriu nos últimos 7 dias</span>
                         </div>
                         <strong className="stats-total">{totalHoras.toFixed(1)}h</strong>
                     </div>
+
+                    {semProgresso ? (
+                        <div className="estado-vazio">
+                            <span>
+                                Você ainda não concluiu uma sessão. Faça uma descoberta rápida de 2
+                                minutos.
+                            </span>
+                            <button className="link-botao" onClick={() => iniciarTrilha(PROGRESSOES[0])}>
+                                Começar prática rápida
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="indicadores">
+                            <div><strong>{progresso.acordes}</strong><span>acordes vistos</span></div>
+                            <div><strong>{progresso.musicas}</strong><span>músicas exploradas</span></div>
+                            <div><strong>{progresso.sessoes}</strong><span>sessões concluídas</span></div>
+                            <div><strong>{progresso.sequencia}</strong><span>dias seguidos</span></div>
+                        </div>
+                    )}
 
                     <div className="stat-grafico">
                         {usoSemanal.map((dia, index) => (
@@ -46,29 +183,44 @@ export default function Home() {
 
                 <PrettyPanel>
                     <div>
-                        <h3>Últimos acessos</h3>
-                        <span className="subtitulo">Cifras que você abriu recentemente</span>
+                        <h3>Continue de onde parou</h3>
+                        <span className="subtitulo">Seu último acorde e as cifras que você abriu</span>
                     </div>
 
                     <div className="recentes">
-                        {acessosRecentes.length === 0 ? (
-                            <div className="recent-item">
-                                <span>Nenhuma cifra aberta ainda</span>
-                                <span className="fonte">—</span>
+                        {progresso.ultimoAcorde && (
+                            <button
+                                className="recent-item"
+                                onClick={() => retomar(progresso.ultimoAcorde)}
+                            >
+                                <span>Retomar o acorde {progresso.ultimoAcorde}</span>
+                                <span className="fonte">Braço</span>
+                            </button>
+                        )}
+
+                        {acessosRecentes.map((acesso, index) => (
+                            <a
+                                key={index}
+                                href={acesso.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="recent-item"
+                            >
+                                <span>{acesso.title}</span>
+                                <span className="fonte">{acesso.source}</span>
+                            </a>
+                        ))}
+
+                        {!progresso.ultimoAcorde && acessosRecentes.length === 0 && (
+                            <div className="estado-vazio">
+                                <span>
+                                    Seu histórico começa aqui. Explore uma música para criar seu
+                                    primeiro atalho.
+                                </span>
+                                <button className="link-botao" onClick={focarBusca}>
+                                    Explorar uma música
+                                </button>
                             </div>
-                        ) : (
-                            acessosRecentes.map((acesso, index) => (
-                                <a
-                                    key={index}
-                                    href={acesso.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="recent-item"
-                                >
-                                    <span>{acesso.title}</span>
-                                    <span className="fonte">{acesso.source}</span>
-                                </a>
-                            ))
                         )}
                     </div>
                 </PrettyPanel>

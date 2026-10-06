@@ -408,7 +408,8 @@ svg.icone {
 }
 
 #braco-nome {
-    color: var(--texto);
+    color: var(--primaria-escura);
+    font-size: 26px;
     font-weight: 700;
 }
 
@@ -444,7 +445,10 @@ canvas#braco {
 }
 
 .braco-controles button.limpar {
-    color: var(--vermelho);
+    background: transparent;
+    color: var(--texto-suave);
+    font-weight: 500;
+    text-decoration: underline;
 }
 
 #braco-janela {
@@ -680,6 +684,189 @@ a.recent-item:hover {
 
 
 /* =========================================================
+   HOME: hero, ponto de partida e fluxo guiado
+   ========================================================= */
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 30px 32px;
+    border-radius: var(--radius-lg);
+    background: var(--lateral-fundo);
+    color: #fff;
+}
+
+.hero h1 {
+    max-width: 22ch;
+    font-size: clamp(26px, 4.2vw, 40px);
+    line-height: 1.12;
+    font-weight: 700;
+}
+
+.hero p {
+    max-width: 58ch;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #d3e2f8;
+}
+
+.hero-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 20px;
+    margin-top: 6px;
+}
+
+.link-botao.hero-cta {
+    padding: 13px 26px;
+    font-size: 17px;
+    background: #fff;
+    color: var(--primaria-escura);
+}
+
+.link-botao.hero-cta:hover {
+    background: #e3eefc;
+}
+
+.hero-secundaria {
+    color: #d3e2f8;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.hero-secundaria:hover {
+    color: #fff;
+}
+
+.comecar {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    scroll-margin-top: 12px;
+}
+
+.comecar-topo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.comecar-topo h2 {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.sugestoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 0 6px;
+}
+
+.sugestoes .subtitulo {
+    width: 100%;
+}
+
+#secao-braco {
+    scroll-margin-top: 12px;
+}
+
+.braco-exemplo {
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+.proximo-acorde {
+    align-self: center;
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+.conquista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    background: #dff3e8;
+    border: 1px solid #b6e2c9;
+    color: #1d6b43;
+}
+
+.dica-bloco {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.dica-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    padding: 0 6px;
+}
+
+.dica-acoes button {
+    font-size: 13px;
+    color: var(--texto-suave);
+    text-decoration: underline;
+}
+
+.estado-vazio {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    background: var(--painel);
+    color: var(--texto-suave);
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.indicadores div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--painel);
+}
+
+.indicadores strong {
+    font-size: 24px;
+    color: var(--primaria-escura);
+}
+
+.indicadores span {
+    font-size: 12px;
+    color: var(--texto-suave);
+}
+
+button.recent-item {
+    width: 100%;
+    text-align: left;
+}
+
+button.recent-item:hover {
+    background: #d6e6fc;
+}
+
+
+/* =========================================================
    BOTÃO FLUTUANTE DO ASSISTENTE
    ========================================================= */
 
@@ -715,6 +902,14 @@ a.recent-item:hover {
 
     .grade-stats {
         grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 22px 20px;
+    }
+
+    .indicadores {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .fab-chat {

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { trata, atualizarBraco } from "../draw";
 
-export default function Braco() {
+export default function Braco({ onInteragir }) {
     useEffect(() => {
         atualizarBraco();
     }, []);
@@ -11,7 +11,10 @@ export default function Braco() {
             id="braco"
             width="1000"
             height="260"
-            onClick={(e) => trata(e.clientX, e.clientY)}
+            onClick={(e) => {
+                trata(e.clientX, e.clientY);
+                onInteragir?.();
+            }}
         />
     );
 }

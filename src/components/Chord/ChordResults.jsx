@@ -6,6 +6,7 @@
 import React from "react";
 import PrettyPanel from "../PrettyPanel";
 import { registrarAcessoCifra } from "../../utils/recentAccess";
+import { registrarEvento } from "../../utils/usageStats";
 
 export default function ChordResults({ resultados }) {
     if (!resultados || resultados.length === 0) {
@@ -31,7 +32,11 @@ export default function ChordResults({ resultados }) {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="link-botao"
-                            onClick={() => registrarAcessoCifra(r)}
+                            onClick={() => {
+                                registrarAcessoCifra(r);
+                                registrarEvento("result_opened", { fonte: r.source });
+                                registrarEvento("first_value_reached", { via: "cifra" }, { umaVezPorSessao: true });
+                            }}
                         >
                             Abrir
                         </a>

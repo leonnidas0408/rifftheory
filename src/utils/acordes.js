@@ -52,3 +52,15 @@ export function formaDoAcorde(raiz, qualidade) {
 
     return { c, i: maiorCasa > 12 ? melhor.casa - 1 : 0 };
 }
+
+
+/**
+ * Forma de um acorde a partir do nome exibido na interface ("C", "Am", "F#",
+ * "Bdim"/"B°"). Retorna null se o nome não for reconhecido.
+ */
+export function formaPorNome(nome) {
+    const m = /^([A-G]#?)(m|dim|°)?$/.exec(nome ?? "");
+    if (!m) return null;
+    const qualidade = m[2] === "m" ? "m" : m[2] ? "dim" : "M";
+    return formaDoAcorde(m[1], qualidade);
+}

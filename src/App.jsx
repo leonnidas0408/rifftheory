@@ -22,7 +22,7 @@ export default function App() {
 
     const pageData = {
         "Início": {
-            page: <Home />,
+            page: <Home setPage={setPage} />,
             icone: "inicio",
         },
 
