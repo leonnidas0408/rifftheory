@@ -17,6 +17,24 @@ const PROGRESSOES = [
     ["Am", "F", "C", "G"],
 ];
 
+const EXEMPLOS_USO = [
+    {
+        nicho: "Quem está começando",
+        antes: "Você sabe o nome da música, mas trava no primeiro acorde.",
+        depois: "Busque a música, veja a forma de C no braço e comece com uma progressão de 3 acordes.",
+    },
+    {
+        nicho: "Quem está montando repertório",
+        antes: "Você alterna entre cifra, diagrama e vídeo para lembrar cada troca.",
+        depois: "Abra a cifra em uma aba e use o braço interativo para revisar as formas sem perder o contexto.",
+    },
+    {
+        nicho: "Quem quer entender teoria",
+        antes: "A escala parece uma lista de notas sem ligação com o que você toca.",
+        depois: "Explore a escala, veja os acordes do campo harmônico e teste as formas no braço.",
+    },
+];
+
 function rolarPara(id) {
     const reduzir = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     document.getElementById(id)?.scrollIntoView({ behavior: reduzir ? "auto" : "smooth", block: "start" });
@@ -79,7 +97,7 @@ export default function Home({ setPage }) {
                             focarBusca();
                         }}
                     >
-                        Começar com uma música
+                        Buscar uma música
                     </button>
                     <button
                         className="hero-secundaria"
@@ -88,12 +106,12 @@ export default function Home({ setPage }) {
                             abrirAcordes();
                         }}
                     >
-                        Explorar acordes
+                        Ver acordes no braço
                     </button>
                 </div>
                 <div className="hero-seguranca">
                     <span className="seguranca-icone" aria-hidden="true">✓</span>
-                    <span>Sem cadastro. Seu histórico fica salvo apenas neste navegador.</span>
+                    <span>Gratuito para começar · sem cadastro · histórico salvo apenas neste navegador.</span>
                 </div>
             </section>
 
@@ -109,9 +127,26 @@ export default function Home({ setPage }) {
                     <div className="prova-numero"><strong>7</strong><span>dias de progresso acompanhados no app</span></div>
                 </div>
                 <div className="prova-recursos">
-                    <div><strong>1. Busque</strong><span>Encontre cifras por música ou artista.</span></div>
-                    <div><strong>2. Veja</strong><span>Visualize a forma no braço interativo.</span></div>
-                    <div><strong>3. Toque</strong><span>Avance por acordes, escalas e prática.</span></div>
+                    <div><strong>1. Busque</strong><span>Digite uma música ou artista.</span></div>
+                    <div><strong>2. Escolha</strong><span>Abra uma fonte de cifra em nova aba.</span></div>
+                    <div><strong>3. Pratique</strong><span>Volte ao Riff Theory e teste a forma no braço.</span></div>
+                </div>
+            </section>
+
+            <section className="exemplos-uso" aria-labelledby="titulo-exemplos">
+                <div className="secao-heading">
+                    <span className="eyebrow">Antes e depois</span>
+                    <h2 id="titulo-exemplos">Veja como o fluxo muda a prática</h2>
+                    <p>Exemplos baseados no que você consegue fazer hoje no app — não são depoimentos inventados.</p>
+                </div>
+                <div className="exemplos-grade">
+                    {EXEMPLOS_USO.map((exemplo) => (
+                        <article className="exemplo-card" key={exemplo.nicho}>
+                            <strong>{exemplo.nicho}</strong>
+                            <div><span className="exemplo-label">Antes</span><p>{exemplo.antes}</p></div>
+                            <div><span className="exemplo-label depois">Depois</span><p>{exemplo.depois}</p></div>
+                        </article>
+                    ))}
                 </div>
             </section>
 
@@ -121,16 +156,16 @@ export default function Home({ setPage }) {
                     <span className="subtitulo">Você pode mudar de caminho a qualquer momento.</span>
                     <div className="braco-acoes">
                         <button className="pilula ligada" onClick={focarBusca}>
-                            Quero tocar uma música
+                            Buscar uma música
                         </button>
                         <button className="pilula" onClick={abrirAcordes}>
-                            Quero aprender um acorde
+                            Ver acordes no braço
                         </button>
                         <button className="pilula" onClick={() => setPage?.("Escalas")}>
-                            Quero entender uma escala
+                            Explorar escalas
                         </button>
                     </div>
-                    <p className="cta-seguranca"><strong>Comece sem compromisso:</strong> não criamos conta, não pedimos cartão e você pode praticar direto no navegador.</p>
+                    <p className="cta-seguranca"><strong>O que acontece agora:</strong> digite uma música, escolha uma fonte de cifra e volte para praticar os acordes no braço.</p>
                 </div>
 
                 <ChordSearch />
@@ -176,7 +211,7 @@ export default function Home({ setPage }) {
                                 minutos.
                             </span>
                             <button className="link-botao" onClick={() => iniciarTrilha(PROGRESSOES[0])}>
-                                Começar prática rápida
+                                Iniciar prática rápida
                             </button>
                         </div>
                     ) : (
@@ -242,12 +277,21 @@ export default function Home({ setPage }) {
                                     primeiro atalho.
                                 </span>
                                 <button className="link-botao" onClick={focarBusca}>
-                                    Explorar uma música
+                                    Buscar uma música
                                 </button>
                             </div>
                         )}
                     </div>
                 </PrettyPanel>
+            </div>
+            <div className="mobile-cta-wrap">
+                <button className="mobile-cta" onClick={() => {
+                    registrarEvento("mobile_cta_clicked", { cta: "buscar_musica" });
+                    focarBusca();
+                }}>
+                    <span>Pronto para tocar?</span>
+                    <strong>Buscar uma música</strong>
+                </button>
             </div>
         </div>
     );

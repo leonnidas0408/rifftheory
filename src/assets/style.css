@@ -840,6 +840,62 @@ a.recent-item:hover {
     color: var(--texto-suave);
 }
 .cta-seguranca strong { color: var(--primaria-escura); }
+.exemplos-uso {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 6px 0;
+}
+.secao-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.secao-heading h2 {
+    color: var(--primaria-escura);
+    font-size: 24px;
+}
+.secao-heading p {
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+.exemplos-grade {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+.exemplo-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 18px;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-md);
+    background: #fff;
+}
+.exemplo-card > strong {
+    color: var(--texto);
+    font-size: 16px;
+}
+.exemplo-card div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.exemplo-card p {
+    color: var(--texto-suave);
+    font-size: 14px;
+    line-height: 1.4;
+}
+.exemplo-label {
+    color: var(--vermelho);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+.exemplo-label.depois { color: var(--verde); }
+.mobile-cta-wrap { display: none; }
 
 .comecar {
     display: flex;
@@ -1015,18 +1071,47 @@ button.recent-item:hover {
         grid-column: auto;
     }
 
+    .exemplos-grade {
+        grid-template-columns: 1fr;
+    }
+
     .indicadores {
         grid-template-columns: repeat(2, 1fr);
     }
 
     .fab-chat {
         right: 16px;
-        bottom: calc(var(--bottom-bar-h) + 16px);
+        bottom: calc(var(--bottom-bar-h) + 68px);
     }
 
     .barra-titulo {
         font-size: 22px;
     }
+
+    .mobile-cta-wrap {
+        display: block;
+        position: fixed;
+        right: 12px;
+        bottom: calc(var(--bottom-bar-h) + 12px);
+        left: 12px;
+        z-index: 14;
+    }
+    .mobile-cta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 12px;
+        padding: 11px 16px;
+        border: 1px solid rgba(255, 255, 255, .25);
+        border-radius: 999px;
+        background: var(--primaria-escura);
+        box-shadow: 0 8px 24px rgba(31, 79, 143, .28);
+        color: #fff;
+        text-align: left;
+    }
+    .mobile-cta span { font-size: 12px; color: #dbe8fb; }
+    .mobile-cta strong { font-size: 14px; white-space: nowrap; }
 }
 
 @media (max-width: 560px) {
