@@ -13,7 +13,7 @@ const MENSAGEM_BOAS_VINDAS = {
     autor: "bot",
     hora: horaAgora(),
     texto:
-        "E aí! Eu sou o assistente do Riff Theory. Pode perguntar sobre teoria " +
+        "E aí! Meu nome é Tonic e eu sou o assistente do Riff Theory. Pode perguntar sobre teoria " +
         "musical, escalas, acordes, harmonia, intervalos, técnica no violão/" +
         "guitarra e afins — esse é o meu único assunto. 🎸",
 };

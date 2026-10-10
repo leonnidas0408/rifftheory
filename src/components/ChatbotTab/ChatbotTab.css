@@ -57,6 +57,8 @@
     place-items: center;
     background: var(--primaria);
     color: #fff;
+    align-content: center;
+    justify-content: center;
 }
 
 .chatbot-bolha {
