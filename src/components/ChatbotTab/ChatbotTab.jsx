@@ -145,7 +145,7 @@ export default function ChatbotTab() {
                         className={`chatbot-linha chatbot-linha-${mensagem.autor}`}
                     >
                         <span className="chatbot-avatar">
-                            <Icone nome={mensagem.autor === "bot" ? "riffs" : "conta"} tamanho={22} />
+                            <Icone nome={mensagem.autor === "bot" ? "assistente" : "conta"} tamanho={22} />
                         </span>
 
                         <div className={`chatbot-bolha chatbot-bolha-${mensagem.autor}`}>
