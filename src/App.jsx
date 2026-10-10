@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 
 import RiffTheoryTuner from "./components/pages/RiffTheoryTuner";
 import PaginaDeEscala from "./components/pages/PaginaDeEscala";
-import Home from "./components/pages/Home";
+import Dashboard from "./components/pages/Dashboard";
 import Metronomo from "./components/pages/Metronomo";
 import ChatbotTab from "./components/ChatbotTab/ChatbotTab";
 
 import NavbarAdapter from "./components/NavbarAdapter";
 
 import { iniciarRastreioDeUso } from "./utils/usageStats";
+import Home from "./components/pages/Presentation";
 
 export default function App() {
     const [page, setPage] = useState("Início");
@@ -22,8 +23,15 @@ export default function App() {
 
     const pageData = {
         "Início": {
-            page: <Home setPage={setPage} />,
+            page: <Home setPage={setPage}/>,
             icone: "inicio",
+            aba: "inicio"
+        },
+
+        "Dashboard": {
+            page: <Dashboard setPage={setPage} />,
+            icone: "lista",
+            aba: "lista"
         },
 
         "Escalas": {
@@ -43,8 +51,7 @@ export default function App() {
                 />
             ),
             icone: "nota",
-            aba: "nota",
-            soMobile: true,
+            aba: "nota"
         },
 
         "Metrônomo": {
@@ -54,8 +61,7 @@ export default function App() {
                 />
             ),
             icone: "play",
-            aba: "play",
-            soMobile: true,
+            aba: "play"
         },
 
         "Chatbot": {
