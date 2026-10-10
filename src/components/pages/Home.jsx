@@ -132,9 +132,9 @@ export default function Home({ setPage }) {
                     <div><strong>3. Toque</strong><span>Avance para o próximo acorde sem trocar de ferramenta.</span></div>
                 </div>
                 <div className="comparacao"><strong>Alternativa comum:</strong> buscar → abrir abas → copiar o acorde. <strong>No Riff Theory:</strong> escolher → visualizar → tocar.</div>
-                <div className="prova-credibilidade"><span><strong>Prova verificável:</strong> o código do app é público e o fluxo pode ser testado sem criar conta.</span><a href="https://github.com/leonnidas0408/rifftheory" target="_blank" rel="noopener noreferrer">Ver projeto no GitHub</a></div>
+                <div className="prova-credibilidade"><span><strong>Fluxo verificável:</strong> você pode testar o primeiro acorde sem criar conta e conferir o resultado no braço.</span></div>
                 <div className="trust-grid" aria-label="Sinais de confiança">
-                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Código público</strong><span>Veja a implementação e o histórico de mudanças.</span></div></div>
+                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Fluxo verificável</strong><span>Teste a experiência principal antes de decidir se ela serve para sua prática.</span></div></div>
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Progresso local</strong><span>Acordes, histórico e prática ficam no navegador; o Chatbot é a exceção.</span></div></div>
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Resultado visível</strong><span>O primeiro acorde aparece no braço ao iniciar a prática.</span></div></div>
                 </div>
@@ -202,9 +202,8 @@ export default function Home({ setPage }) {
                 <div>
                     <span className="eyebrow">Produto em evolução</span>
                     <h2>Teste tocando uma música real</h2>
-                    <p>O melhor feedback vem de quem usa o instrumento. Se uma etapa ficar confusa ou faltar um acorde, conte o caso concreto.</p>
+                    <p>O melhor feedback vem de quem usa o instrumento. Se uma etapa ficar confusa ou faltar um acorde, anote o caso concreto para a próxima rodada de melhorias.</p>
                 </div>
-                <a className="link-botao" href="https://github.com/leonnidas0408/rifftheory/issues/new" target="_blank" rel="noopener noreferrer">Enviar uma sugestão</a>
             </section>
 
             <div id="comecar" className="comecar">

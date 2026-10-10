@@ -2,14 +2,6 @@
   "name": "rifftheory",
   "version": "1.0.0",
   "description": "<div align=\"center\">\r   <img src=\"/public/icon.jpg\" width=\"256\" height=\"256\">\r   <p>Riff Theory é capaz de te ajudar em todos os seus sonhos guitarreiros.</p>\r </div>",
-  "homepage": "https://github.com/leonnidas0408/rifftheory#readme",
-  "bugs": {
-    "url": "https://github.com/leonnidas0408/rifftheory/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/leonnidas0408/rifftheory.git"
-  },
   "license": "ISC",
   "author": "",
   "type": "commonjs",
