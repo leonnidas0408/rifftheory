@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import PrettyPanel from "../PrettyPanel";
 import BracoInterativo from "../BracoInterativo";
 import ChordSearch from "../Chord/ChordSearch";
+import Barra from "../Barra";
 import {
     obterUsoSemanal,
     obterTotalHorasSemana,
@@ -82,6 +83,7 @@ export default function Dashboard({ setPage }) {
 
     return (
         <div className="pagina"><div id="comecar" className="comecar">
+            <Barra titulo="Dashboard"/>
             <div className="comecar-topo">
                 <h2>Escolha um ponto de partida</h2>
                 <span className="subtitulo">Você pode mudar de caminho a qualquer momento.</span>

@@ -9,7 +9,7 @@ import ChatbotTab from "./components/ChatbotTab/ChatbotTab";
 import NavbarAdapter from "./components/NavbarAdapter";
 
 import { iniciarRastreioDeUso } from "./utils/usageStats";
-import Home from "./components/pages/Presentation";
+import Home from "./components/pages/Home";
 
 export default function App() {
     const [page, setPage] = useState("Início");

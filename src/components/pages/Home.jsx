@@ -53,7 +53,7 @@ export default function Home({ setPage }) {
 
     return (
         <div className="pagina">
-            <Barra titulo="Apresentação"/>
+            <Barra titulo="Início"/>
             <section className="hero">
                 <div className="hero-kicker">Seu estúdio de guitarra em um só fluxo</div>
                 <h1>Toque a próxima música entendendo o que está no braço.</h1>
