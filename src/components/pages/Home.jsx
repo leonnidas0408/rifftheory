@@ -111,7 +111,7 @@ export default function Home({ setPage }) {
                 </div>
                 <div className="hero-seguranca">
                     <span className="seguranca-icone" aria-hidden="true">✓</span>
-                    <span>Gratuito para começar · sem instalação · sem cadastro · primeiro acorde direto no app.</span>
+                    <span>Gratuito para começar · sem instalação · sem cadastro · prática e progresso locais.</span>
                 </div>
             </section>
 
@@ -135,7 +135,7 @@ export default function Home({ setPage }) {
                 <div className="prova-credibilidade"><span><strong>Prova verificável:</strong> o código do app é público e o fluxo pode ser testado sem criar conta.</span><a href="https://github.com/leonnidas0408/rifftheory" target="_blank" rel="noopener noreferrer">Ver projeto no GitHub</a></div>
                 <div className="trust-grid" aria-label="Sinais de confiança">
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Código público</strong><span>Veja a implementação e o histórico de mudanças.</span></div></div>
-                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Sem cadastro</strong><span>Comece no navegador e mantenha o progresso local.</span></div></div>
+                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Progresso local</strong><span>Acordes, histórico e prática ficam no navegador; o Chatbot é a exceção.</span></div></div>
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Resultado visível</strong><span>O primeiro acorde aparece no braço ao iniciar a prática.</span></div></div>
                 </div>
             </section>
@@ -148,7 +148,7 @@ export default function Home({ setPage }) {
                 <div className="objecoes-grid">
                     <div><strong>Preço</strong><span><b>Gratuito para começar.</b> Não há cartão nem plano obrigatório nesta experiência.</span></div>
                     <div><strong>Setup</strong><span><b>Abra e toque.</b> Funciona no navegador, sem instalar programa ou configurar conta.</span></div>
-                    <div><strong>Segurança</strong><span><b>Seus dados ficam no seu navegador.</b> As cifras abrem a fonte original em nova aba.</span></div>
+                    <div><strong>Segurança</strong><span><b>Prática e progresso ficam no navegador.</b> Perguntas ao Chatbot são enviadas à API para gerar respostas.</span></div>
                     <div><strong>Troca de ferramenta</strong><span><b>Prática guiada dentro do app.</b> Use a busca apenas quando quiser partir de uma música.</span></div>
                 </div>
             </section>

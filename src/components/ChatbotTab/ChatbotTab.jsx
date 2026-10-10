@@ -157,6 +157,9 @@ export default function ChatbotTab() {
                     <Icone nome="enviar" tamanho={22} />
                 </button>
             </form>
+            <p className="chatbot-privacidade">
+                Para responder, sua pergunta e o histórico recente desta conversa são enviados ao serviço de IA. O progresso da prática continua local no navegador.
+            </p>
         </div>
     );
 }

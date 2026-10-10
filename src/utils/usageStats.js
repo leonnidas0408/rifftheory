@@ -97,8 +97,21 @@ export function iniciarRastreioDeUso() {
 // ---------------------------------------------------------------------------
 
 const CHAVE_EVENTOS = "riffTheoryEventos";
+const CHAVE_INICIO_SESSAO = "riffTheoryInicioSessao";
 const MAX_EVENTOS = 500;
 const DIA_MS = 24 * 60 * 60 * 1000;
+
+function obterInicioSessao() {
+    try {
+        const existente = sessionStorage.getItem(CHAVE_INICIO_SESSAO);
+        if (existente) return Number(existente);
+        const inicio = Date.now();
+        sessionStorage.setItem(CHAVE_INICIO_SESSAO, String(inicio));
+        return inicio;
+    } catch {
+        return Date.now();
+    }
+}
 
 function lerEventos() {
     try {
@@ -125,7 +138,11 @@ export function registrarEvento(nome, dados = {}, { umaVezPorSessao = false } = 
         }
     }
 
-    const evento = { nome, t: Date.now(), ...dados };
+    const agora = Date.now();
+    const dadosComResultado = nome === "first_value_reached"
+        ? { ...dados, tempoAtePrimeiroValorMs: Math.max(0, agora - obterInicioSessao()) }
+        : dados;
+    const evento = { nome, t: agora, ...dadosComResultado };
 
     try {
         const lista = [...lerEventos(), evento].slice(-MAX_EVENTOS);

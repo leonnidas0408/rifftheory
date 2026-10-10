@@ -688,15 +688,30 @@ a.recent-item:hover {
    ========================================================= */
 
 .hero {
+    position: relative;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
-    padding: 30px 32px;
+    padding: 46px 32px 30px;
     border-radius: var(--radius-lg);
     background: var(--lateral-fundo);
     color: #fff;
 }
+.hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 8%;
+    width: 42%;
+    height: 100%;
+    opacity: .18;
+    background: repeating-linear-gradient(90deg, transparent 0 34px, rgba(255, 255, 255, .42) 34px 35px), linear-gradient(135deg, transparent 0 48%, rgba(63, 120, 230, .8) 48% 49%, transparent 49%);
+    mask-image: linear-gradient(90deg, transparent, #000 24%, #000 76%, transparent);
+    pointer-events: none;
+}
+.hero > * { position: relative; z-index: 1; }
 .hero-kicker,
 .eyebrow {
     color: #9fc3ff;
@@ -1150,7 +1165,7 @@ button.recent-item:hover {
 
 @media (max-width: 900px) {
     .conteudo {
-        padding: 14px 14px calc(var(--bottom-bar-h) + 28px);
+        padding: 14px 14px calc(var(--bottom-bar-h) + 96px + env(safe-area-inset-bottom));
     }
 
     .grade-stats {
@@ -1158,7 +1173,7 @@ button.recent-item:hover {
     }
 
     .hero {
-        padding: 22px 20px;
+        padding: 34px 20px 22px;
     }
 
     .prova-valor {
@@ -1199,7 +1214,7 @@ button.recent-item:hover {
 
     .fab-chat {
         right: 16px;
-        bottom: calc(var(--bottom-bar-h) + 68px);
+        bottom: calc(var(--bottom-bar-h) + 68px + env(safe-area-inset-bottom));
     }
 
     .barra-titulo {
@@ -1210,7 +1225,7 @@ button.recent-item:hover {
         display: block;
         position: fixed;
         right: 12px;
-        bottom: calc(var(--bottom-bar-h) + 12px);
+        bottom: calc(var(--bottom-bar-h) + 12px + env(safe-area-inset-bottom));
         left: 12px;
         z-index: 14;
     }

@@ -155,6 +155,13 @@
 .chatbot-form button:disabled {
     opacity: 0.55;
 }
+.chatbot-privacidade {
+    padding: 0 14px;
+    color: var(--texto-suave);
+    font-size: 12px;
+    line-height: 1.4;
+    text-align: center;
+}
 
 @media (max-width: 900px) {
     .chatbot-tab {
