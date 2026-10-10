@@ -97,7 +97,7 @@ export default function Home({ setPage }) {
                             iniciarTrilha(PROGRESSOES[0]);
                         }}
                     >
-                        Ver meu primeiro acorde
+                        Começar agora
                     </button>
                     <button
                         className="hero-secundaria"
@@ -111,7 +111,7 @@ export default function Home({ setPage }) {
                 </div>
                 <div className="hero-seguranca">
                     <span className="seguranca-icone" aria-hidden="true">✓</span>
-                    <span>Gratuito para começar · sem cadastro · primeiro acorde direto no app.</span>
+                    <span>Gratuito para começar · sem instalação · sem cadastro · primeiro acorde direto no app.</span>
                 </div>
             </section>
 
@@ -137,6 +137,19 @@ export default function Home({ setPage }) {
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Código público</strong><span>Veja a implementação e o histórico de mudanças.</span></div></div>
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Sem cadastro</strong><span>Comece no navegador e mantenha o progresso local.</span></div></div>
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Resultado visível</strong><span>O primeiro acorde aparece no braço ao iniciar a prática.</span></div></div>
+                </div>
+            </section>
+
+            <section className="objecoes" aria-labelledby="titulo-objecoes">
+                <div className="secao-heading">
+                    <span className="eyebrow">Antes de começar</span>
+                    <h2 id="titulo-objecoes">Feito para testar sem compromisso</h2>
+                </div>
+                <div className="objecoes-grid">
+                    <div><strong>Preço</strong><span><b>Gratuito para começar.</b> Não há cartão nem plano obrigatório nesta experiência.</span></div>
+                    <div><strong>Setup</strong><span><b>Abra e toque.</b> Funciona no navegador, sem instalar programa ou configurar conta.</span></div>
+                    <div><strong>Segurança</strong><span><b>Seus dados ficam no seu navegador.</b> As cifras abrem a fonte original em nova aba.</span></div>
+                    <div><strong>Troca de ferramenta</strong><span><b>Prática guiada dentro do app.</b> Use a busca apenas quando quiser partir de uma música.</span></div>
                 </div>
             </section>
 
@@ -172,7 +185,7 @@ export default function Home({ setPage }) {
                             Explorar escalas
                         </button>
                     </div>
-                    <p className="cta-seguranca"><strong>O que acontece agora:</strong> digite uma música, escolha uma fonte de cifra e volte para praticar os acordes no braço.</p>
+                    <p className="cta-seguranca"><strong>Comece agora:</strong> escolha uma trilha e veja o primeiro acorde no braço — ou busque uma música quando já souber o que quer tocar.</p>
                 </div>
 
                 <ChordSearch />
@@ -205,8 +218,8 @@ export default function Home({ setPage }) {
                 <PrettyPanel>
                     <div className="stats-topo">
                         <div>
-                            <h3>Progresso desta semana</h3>
-                            <span className="subtitulo">O que você descobriu nos últimos 7 dias</span>
+                            <h3>O que você já praticou</h3>
+                            <span className="subtitulo">Resultados da sua prática nos últimos 7 dias</span>
                         </div>
                         <strong className="stats-total">{totalHoras.toFixed(1)}h</strong>
                     </div>
@@ -214,11 +227,11 @@ export default function Home({ setPage }) {
                     {semProgresso ? (
                         <div className="estado-vazio">
                             <span>
-                                Você ainda não concluiu uma sessão. Faça uma descoberta rápida de 2
-                                minutos.
+                                Você ainda não concluiu uma sessão. Comece agora e veja seu primeiro
+                                acorde no braço.
                             </span>
                             <button className="link-botao" onClick={() => iniciarTrilha(PROGRESSOES[0])}>
-                                Iniciar prática rápida
+                                Começar agora
                             </button>
                         </div>
                     ) : (
@@ -293,11 +306,11 @@ export default function Home({ setPage }) {
             </div>
             <div className="mobile-cta-wrap">
                 <button className="mobile-cta" onClick={() => {
-                    registrarEvento("mobile_cta_clicked", { cta: "buscar_musica" });
-                    focarBusca();
+                    registrarEvento("mobile_cta_clicked", { cta: "pratica_guiada" });
+                    iniciarTrilha(PROGRESSOES[0]);
                 }}>
-                    <span>Pronto para tocar?</span>
-                    <strong>Buscar uma música</strong>
+                    <span>Primeiro acorde em um clique</span>
+                    <strong>Começar agora</strong>
                 </button>
             </div>
         </div>

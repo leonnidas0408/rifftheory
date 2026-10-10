@@ -915,6 +915,36 @@ a.recent-item:hover {
     gap: 16px;
     padding: 6px 0;
 }
+.objecoes {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 6px 0;
+}
+.objecoes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+.objecoes-grid > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 14px;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-md);
+    background: #fff;
+}
+.objecoes-grid strong {
+    color: var(--primaria-escura);
+    font-size: 15px;
+}
+.objecoes-grid span {
+    color: var(--texto-suave);
+    font-size: 13px;
+    line-height: 1.4;
+}
+.objecoes-grid b { color: var(--texto); }
 .secao-heading {
     display: flex;
     flex-direction: column;
@@ -1159,6 +1189,10 @@ button.recent-item:hover {
         grid-template-columns: 1fr;
     }
 
+    .objecoes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .indicadores {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1200,7 +1234,8 @@ button.recent-item:hover {
 
 @media (max-width: 560px) {
     .prova-numeros,
-    .prova-recursos {
+    .prova-recursos,
+    .objecoes-grid {
         grid-template-columns: 1fr;
     }
 
