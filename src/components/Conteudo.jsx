@@ -1,5 +1,6 @@
 import React from "react";
 import Icone from "./Icone";
+import AuthButton from "./AuthButton";
 
 // Área principal: abas de ferramentas no topo, página atual e o botão
 // flutuante que abre o assistente (chat).
@@ -8,6 +9,7 @@ export default function Conteudo({ page, setPage, pageData }) {
 
     return (
         <main className="conteudo">
+            <div className="auth-mobile"><AuthButton compact /></div>
             <nav className="abas" aria-label="Ferramentas">
                 {abas.map(([chave, item]) => (
                     <button

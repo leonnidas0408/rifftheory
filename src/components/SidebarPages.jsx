@@ -1,6 +1,6 @@
 import IconButton from "./IconButton";
-import Icone from "./Icone";
 import Conteudo from "./Conteudo";
+import AuthButton from "./AuthButton";
 
 // Seções planejadas: aparecem no menu, mas ainda não têm página.
 const EM_BREVE = [
@@ -18,7 +18,7 @@ export default function SidebarPages({ page, setPage, pageData }) {
         <div>
             <aside className="sidebar">
                 <div className="sidebar-avatar">
-                    <Icone nome="conta" tamanho={56} />
+                    <AuthButton />
                 </div>
 
                 <nav>
