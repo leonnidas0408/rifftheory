@@ -153,6 +153,34 @@ export default function Home({ setPage }) {
                 </div>
             </section>
 
+            <section className="rotas-pratica" aria-labelledby="titulo-rotas-pratica">
+                <div className="secao-heading">
+                    <span className="eyebrow">Comece simples</span>
+                    <h2 id="titulo-rotas-pratica">Escolha uma prática e avance no seu ritmo</h2>
+                    <p>Você não precisa estudar tudo de uma vez. Comece por uma ação concreta e aprofunde quando fizer sentido.</p>
+                </div>
+                <div className="rotas-grade">
+                    <article className="rota-card">
+                        <span className="rota-numero">01</span>
+                        <strong>Aprender um acorde</strong>
+                        <p>Veja a forma no braço e descubra onde colocar cada dedo.</p>
+                        <button className="pilula" onClick={abrirAcordes}>Ver acordes práticos</button>
+                    </article>
+                    <article className="rota-card">
+                        <span className="rota-numero">02</span>
+                        <strong>Treinar uma troca</strong>
+                        <p>Pratique uma progressão pronta com quatro acordes em sequência.</p>
+                        <button className="pilula" onClick={() => iniciarTrilha(PROGRESSOES[0])}>Iniciar uma trilha</button>
+                    </article>
+                    <article className="rota-card">
+                        <span className="rota-numero">03</span>
+                        <strong>Entender a relação</strong>
+                        <p>Explore a escala e veja como ela se conecta aos acordes que você toca.</p>
+                        <button className="pilula" onClick={() => setPage?.("Escalas")}>Explorar escalas</button>
+                    </article>
+                </div>
+            </section>
+
             <section className="exemplos-uso" aria-labelledby="titulo-exemplos">
                 <div className="secao-heading">
                     <span className="eyebrow">Antes e depois</span>
@@ -168,6 +196,15 @@ export default function Home({ setPage }) {
                         </article>
                     ))}
                 </div>
+            </section>
+
+            <section className="beta-convite" aria-label="Convite para testar e enviar feedback">
+                <div>
+                    <span className="eyebrow">Produto em evolução</span>
+                    <h2>Teste tocando uma música real</h2>
+                    <p>O melhor feedback vem de quem usa o instrumento. Se uma etapa ficar confusa ou faltar um acorde, conte o caso concreto.</p>
+                </div>
+                <a className="link-botao" href="https://github.com/leonnidas0408/rifftheory/issues/new" target="_blank" rel="noopener noreferrer">Enviar uma sugestão</a>
             </section>
 
             <div id="comecar" className="comecar">

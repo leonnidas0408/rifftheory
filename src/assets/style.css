@@ -960,6 +960,67 @@ a.recent-item:hover {
     line-height: 1.4;
 }
 .objecoes-grid b { color: var(--texto); }
+.rotas-pratica {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 6px 0;
+}
+.rotas-grade {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+.rota-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 18px;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-md);
+    background: #fff;
+}
+.rota-numero {
+    color: var(--primaria);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .12em;
+}
+.rota-card strong {
+    color: var(--texto);
+    font-size: 17px;
+}
+.rota-card p {
+    flex: 1;
+    color: var(--texto-suave);
+    font-size: 14px;
+    line-height: 1.4;
+}
+.rota-card .pilula { margin-top: 4px; }
+.beta-convite {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 20px 24px;
+    border: 1px solid #b6e2c9;
+    border-radius: var(--radius-lg);
+    background: #effaf3;
+}
+.beta-convite h2 {
+    margin-top: 4px;
+    color: #1d6b43;
+    font-size: 22px;
+}
+.beta-convite p {
+    max-width: 64ch;
+    margin-top: 5px;
+    color: #397b58;
+    font-size: 14px;
+    line-height: 1.4;
+}
+.beta-convite .eyebrow { color: #2e9d63; }
 .secao-heading {
     display: flex;
     flex-direction: column;
@@ -1206,6 +1267,16 @@ button.recent-item:hover {
 
     .objecoes-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rotas-grade {
+        grid-template-columns: 1fr;
+    }
+
+    .beta-convite {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px 20px;
     }
 
     .indicadores {
