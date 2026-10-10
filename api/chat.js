@@ -19,6 +19,8 @@ const path = require("path");
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 const MAX_TRECHOS_CONTEXTO = 4;
 const MAX_MENSAGENS_HISTORICO = 12; // limita o tamanho do payload enviado
@@ -113,9 +115,38 @@ function montarSystemPrompt(trechos) {
     return `${SYSTEM_PROMPT_BASE}\n\nTRECHOS DE REFERÊNCIA:\n${blocoTrechos}`;
 }
 
+async function validarSessao(req) {
+    const autorizacao = req.headers.authorization || "";
+    if (!autorizacao.startsWith("Bearer ")) return { ausente: true };
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return { configuracaoAusente: true };
+
+    try {
+        const resposta = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+            headers: {
+                apikey: SUPABASE_ANON_KEY,
+                Authorization: autorizacao,
+            },
+        });
+        if (!resposta.ok) return { invalida: true };
+        return { usuario: await resposta.json() };
+    } catch {
+        return { invalida: true };
+    }
+}
+
 module.exports = async function handler(req, res) {
     if (req.method !== "POST") {
         res.status(405).json({ erro: "Método não permitido." });
+        return;
+    }
+
+    const sessao = await validarSessao(req);
+    if (sessao.configuracaoAusente) {
+        res.status(503).json({ erro: "Autenticação ainda não configurada no servidor." });
+        return;
+    }
+    if (sessao.ausente || sessao.invalida || !sessao.usuario) {
+        res.status(401).json({ erro: "Faça login com Google para usar o assistente." });
         return;
     }
 

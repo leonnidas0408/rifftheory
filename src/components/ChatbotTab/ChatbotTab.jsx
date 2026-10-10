@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import Barra from "../Barra";
 import Icone from "../Icone";
+import { useAuth } from "../../auth/AuthContext";
 
 import "./ChatbotTab.css";
 
@@ -19,6 +20,7 @@ const MENSAGEM_BOAS_VINDAS = {
 };
 
 export default function ChatbotTab() {
+    const { user, session, loading: authLoading, authConfigured, signInWithGoogle, error: authError } = useAuth();
     const [mensagens, setMensagens] = useState([MENSAGEM_BOAS_VINDAS]);
     const [entrada, setEntrada] = useState("");
     const [carregando, setCarregando] = useState(false);
@@ -47,7 +49,10 @@ export default function ChatbotTab() {
         try {
             const resposta = await fetch("/api/chat", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${session?.access_token || ""}`,
+                },
                 body: JSON.stringify({
                     // Manda só autor/texto pro backend remontar a conversa.
                     mensagens: historicoAtualizado.map((m) => ({
@@ -86,6 +91,34 @@ export default function ChatbotTab() {
         setMensagens([{ ...MENSAGEM_BOAS_VINDAS, hora: horaAgora() }]);
         setEntrada("");
         setErro("");
+    }
+
+    if (authLoading) {
+        return (
+            <div className="pagina chatbot-tab chatbot-gate">
+                <Barra titulo="Assistente de teoria" />
+                <div className="chatbot-gate-card">Verificando sua conta...</div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="pagina chatbot-tab chatbot-gate">
+                <Barra titulo="Assistente de teoria" />
+                <div className="chatbot-gate-card">
+                    <span className="chatbot-gate-icon" aria-hidden="true">Acesso protegido</span>
+                    <h2>Entre para usar a IA</h2>
+                    <p>O assistente envia suas perguntas a um serviço de IA. Faça login com Google para continuar.</p>
+                    <button className="chatbot-login" type="button" onClick={signInWithGoogle}>
+                        <span className="google-mark" aria-hidden="true">G</span>
+                        Entrar com Google
+                    </button>
+                    {!authConfigured && <small>O login ainda precisa ser configurado neste ambiente.</small>}
+                    {authError && <div className="chatbot-erro" role="alert">{authError}</div>}
+                </div>
+            </div>
+        );
     }
 
     return (

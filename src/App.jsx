@@ -10,6 +10,7 @@ import NavbarAdapter from "./components/NavbarAdapter";
 
 import { iniciarRastreioDeUso } from "./utils/usageStats";
 import Home from "./components/pages/Home";
+import { AuthProvider } from "./auth/AuthContext";
 
 export default function App() {
     const [page, setPage] = useState("Início");
@@ -74,13 +75,13 @@ export default function App() {
     const defaultPage = "Início";
 
     return (
-        <div>
+        <AuthProvider>
             <NavbarAdapter
                 page={page}
                 setPage={setPage}
                 pageData={pageData}
                 defaultPage={defaultPage}
             />
-        </div>
+        </AuthProvider>
     );
 }

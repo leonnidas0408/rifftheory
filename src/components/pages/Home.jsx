@@ -1,7 +1,13 @@
-import { React, useEffect, useState } from "react";
+import { useState } from "react";
 import Barra from "../Barra";
 import BracoInterativo from "../BracoInterativo";
 import ChordSearch from "../Chord/ChordSearch";
+import { registrarEvento } from "../../utils/usageStats";
+
+function rolarPara(id) {
+    const reduzir = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(id)?.scrollIntoView({ behavior: reduzir ? "auto" : "smooth", block: "start" });
+}
 
 export default function Home({ setPage }) {
     const EXEMPLOS_USO = [
@@ -27,7 +33,6 @@ export default function Home({ setPage }) {
         ["Em", "C", "G", "D"],
         ["Am", "F", "C", "G"],
     ];
-    const [, atualizar] = useState(0);
     const [trilha, setTrilha] = useState(null);
     const [abrirEscolha, setAbrirEscolha] = useState(0);
 

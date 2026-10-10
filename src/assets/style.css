@@ -99,19 +99,14 @@ svg.icone {
 }
 
 .sidebar-avatar {
-    width: 84px;
-    height: 84px;
-    margin: 0 auto 30px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: #eaf1ff;
-    color: var(--primaria);
+    margin: 0 auto 22px;
+    width: 100%;
 }
 
-.sidebar-avatar svg {
-    width: 56px;
-    height: 56px;
+.auth-mobile {
+    display: none;
+    justify-content: flex-end;
+    margin-bottom: 10px;
 }
 
 .sidebar nav {
@@ -1225,6 +1220,8 @@ button.recent-item:hover {
    ========================================================= */
 
 @media (max-width: 900px) {
+    .auth-mobile { display: flex; }
+
     .conteudo {
         padding: 14px 14px calc(var(--bottom-bar-h) + 96px + env(safe-area-inset-bottom));
     }
