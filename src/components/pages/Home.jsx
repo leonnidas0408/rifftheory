@@ -20,13 +20,13 @@ const PROGRESSOES = [
 const EXEMPLOS_USO = [
     {
         nicho: "Quem está começando",
-        antes: "Você sabe o nome da música, mas trava no primeiro acorde.",
-        depois: "Busque a música, veja a forma de C no braço e comece com uma progressão de 3 acordes.",
+        antes: "Você sabe o nome do acorde, mas trava na hora de encontrar a forma.",
+        depois: "Escolha um acorde e veja sua posição no braço imediatamente, sem sair da prática.",
     },
     {
         nicho: "Quem está montando repertório",
         antes: "Você alterna entre cifra, diagrama e vídeo para lembrar cada troca.",
-        depois: "Abra a cifra em uma aba e use o braço interativo para revisar as formas sem perder o contexto.",
+        depois: "Use uma trilha pronta de acordes para revisar as trocas em sequência no mesmo app.",
     },
     {
         nicho: "Quem quer entender teoria",
@@ -93,11 +93,11 @@ export default function Home({ setPage }) {
                     <button
                         className="link-botao hero-cta"
                         onClick={() => {
-                            registrarEvento("hero_cta_clicked", { cta: "musica" });
-                            focarBusca();
+                            registrarEvento("hero_cta_clicked", { cta: "pratica_guiada" });
+                            iniciarTrilha(PROGRESSOES[0]);
                         }}
                     >
-                        Buscar uma música
+                        Ver meu primeiro acorde
                     </button>
                     <button
                         className="hero-secundaria"
@@ -111,25 +111,32 @@ export default function Home({ setPage }) {
                 </div>
                 <div className="hero-seguranca">
                     <span className="seguranca-icone" aria-hidden="true">✓</span>
-                    <span>Gratuito para começar · sem cadastro · histórico salvo apenas neste navegador.</span>
+                    <span>Gratuito para começar · sem cadastro · primeiro acorde direto no app.</span>
                 </div>
             </section>
 
             <section className="prova-valor" aria-label="Por que usar o Riff Theory">
                 <div className="prova-intro">
-                    <span className="eyebrow">Um caminho mais curto para praticar</span>
-                    <h2>Da música ao braço em um único lugar</h2>
-                    <p>O Riff Theory conecta a descoberta à prática: você não precisa copiar acordes entre abas nem abandonar a música para estudar a teoria.</p>
+                    <span className="eyebrow">A diferença está no próximo clique</span>
+                    <h2>Menos procura. Mais tempo tocando.</h2>
+                    <p>Em vez de abrir uma busca, um diagrama e um metrônomo separados, você escolhe um acorde e já tem uma próxima ação dentro do app.</p>
                 </div>
                 <div className="prova-numeros">
-                    <div className="prova-numero"><strong>12</strong><span>notas para montar qualquer acorde</span></div>
-                    <div className="prova-numero"><strong>3</strong><span>passos para concluir uma sessão guiada</span></div>
-                    <div className="prova-numero"><strong>7</strong><span>dias de progresso acompanhados no app</span></div>
+                    <div className="prova-numero"><strong>1 clique</strong><span>para revelar a forma de um acorde no braço</span></div>
+                    <div className="prova-numero"><strong>4 acordes</strong><span>em cada trilha guiada pronta para tocar</span></div>
+                    <div className="prova-numero"><strong>30–260</strong><span>BPM no metrônomo para praticar no seu ritmo</span></div>
                 </div>
                 <div className="prova-recursos">
-                    <div><strong>1. Busque</strong><span>Digite uma música ou artista.</span></div>
-                    <div><strong>2. Escolha</strong><span>Abra uma fonte de cifra em nova aba.</span></div>
-                    <div><strong>3. Pratique</strong><span>Volte ao Riff Theory e teste a forma no braço.</span></div>
+                    <div><strong>1. Escolha</strong><span>Comece com uma trilha ou acorde pronto.</span></div>
+                    <div><strong>2. Veja</strong><span>A forma aparece no braço interativo.</span></div>
+                    <div><strong>3. Toque</strong><span>Avance para o próximo acorde sem trocar de ferramenta.</span></div>
+                </div>
+                <div className="comparacao"><strong>Alternativa comum:</strong> buscar → abrir abas → copiar o acorde. <strong>No Riff Theory:</strong> escolher → visualizar → tocar.</div>
+                <div className="prova-credibilidade"><span><strong>Prova verificável:</strong> o código do app é público e o fluxo pode ser testado sem criar conta.</span><a href="https://github.com/leonnidas0408/rifftheory" target="_blank" rel="noopener noreferrer">Ver projeto no GitHub</a></div>
+                <div className="trust-grid" aria-label="Sinais de confiança">
+                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Código público</strong><span>Veja a implementação e o histórico de mudanças.</span></div></div>
+                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Sem cadastro</strong><span>Comece no navegador e mantenha o progresso local.</span></div></div>
+                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Resultado visível</strong><span>O primeiro acorde aparece no braço ao iniciar a prática.</span></div></div>
                 </div>
             </section>
 
@@ -137,7 +144,7 @@ export default function Home({ setPage }) {
                 <div className="secao-heading">
                     <span className="eyebrow">Antes e depois</span>
                     <h2 id="titulo-exemplos">Veja como o fluxo muda a prática</h2>
-                    <p>Exemplos baseados no que você consegue fazer hoje no app — não são depoimentos inventados.</p>
+                    <p>Exemplos baseados no que você consegue fazer hoje no app. Quando houver avaliações reais, elas entrarão aqui.</p>
                 </div>
                 <div className="exemplos-grade">
                     {EXEMPLOS_USO.map((exemplo) => (
