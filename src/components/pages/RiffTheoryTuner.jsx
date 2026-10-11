@@ -68,6 +68,47 @@ const TUNINGS = {
   ],
 };
 
+const TUNING_PRESETS = {
+  Guitarra: [
+    { id: "standard", name: "Padrão E", summary: "E2 · A2 · D3 · G3 · B3 · E4", strings: TUNINGS.Guitarra },
+    { id: "drop-d", name: "Drop D", summary: "D2 · A2 · D3 · G3 · B3 · E4", strings: [
+      { name: "D2", freq: 73.42 }, { name: "A2", freq: 110.0 }, { name: "D3", freq: 146.83 },
+      { name: "G3", freq: 196.0 }, { name: "B3", freq: 246.94 }, { name: "E4", freq: 329.63 },
+    ] },
+    { id: "eb", name: "Meio tom abaixo", summary: "D#2 · G#2 · C#3 · F#3 · A#3 · D#4", strings: [
+      { name: "D#2", freq: 77.78 }, { name: "G#2", freq: 103.83 }, { name: "C#3", freq: 138.59 },
+      { name: "F#3", freq: 185.00 }, { name: "A#3", freq: 233.08 }, { name: "D#4", freq: 311.13 },
+    ] },
+    { id: "dadgad", name: "DADGAD", summary: "D2 · A2 · D3 · G3 · A3 · D4", strings: [
+      { name: "D2", freq: 73.42 }, { name: "A2", freq: 110.0 }, { name: "D3", freq: 146.83 },
+      { name: "G3", freq: 196.0 }, { name: "A3", freq: 220.0 }, { name: "D4", freq: 293.66 },
+    ] },
+    { id: "open-g", name: "Open G", summary: "D2 · G2 · D3 · G3 · B3 · D4", strings: [
+      { name: "D2", freq: 73.42 }, { name: "G2", freq: 98.00 }, { name: "D3", freq: 146.83 },
+      { name: "G3", freq: 196.0 }, { name: "B3", freq: 246.94 }, { name: "D4", freq: 293.66 },
+    ] },
+  ],
+  Baixo: [
+    { id: "standard", name: "Padrão E", summary: "E1 · A1 · D2 · G2", strings: TUNINGS.Baixo },
+    { id: "drop-d", name: "Drop D", summary: "D1 · A1 · D2 · G2", strings: [
+      { name: "D1", freq: 36.71 }, { name: "A1", freq: 55.0 }, { name: "D2", freq: 73.42 }, { name: "G2", freq: 98.0 },
+    ] },
+    { id: "five-string", name: "5 cordas · Si", summary: "B0 · E1 · A1 · D2 · G2", strings: [
+      { name: "B0", freq: 30.87 }, { name: "E1", freq: 41.2 }, { name: "A1", freq: 55.0 },
+      { name: "D2", freq: 73.42 }, { name: "G2", freq: 98.0 },
+    ] },
+  ],
+  Ukulele: [
+    { id: "standard", name: "GCEA · G agudo", summary: "G4 · C4 · E4 · A4", strings: TUNINGS.Ukulele },
+    { id: "low-g", name: "GCEA · G grave", summary: "G3 · C4 · E4 · A4", strings: [
+      { name: "G3", freq: 196.0 }, { name: "C4", freq: 261.63 }, { name: "E4", freq: 329.63 }, { name: "A4", freq: 440.0 },
+    ] },
+    { id: "d-tuning", name: "Afinação D", summary: "A4 · D4 · F#4 · B4", strings: [
+      { name: "A4", freq: 440.0 }, { name: "D4", freq: 293.66 }, { name: "F#4", freq: 369.99 }, { name: "B4", freq: 493.88 },
+    ] },
+  ],
+};
+
 const INSTRUMENTS = Object.keys(TUNINGS);
 const REFERENCE_OPTIONS = [415, 432, 440, 442];
 const IN_TUNE_CENTS = 5;
@@ -160,6 +201,7 @@ function autoCorrelate(buffer, sampleRate) {
 export default function RiffTheoryTuner() {
   const [running, setRunning] = useState(false);
   const [instrument, setInstrument] = useState("Guitarra");
+  const [tuningPreset, setTuningPreset] = useState("standard");
   const [referenceA4, setReferenceA4] = useState(440);
   const [reading, setReading] = useState(null);
   const [error, setError] = useState(null);
@@ -169,7 +211,22 @@ export default function RiffTheoryTuner() {
   const streamRef = useRef(null);
   const bufferRef = useRef(null);
   const intervalRef = useRef(null);
+  const tickRef = useRef(null);
   const historyRef = useRef([]);
+  const selectedTuning = TUNING_PRESETS[instrument].find((preset) => preset.id === tuningPreset) || TUNING_PRESETS[instrument][0];
+
+  function chooseInstrument(nextInstrument) {
+    historyRef.current = [];
+    setReading(null);
+    setInstrument(nextInstrument);
+    setTuningPreset(TUNING_PRESETS[nextInstrument][0].id);
+  }
+
+  function chooseTuning(presetId) {
+    historyRef.current = [];
+    setReading(null);
+    setTuningPreset(presetId);
+  }
 
   const stop = useCallback(() => {
     if (intervalRef.current) {
@@ -212,7 +269,7 @@ export default function RiffTheoryTuner() {
     const smoothed = hist.reduce((a, b) => a + b, 0) / hist.length;
 
     const { note, octave, cents } = freqToNote(smoothed, referenceA4);
-    const { string, cents: stringCents } = nearestString(smoothed, TUNINGS[instrument]);
+    const { string, cents: stringCents } = nearestString(smoothed, selectedTuning.strings);
 
     setReading({
       active: true,
@@ -223,7 +280,9 @@ export default function RiffTheoryTuner() {
       stringName: string ? string.name : null,
       stringCents,
     });
-  }, [instrument, referenceA4]);
+  }, [instrument, referenceA4, selectedTuning]);
+
+  tickRef.current = tick;
 
   const start = useCallback(async () => {
     setError(null);
@@ -250,7 +309,7 @@ export default function RiffTheoryTuner() {
 
       historyRef.current = [];
       setRunning(true);
-      intervalRef.current = setInterval(tick, 80);
+      intervalRef.current = setInterval(() => tickRef.current?.(), 80);
     } catch (err) {
       setError(
         "Não foi possível acessar o microfone. Verifique a permissão do navegador e tente novamente."
@@ -482,6 +541,17 @@ export default function RiffTheoryTuner() {
         .rt-instruments { justify-content: flex-start; gap: 6px; margin: 0; }
         .rt-instrument-btn { min-width: 92px; padding: 9px 14px; border: 1px solid #d9e0e7; border-radius: 3px; background: #fff; color: #475569; font-size: 13px; font-weight: 650; }
         .rt-instrument-btn.active { border-color: #315ce8; background: #315ce8; color: #fff; }
+        .rt-tuning-section { padding: 17px 0 19px; border-top: 1px solid #e2e7ec; border-bottom: 1px solid #e2e7ec; }
+        .rt-tuning-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 11px; }
+        .rt-tuning-heading p { margin: 4px 0 0; color: #68778b; font-size: 12px; }
+        .rt-selected-tuning { color: #315ce8; font-size: 12px; font-weight: 700; }
+        .rt-tuning-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+        .rt-tuning-option { display: flex; min-width: 0; min-height: 60px; flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; padding: 9px 10px; border: 1px solid #dce2e8; border-radius: 3px; background: #fff; color: #172432; text-align: left; cursor: pointer; transition: border-color .15s ease, background .15s ease; }
+        .rt-tuning-option strong { font-size: 12px; line-height: 1.2; }
+        .rt-tuning-option span { color: #68778b; font-size: 10px; line-height: 1.35; }
+        .rt-tuning-option:hover { border-color: #9aadd0; background: #f8faff; }
+        .rt-tuning-option.active { border-color: #315ce8; background: #f2f5ff; box-shadow: inset 0 -2px #315ce8; }
+        .rt-tuning-option:focus-visible { outline: 2px solid #315ce8; outline-offset: 2px; }
         .rt-main-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(245px, .8fr); border-top: 1px solid #e2e7ec; border-bottom: 1px solid #e2e7ec; }
         .rt-readout { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; padding: 8px 22px 22px 10px; border-right: 1px solid #e2e7ec; }
         .rt-gauge-wrap { max-width: 420px; height: 172px; margin: 0 auto; }
@@ -522,6 +592,8 @@ export default function RiffTheoryTuner() {
           .rt-instruments-wrap { align-items: flex-start; flex-direction: column; gap: 8px; }
           .rt-instruments { width: 100%; }
           .rt-instrument-btn { min-width: 0; flex: 1; padding-inline: 8px; }
+          .rt-tuning-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .rt-tuning-option { min-height: 58px; padding: 8px; }
           .rt-gauge-wrap { height: 145px; }
           .rt-note { font-size: 62px; }
         }
@@ -557,13 +629,37 @@ export default function RiffTheoryTuner() {
                 type="button"
                 className={"rt-instrument-btn" + (instrument === inst ? " active" : "")}
                 aria-pressed={instrument === inst}
-                onClick={() => setInstrument(inst)}
+                onClick={() => chooseInstrument(inst)}
               >
                 {inst}
               </button>
             ))}
           </div>
         </div>
+
+        <section className="rt-tuning-section" aria-label="Afinações disponíveis">
+          <div className="rt-tuning-heading">
+            <div>
+              <span className="rt-label">Afinação das cordas</span>
+              <p>Selecione um preset para atualizar as notas-alvo.</p>
+            </div>
+            <span className="rt-selected-tuning">{selectedTuning.name}</span>
+          </div>
+          <div className="rt-tuning-options" role="group" aria-label={`Presets de afinação para ${instrument}`}>
+            {TUNING_PRESETS[instrument].map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                className={"rt-tuning-option" + (selectedTuning.id === preset.id ? " active" : "")}
+                aria-pressed={selectedTuning.id === preset.id}
+                onClick={() => chooseTuning(preset.id)}
+              >
+                <strong>{preset.name}</strong>
+                <span>{preset.summary}</span>
+              </button>
+            ))}
+          </div>
+        </section>
 
         <div className="rt-main-grid">
           <section className="rt-readout" aria-label="Leitura do afinador">
@@ -596,7 +692,7 @@ export default function RiffTheoryTuner() {
                 <span>{instrument}</span>
               </div>
               <div className="rt-string-row">
-                {TUNINGS[instrument].map((s) => {
+                {selectedTuning.strings.map((s) => {
                   const selected = reading && reading.active && reading.stringName === s.name;
                   const tuned = selected && Math.abs(reading.stringCents) <= IN_TUNE_CENTS;
                   return (
