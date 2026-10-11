@@ -30,9 +30,13 @@ Na função serverless, configure:
 SUPABASE_URL=https://seu-projeto.supabase.co
 SUPABASE_ANON_KEY=sua-chave-anon-publica
 GROQ_API_KEY=sua-chave-groq
+CATALOG_OWNER_USER_ID=uuid-do-usuario-proprietario
 ```
 
 A chave `SUPABASE_ANON_KEY` é usada para validar o Bearer token da sessão. Não coloque uma service role key no navegador.
+
+`CATALOG_OWNER_USER_ID` é o UUID do usuário autorizado a ler `/api/catalog`;
+sem essa variável o endpoint fica desabilitado (503), e outros usuários recebem 403.
 
 ## 4. Comportamento implementado
 

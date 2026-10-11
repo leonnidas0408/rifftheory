@@ -10,11 +10,15 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "build:knowledge": "node scripts/build-knowledge.mjs"
+    "build:knowledge": "node scripts/build-knowledge.mjs",
+    "sync:drive": "node scripts/sync-drive.mjs",
+    "build:catalog": "npm run sync:drive && npm run build:knowledge"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",
     "@vitejs/plugin-react": "^6.0.5",
+    "image-size": "^2.0.4",
+    "music-metadata": "^12.1.0",
     "react": "^19.2.8",
     "react-device-detect": "^2.2.3",
     "react-dom": "^19.2.8"

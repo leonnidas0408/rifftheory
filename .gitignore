@@ -3,3 +3,7 @@ node_modules/
 .env.*
 !.env.example
 dist/
+/knowledge-source/drive-import/
+/api/media-catalog.json
+/api/catalog-report.json
+/api/drive-quality-report.json
