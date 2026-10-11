@@ -14,10 +14,16 @@ const MENSAGEM_BOAS_VINDAS = {
     autor: "bot",
     hora: horaAgora(),
     texto:
-        "E aí! Meu nome é Tonic e eu sou o assistente do Riff Theory. Pode perguntar sobre teoria " +
+        "E aí! Meu nome é Thonic e eu sou o assistente do Riff Theory. Pode perguntar sobre teoria " +
         "musical, escalas, acordes, harmonia, intervalos, técnica no violão/" +
         "guitarra e afins — esse é o meu único assunto. 🎸",
 };
+
+const FALAS_THONIC = [
+    { fala: "Quer destravar um acorde?", pergunta: "Como posso tocar um acorde fácil no violão?" },
+    { fala: "Vamos montar uma progressão?", pergunta: "Sugira uma progressão simples para praticar." },
+    { fala: "Uma dica para escalas?", pergunta: "Como escolho uma escala para improvisar?" },
+];
 
 export default function ChatbotTab() {
     const { user, session, loading: authLoading, authConfigured, signInWithGoogle, error: authError } = useAuth();
@@ -108,6 +114,14 @@ export default function ChatbotTab() {
                 <Barra titulo="Assistente de teoria" />
                 <div className="chatbot-gate-card">
                     <span className="chatbot-gate-icon" aria-hidden="true">Acesso protegido</span>
+                    <div className="chatbot-gate-thonic">
+                        <img src="/thonic.webp" alt="Thonic, assistente do Riff Theory" />
+                        <div className="chatbot-gate-falas" aria-label="Apresentação do Thonic">
+                            <p>Oi, eu sou o Thonic!</p>
+                            <p>Te ajudo com acordes, escalas e teoria musical.</p>
+                            <p>Entre para a gente começar.</p>
+                        </div>
+                    </div>
                     <h2>Entre para usar a IA</h2>
                     <p>O assistente envia suas perguntas a um serviço de IA. Faça login com Google para continuar.</p>
                     <button className="chatbot-login" type="button" onClick={signInWithGoogle}>
@@ -145,7 +159,11 @@ export default function ChatbotTab() {
                         className={`chatbot-linha chatbot-linha-${mensagem.autor}`}
                     >
                         <span className="chatbot-avatar">
-                            <Icone nome={mensagem.autor === "bot" ? "assistente" : "conta"} tamanho={22} />
+                            {mensagem.autor === "bot" ? (
+                                <img src="/thonic.webp" alt="Thonic" />
+                            ) : (
+                                <Icone nome="conta" tamanho={22} />
+                            )}
                         </span>
 
                         <div className={`chatbot-bolha chatbot-bolha-${mensagem.autor}`}>
@@ -155,10 +173,29 @@ export default function ChatbotTab() {
                     </div>
                 ))}
 
+                {mensagens.length === 1 && !carregando && (
+                    <div className="chatbot-falas" aria-label="Balões de sugestão do Thonic">
+                        <p className="chatbot-falas-intro">Toque numa fala do Thonic para começar:</p>
+                        <div className="chatbot-falas-lista">
+                            {FALAS_THONIC.map(({ fala, pergunta }) => (
+                                <button
+                                    key={fala}
+                                    type="button"
+                                    className="chatbot-fala"
+                                    onClick={() => setEntrada(pergunta)}
+                                    title="Usar como pergunta"
+                                >
+                                    {fala}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {carregando && (
                     <div className="chatbot-linha chatbot-linha-bot">
                         <span className="chatbot-avatar">
-                            <Icone nome="riffs" tamanho={22} />
+                            <img src="/thonic.webp" alt="Thonic está digitando" />
                         </span>
                         <div className="chatbot-bolha chatbot-bolha-bot chatbot-digitando">
                             <span></span>

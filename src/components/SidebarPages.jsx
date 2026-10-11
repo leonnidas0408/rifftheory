@@ -17,11 +17,16 @@ export default function SidebarPages({ page, setPage, pageData }) {
     return (
         <div>
             <aside className="sidebar">
+                <a className="brand-lockup" href="#inicio" onClick={(event) => { event.preventDefault(); setPage("Início"); }} aria-label="Riff Theory — início">
+                    <span className="brand-mark"><img src="/icon.jpg" alt="" /></span>
+                    <span className="brand-copy"><strong>riff<span>theory</span></strong><small>STUDIO DE GUITARRA</small></span>
+                </a>
                 <div className="sidebar-avatar">
                     <AuthButton />
                 </div>
 
-                <nav>
+                <nav aria-label="Navegação principal">
+                    <span className="nav-caption">SEU ESPAÇO</span>
                     {itens.map(([chave, item]) => (
                         <IconButton
                             key={chave}
@@ -36,6 +41,7 @@ export default function SidebarPages({ page, setPage, pageData }) {
                         <IconButton key={nome} label={nome} icon={icone} disabled />
                     ))}
                 </nav>
+                <div className="sidebar-footnote"><span className="status-dot" /> Sua prática, no seu ritmo</div>
             </aside>
 
             <div className="area-lateral">

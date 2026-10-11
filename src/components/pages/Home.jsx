@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Barra from "../Barra";
 import BracoInterativo from "../BracoInterativo";
 import ChordSearch from "../Chord/ChordSearch";
@@ -35,6 +35,29 @@ export default function Home({ setPage }) {
     ];
     const [trilha, setTrilha] = useState(null);
     const [abrirEscolha, setAbrirEscolha] = useState(0);
+
+    useEffect(() => {
+        const blocos = Array.from(document.querySelectorAll(
+            ".pagina > section, .pagina > .comecar, .pagina > #secao-braco"
+        ));
+        if (!blocos.length) return undefined;
+
+        const movimentoReduzido = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+        if (movimentoReduzido || !("IntersectionObserver" in window)) {
+            blocos.forEach((bloco) => bloco.classList.add("scroll-reveal", "is-visible"));
+            return undefined;
+        }
+
+        blocos.forEach((bloco) => bloco.classList.add("scroll-reveal"));
+        const observer = new IntersectionObserver((entradas) => {
+            entradas.forEach((entrada) => {
+                entrada.target.classList.toggle("is-visible", entrada.isIntersecting);
+            });
+        }, { threshold: 0.08, rootMargin: "0px 0px -5% 0px" });
+
+        blocos.forEach((bloco) => observer.observe(bloco));
+        return () => observer.disconnect();
+    }, []);
 
     function focarBusca() {
         rolarPara("comecar");
