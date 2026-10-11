@@ -1598,3 +1598,110 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
     html { scroll-behavior: auto; }
     *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+
+
+/* =========================================================
+   AJUSTE DE DIREÇÃO — visual editorial, plano e sem gradientes
+   ========================================================= */
+:root {
+    --lateral-fundo: #17212b;
+    --radius-sm: 3px;
+    --radius-md: 4px;
+    --radius-lg: 5px;
+}
+
+/* Uma paleta curta e superfícies sem efeitos de profundidade. */
+.sidebar { background: #17212b; box-shadow: none; }
+.brand-mark, .mobile-brand img { border-radius: 2px; box-shadow: none; }
+.icon-button { border-radius: 3px; }
+.icon-button.selected { background: #315ce8; box-shadow: none; }
+.status-dot { box-shadow: none; }
+.abas { gap: 20px; width: 100%; padding: 0; border: 0; border-bottom: 1px solid #d8dde4; border-radius: 0; background: transparent; box-shadow: none; }
+.aba { padding: 10px 2px 12px; border: 0; border-bottom: 2px solid transparent; border-radius: 0; }
+.aba.ativa { border-bottom-color: #315ce8; background: transparent; color: #1e293b; box-shadow: none; }
+.aba:hover { background: transparent; color: #315ce8; }
+.hero { min-height: 300px; border: 0; border-radius: 3px; background: #1c2732; box-shadow: none; }
+.hero::before, .hero::after { display: none; }
+.hero-kicker, .eyebrow { color: #52637a; }
+.hero-kicker { color: #b6c2d2; }
+.hero h1 { max-width: 18ch; font-size: clamp(34px, 4vw, 50px); letter-spacing: -.04em; }
+.hero p { color: #c6ced8; }
+.link-botao.hero-cta { border-radius: 3px; background: #315ce8; color: #fff; box-shadow: none; }
+.link-botao.hero-cta:hover { background: #2449c8; }
+.hero-secundaria:hover { color: #fff; }
+.seguranca-icone { border-radius: 2px; background: rgba(255,255,255,.12); color: #d7e2ef; }
+.prova-valor { padding: 24px 0; border: 0; border-top: 1px solid #d8dde4; border-bottom: 1px solid #d8dde4; border-radius: 0; background: transparent; box-shadow: none; }
+.prova-numero { padding: 5px 14px; border: 0; border-left: 1px solid #d8dde4; border-radius: 0; background: transparent; }
+.prova-numero strong { color: #315ce8; }
+.prova-recursos { border-color: #d8dde4; }
+.comparacao { border-left-width: 2px; border-radius: 0; background: #eef1f5; }
+.trust-item { padding: 10px 0; border: 0; border-radius: 0; border-bottom: 1px solid #e1e5eb; background: transparent; }
+.trust-check { width: 18px; height: 18px; border-radius: 2px; background: #e8edf2; color: #42536b; }
+.objecoes-grid > div { padding: 13px 12px 13px 0; border: 0; border-top: 1px solid #dfe4ea; border-radius: 0; background: transparent; box-shadow: none; }
+.rota-card { min-height: 180px; padding: 17px 16px 12px 0; border: 0; border-top: 1px solid #d8dde4; border-radius: 0; background: transparent; box-shadow: none; }
+.rota-card:hover, .exemplo-card:hover { transform: none; box-shadow: none; }
+.pilula { min-height: 35px; border-radius: 3px; }
+.pilula:hover { transform: none; }
+.beta-convite { padding: 19px 0; border: 0; border-top: 1px solid #d8dde4; border-bottom: 1px solid #d8dde4; border-radius: 0; background: transparent; }
+.exemplo-card { padding: 17px 14px 12px 0; border: 0; border-top: 1px solid #d8dde4; border-radius: 0; background: transparent; box-shadow: none; }
+.comecar { padding: 22px 0; border: 0; border-top: 1px solid #d8dde4; border-radius: 0; background: transparent; box-shadow: none; }
+.cta-seguranca { border: 0; border-left: 2px solid #315ce8; border-radius: 0; background: #eef1f5; }
+.pretty-panel { border: 1px solid #dfe4ea; border-radius: 3px; box-shadow: none; }
+.dica, .estado-vazio, .indicadores div { border-radius: 3px; box-shadow: none; }
+.acorde-card, .recent-item, .selo { border-radius: 3px; box-shadow: none; }
+.stat-bar { background: #315ce8; }
+.fab-chat { border: 0; border-radius: 3px; box-shadow: none; }
+.fab-chat:hover { transform: none; }
+.barra-botao { border-radius: 3px; box-shadow: none; }
+.auth-card.compact .auth-login, .auth-card.compact .auth-logout,
+.sidebar .auth-login, .sidebar .auth-logout { border-radius: 3px; }
+.bottom-bar { box-shadow: none; }
+.bottom-bar .icon-button.selected { border-radius: 3px; background: #26364a; box-shadow: none; }
+.mobile-cta { border-radius: 3px; background: #17212b; box-shadow: none; }
+.mobile-cta strong { color: #fff; }
+
+/* Entrada sequencial: cada seção e seus itens surgem quando chegam à viewport. */
+.scroll-reveal {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+    filter: blur(3px);
+    transition: opacity .55s ease, transform .65s cubic-bezier(.2,.65,.25,1), filter .55s ease;
+    will-change: opacity, transform;
+}
+.scroll-reveal:not(.is-visible) > * {
+    opacity: 0;
+    transform: translate3d(0, 9px, 0);
+}
+.scroll-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    filter: none;
+}
+.scroll-reveal.is-visible > * {
+    animation: scroll-build-in .48s cubic-bezier(.2,.65,.25,1) both;
+}
+.scroll-reveal.is-visible > :nth-child(1) { animation-delay: 30ms; }
+.scroll-reveal.is-visible > :nth-child(2) { animation-delay: 90ms; }
+.scroll-reveal.is-visible > :nth-child(3) { animation-delay: 150ms; }
+.scroll-reveal.is-visible > :nth-child(4) { animation-delay: 210ms; }
+.scroll-reveal.is-visible > :nth-child(5) { animation-delay: 270ms; }
+.scroll-reveal.is-visible > :nth-child(6) { animation-delay: 330ms; }
+@keyframes scroll-build-in {
+    from { opacity: 0; transform: translate3d(0, 11px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .scroll-reveal, .scroll-reveal:not(.is-visible) > *, .scroll-reveal.is-visible > * {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        animation: none;
+        transition: none;
+    }
+}
+@media (max-width: 560px) {
+    .hero { border-radius: 3px; }
+    .prova-valor { padding: 17px 0; border-radius: 0; }
+    .rota-card, .exemplo-card { padding: 15px 12px 12px 0; }
+    .objecoes-grid > div { padding: 11px 8px 11px 0; }
+}
