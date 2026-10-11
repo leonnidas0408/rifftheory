@@ -9,7 +9,10 @@ export default function Conteudo({ page, setPage, pageData }) {
 
     return (
         <main className="conteudo">
-            <div className="auth-mobile"><AuthButton compact /></div>
+            <div className="auth-mobile">
+                <span className="mobile-brand"><img src="/icon.jpg" alt="" /><strong>riff<span>theory</span></strong></span>
+                <AuthButton compact />
+            </div>
             <nav className="abas" aria-label="Ferramentas">
                 {abas.map(([chave, item]) => (
                     <button
