@@ -87,6 +87,30 @@ const TUNING_PRESETS = {
       { name: "D2", freq: 73.42 }, { name: "G2", freq: 98.00 }, { name: "D3", freq: 146.83 },
       { name: "G3", freq: 196.0 }, { name: "B3", freq: 246.94 }, { name: "D4", freq: 293.66 },
     ] },
+    { id: "d-standard", name: "D Standard", summary: "D2 · G2 · C3 · F3 · A3 · D4", strings: [
+      { name: "D2", freq: 73.42 }, { name: "G2", freq: 98.00 }, { name: "C3", freq: 130.81 },
+      { name: "F3", freq: 174.61 }, { name: "A3", freq: 220.0 }, { name: "D4", freq: 293.66 },
+    ] },
+    { id: "drop-c", name: "Drop C", summary: "C2 · G2 · C3 · F3 · A3 · D4", strings: [
+      { name: "C2", freq: 65.41 }, { name: "G2", freq: 98.00 }, { name: "C3", freq: 130.81 },
+      { name: "F3", freq: 174.61 }, { name: "A3", freq: 220.0 }, { name: "D4", freq: 293.66 },
+    ] },
+    { id: "open-d", name: "Open D", summary: "D2 · A2 · D3 · F#3 · A3 · D4", strings: [
+      { name: "D2", freq: 73.42 }, { name: "A2", freq: 110.0 }, { name: "D3", freq: 146.83 },
+      { name: "F#3", freq: 185.0 }, { name: "A3", freq: 220.0 }, { name: "D4", freq: 293.66 },
+    ] },
+    { id: "open-c", name: "Open C", summary: "C2 · G2 · C3 · G3 · C4 · E4", strings: [
+      { name: "C2", freq: 65.41 }, { name: "G2", freq: 98.00 }, { name: "C3", freq: 130.81 },
+      { name: "G3", freq: 196.0 }, { name: "C4", freq: 261.63 }, { name: "E4", freq: 329.63 },
+    ] },
+    { id: "open-e", name: "Open E", summary: "E2 · B2 · E3 · G#3 · B3 · E4", strings: [
+      { name: "E2", freq: 82.41 }, { name: "B2", freq: 123.47 }, { name: "E3", freq: 164.81 },
+      { name: "G#3", freq: 207.65 }, { name: "B3", freq: 246.94 }, { name: "E4", freq: 329.63 },
+    ] },
+    { id: "open-a", name: "Open A", summary: "E2 · A2 · E3 · A3 · C#4 · E4", strings: [
+      { name: "E2", freq: 82.41 }, { name: "A2", freq: 110.0 }, { name: "E3", freq: 164.81 },
+      { name: "A3", freq: 220.0 }, { name: "C#4", freq: 277.18 }, { name: "E4", freq: 329.63 },
+    ] },
   ],
   Baixo: [
     { id: "standard", name: "Padrão E", summary: "E1 · A1 · D2 · G2", strings: TUNINGS.Baixo },
@@ -97,6 +121,15 @@ const TUNING_PRESETS = {
       { name: "B0", freq: 30.87 }, { name: "E1", freq: 41.2 }, { name: "A1", freq: 55.0 },
       { name: "D2", freq: 73.42 }, { name: "G2", freq: 98.0 },
     ] },
+    { id: "drop-c", name: "Drop C", summary: "C1 · G1 · C2 · F2", strings: [
+      { name: "C1", freq: 32.70 }, { name: "G1", freq: 49.0 }, { name: "C2", freq: 65.41 }, { name: "F2", freq: 87.31 },
+    ] },
+    { id: "c-standard", name: "C Standard", summary: "C1 · F1 · A#1 · D#2", strings: [
+      { name: "C1", freq: 32.70 }, { name: "F1", freq: 43.65 }, { name: "A#1", freq: 58.27 }, { name: "D#2", freq: 77.78 },
+    ] },
+    { id: "d-standard", name: "D Standard", summary: "D1 · G1 · C2 · F2", strings: [
+      { name: "D1", freq: 36.71 }, { name: "G1", freq: 49.0 }, { name: "C2", freq: 65.41 }, { name: "F2", freq: 87.31 },
+    ] },
   ],
   Ukulele: [
     { id: "standard", name: "GCEA · G agudo", summary: "G4 · C4 · E4 · A4", strings: TUNINGS.Ukulele },
@@ -105,6 +138,9 @@ const TUNING_PRESETS = {
     ] },
     { id: "d-tuning", name: "Afinação D", summary: "A4 · D4 · F#4 · B4", strings: [
       { name: "A4", freq: 440.0 }, { name: "D4", freq: 293.66 }, { name: "F#4", freq: 369.99 }, { name: "B4", freq: 493.88 },
+    ] },
+    { id: "baritone", name: "Barítono · DGBE", summary: "D3 · G3 · B3 · E4", strings: [
+      { name: "D3", freq: 146.83 }, { name: "G3", freq: 196.0 }, { name: "B3", freq: 246.94 }, { name: "E4", freq: 329.63 },
     ] },
   ],
 };
