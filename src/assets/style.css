@@ -1705,3 +1705,49 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
     .rota-card, .exemplo-card { padding: 15px 12px 12px 0; }
     .objecoes-grid > div { padding: 11px 8px 11px 0; }
 }
+
+
+/* Ajustes solicitados: banner principal arredondado; avatar e ícones nítidos. */
+.hero { border-radius: 18px; }
+.icon-button > svg.icone { width: 20px; height: 20px; stroke-width: 1.9; }
+.sidebar .icon-button.selected > svg.icone { stroke-width: 2.1; }
+.sidebar .icon-button:hover:not(:disabled) > svg.icone { transform: translateX(1px); }
+.fab-chat { display: grid; place-items: center; overflow: hidden; border-radius: 50%; background: #fff; }
+.fab-chat img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.chatbot-avatar { overflow: hidden; background: transparent; }
+.chatbot-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.chatbot-falas { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; margin-left: 54px; }
+.chatbot-falas-intro { color: var(--texto-suave); font-size: 12px; }
+.chatbot-falas-lista { display: flex; flex-wrap: wrap; gap: 8px; }
+.chatbot-fala {
+    position: relative;
+    max-width: 260px;
+    padding: 9px 13px;
+    border: 1px solid var(--borda);
+    border-radius: 12px 12px 12px 3px;
+    background: #fff;
+    color: var(--texto);
+    font-size: 13px;
+    line-height: 1.35;
+    text-align: left;
+}
+.chatbot-fala::before {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 12px;
+    width: 8px;
+    height: 8px;
+    border-bottom: 1px solid var(--borda);
+    border-left: 1px solid var(--borda);
+    background: #fff;
+    transform: skewY(-35deg) rotate(-8deg);
+}
+.chatbot-fala:hover { border-color: var(--primaria); color: var(--primaria-escura); }
+.chatbot-nova { border-radius: 4px; }
+.chatbot-form { border-radius: 4px; background: var(--primaria-escura); }
+.chatbot-form button { border-radius: 3px; }
+@media (max-width: 560px) {
+    .hero { border-radius: 15px; }
+    .chatbot-falas { margin-left: 0; }
+}

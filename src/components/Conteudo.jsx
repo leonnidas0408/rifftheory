@@ -31,10 +31,10 @@ export default function Conteudo({ page, setPage, pageData }) {
             {page !== "Chatbot" && (
                 <button
                     className="fab-chat"
-                    aria-label="Abrir assistente"
+                    aria-label="Abrir assistente Thonic"
                     onClick={() => setPage("Chatbot")}
                 >
-                    <Icone nome="chat" tamanho={28} />
+                    <img src="/thonic.webp" alt="" />
                 </button>
             )}
         </main>
