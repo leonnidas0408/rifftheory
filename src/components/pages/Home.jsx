@@ -51,10 +51,7 @@ export default function Home({ setPage }) {
         blocos.forEach((bloco) => bloco.classList.add("scroll-reveal"));
         const observer = new IntersectionObserver((entradas) => {
             entradas.forEach((entrada) => {
-                if (entrada.isIntersecting) {
-                    entrada.target.classList.add("is-visible");
-                    observer.unobserve(entrada.target);
-                }
+                entrada.target.classList.toggle("is-visible", entrada.isIntersecting);
             });
         }, { threshold: 0.08, rootMargin: "0px 0px -5% 0px" });
 

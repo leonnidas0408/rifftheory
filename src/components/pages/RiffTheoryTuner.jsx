@@ -467,11 +467,77 @@ export default function RiffTheoryTuner() {
         }
       `}</style>
 
+      <style>{`
+        .rt-root { --green: #19845b; --amber: #a86500; --red: #bd4338; --cream: #172432; --muted: #68778b; width: 100%; }
+        .rt-panel { box-sizing: border-box; max-width: 920px; margin: 12px auto 0; padding: 26px 30px; border: 1px solid #dce2e8; border-radius: 3px; color: #172432; background: #fff; box-shadow: none; }
+        .rt-panel.in-tune { border-left: 3px solid var(--green); box-shadow: none; }
+        .rt-panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; padding-bottom: 20px; border-bottom: 1px solid #e2e7ec; }
+        .rt-panel-intro .rt-kicker { color: #315ce8; font-size: 11px; font-weight: 750; letter-spacing: .12em; }
+        .rt-panel-intro h2 { margin: 7px 0 5px; color: #172432; font-size: 22px; letter-spacing: -.025em; }
+        .rt-panel-intro p { margin: 0; color: #68778b; font-size: 13px; }
+        .rt-ref-select { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; color: #59687a; font-size: 12px; font-weight: 650; }
+        .rt-ref-select select { min-width: 132px; padding: 9px 30px 9px 10px; border: 1px solid #d7dee6; border-radius: 3px; background: #fff; color: #172432; font-size: 13px; }
+        .rt-instruments-wrap { display: flex; align-items: center; gap: 18px; margin: 18px 0; }
+        .rt-label { color: #59687a; font-size: 12px; font-weight: 700; }
+        .rt-instruments { justify-content: flex-start; gap: 6px; margin: 0; }
+        .rt-instrument-btn { min-width: 92px; padding: 9px 14px; border: 1px solid #d9e0e7; border-radius: 3px; background: #fff; color: #475569; font-size: 13px; font-weight: 650; }
+        .rt-instrument-btn.active { border-color: #315ce8; background: #315ce8; color: #fff; }
+        .rt-main-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(245px, .8fr); border-top: 1px solid #e2e7ec; border-bottom: 1px solid #e2e7ec; }
+        .rt-readout { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; padding: 8px 22px 22px 10px; border-right: 1px solid #e2e7ec; }
+        .rt-gauge-wrap { max-width: 420px; height: 172px; margin: 0 auto; }
+        .rt-note-display { margin-top: -1px; text-align: center; }
+        .rt-note { color: #172432; font-size: 72px; font-weight: 700; letter-spacing: -.05em; line-height: .95; }
+        .rt-octave { color: #68778b; font-size: 23px; }
+        .rt-freq { margin-top: 8px; color: #68778b; font-size: 14px; font-variant-numeric: tabular-nums; }
+        .rt-status { margin: 12px 0 0; color: #68778b; font-size: 12px; font-weight: 750; letter-spacing: .08em; }
+        .rt-controls { display: flex; flex-direction: column; gap: 16px; min-width: 0; padding: 21px 2px 20px 22px; }
+        .rt-control-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .rt-control-heading > span:last-child { color: #68778b; font-size: 12px; }
+        .rt-string-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin: 10px 0 0; }
+        .rt-string-chip { min-width: 0; padding: 9px 4px; border: 1px solid #dce2e8; border-radius: 3px; background: #fff; color: #475569; font-size: 14px; font-variant-numeric: tabular-nums; }
+        .rt-string-chip.active { border-color: #315ce8; background: #eef3ff; color: #2449c8; }
+        .rt-string-chip.active.in-tune { border-color: #19845b; background: #edf8f2; color: #176b4b; }
+        .rt-target { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; padding: 13px 14px; border-left: 2px solid #315ce8; background: #f5f7fa; }
+        .rt-target > span:first-child { color: #68778b; font-size: 12px; }
+        .rt-target strong { grid-row: span 2; color: #172432; font-size: 23px; font-variant-numeric: tabular-nums; }
+        .rt-target > span:last-child { color: #475569; font-size: 12px; }
+        .rt-hint { margin: 0; color: #68778b; font-size: 12px; line-height: 1.5; text-align: left; }
+        .rt-footer { display: flex; flex-direction: column; align-items: center; gap: 9px; padding-top: 20px; }
+        .rt-footswitch { max-width: 320px; padding: 13px 18px; border: 0; border-radius: 3px; background: #315ce8; color: #fff; font-size: 14px; font-weight: 700; }
+        .rt-footswitch:hover { background: #2449c8; }
+        .rt-footswitch.on { background: #bd4338; color: #fff; }
+        .rt-footer-note { color: #68778b; font-size: 12px; text-align: center; }
+        .rt-error { margin-top: 4px; color: #bd4338; }
+        @media (max-width: 760px) {
+          .rt-panel { padding: 21px 20px; }
+          .rt-main-grid { grid-template-columns: 1fr; }
+          .rt-readout { padding: 6px 6px 19px; border-right: 0; border-bottom: 1px solid #e2e7ec; }
+          .rt-controls { padding: 19px 2px 20px; }
+        }
+        @media (max-width: 520px) {
+          .rt-panel { margin-top: 8px; padding: 17px 14px; }
+          .rt-panel-head { flex-direction: column; gap: 15px; }
+          .rt-ref-select { width: 100%; }
+          .rt-ref-select select { width: 100%; }
+          .rt-instruments-wrap { align-items: flex-start; flex-direction: column; gap: 8px; }
+          .rt-instruments { width: 100%; }
+          .rt-instrument-btn { min-width: 0; flex: 1; padding-inline: 8px; }
+          .rt-gauge-wrap { height: 145px; }
+          .rt-note { font-size: 62px; }
+        }
+      `}</style>
+
       <div className={`rt-panel${inTune ? " in-tune" : ""}`}>
-        <div className="rt-header">
-          <div className="rt-ref-select">
-            <span>A4</span>
+        <header className="rt-panel-head">
+          <div className="rt-panel-intro">
+            <span className="rt-kicker">AFINAÇÃO CROMÁTICA</span>
+            <h2>Ajuste seu instrumento</h2>
+            <p>Toque uma corda por vez e acompanhe a afinação em tempo real.</p>
+          </div>
+          <label className="rt-ref-select" htmlFor="rt-reference">
+            <span>Tom de referência</span>
             <select
+              id="rt-reference"
               value={referenceA4}
               onChange={(e) => setReferenceA4(Number(e.target.value))}
             >
@@ -479,73 +545,99 @@ export default function RiffTheoryTuner() {
                 <option key={f} value={f}>{f} Hz</option>
               ))}
             </select>
+          </label>
+        </header>
+
+        <div className="rt-instruments-wrap">
+          <span className="rt-label">Instrumento</span>
+          <div className="rt-instruments">
+            {INSTRUMENTS.map((inst) => (
+              <button
+                key={inst}
+                type="button"
+                className={"rt-instrument-btn" + (instrument === inst ? " active" : "")}
+                aria-pressed={instrument === inst}
+                onClick={() => setInstrument(inst)}
+              >
+                {inst}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="rt-instruments">
-          {INSTRUMENTS.map((inst) => (
-            <button
-              key={inst}
-              className={"rt-instrument-btn" + (instrument === inst ? " active" : "")}
-              onClick={() => setInstrument(inst)}
-            >
-              {inst}
-            </button>
-          ))}
-        </div>
-
-        <div className="rt-gauge-wrap">
-          <VUGauge angle={reading && reading.active ? needleAngle : 0} inTune={!!inTune} color={statusColor} />
-        </div>
-
-        <div className="rt-note-display">
-          <span className="rt-note" style={{ color: reading && reading.active ? statusColor : "var(--cream)" }}>
-            {reading && reading.active ? reading.note : "--"}
-          </span>
-          {reading && reading.active && (
-            <span className="rt-octave">{reading.octave}</span>
-          )}
-          <div className="rt-freq">
-            {reading && reading.active ? `${reading.frequency.toFixed(2)} Hz` : "-- Hz"}
-            {reading && reading.active && (
-              <span> &nbsp;·&nbsp; {cents >= 0 ? "+" : ""}{cents.toFixed(1)} cents</span>
-            )}
-          </div>
-        </div>
-
-        <div className="rt-status" style={{ color: statusColor }}>
-          {running ? statusText : "PARADO"}
-        </div>
-
-        <div className="rt-string-row">
-          {TUNINGS[instrument].map((s) => (
-            <div
-              key={s.name}
-              className={
-                "rt-string-chip" +
-                (reading && reading.active && reading.stringName === s.name && Math.abs(reading.stringCents) <= IN_TUNE_CENTS
-                  ? " active"
-                  : "")
-              }
-            >
-              {s.name}
+        <div className="rt-main-grid">
+          <section className="rt-readout" aria-label="Leitura do afinador">
+            <div className="rt-gauge-wrap">
+              <VUGauge angle={reading && reading.active ? needleAngle : 0} inTune={!!inTune} color={statusColor} />
             </div>
-          ))}
+            <div className="rt-note-display">
+              <span className="rt-note" style={{ color: reading && reading.active ? statusColor : "var(--cream)" }}>
+                {reading && reading.active ? reading.note : "--"}
+              </span>
+              {reading && reading.active && (
+                <span className="rt-octave">{reading.octave}</span>
+              )}
+              <div className="rt-freq">
+                {reading && reading.active ? `${reading.frequency.toFixed(2)} Hz` : "-- Hz"}
+                {reading && reading.active && (
+                  <span> &nbsp;·&nbsp; {cents >= 0 ? "+" : ""}{cents.toFixed(1)} cents</span>
+                )}
+              </div>
+            </div>
+            <div className="rt-status" style={{ color: statusColor }}>
+              {running ? statusText : "PRONTO PARA AFINAR"}
+            </div>
+          </section>
+
+          <aside className="rt-controls">
+            <div className="rt-control-group">
+              <div className="rt-control-heading">
+                <span className="rt-label">Notas da afinação</span>
+                <span>{instrument}</span>
+              </div>
+              <div className="rt-string-row">
+                {TUNINGS[instrument].map((s) => {
+                  const selected = reading && reading.active && reading.stringName === s.name;
+                  const tuned = selected && Math.abs(reading.stringCents) <= IN_TUNE_CENTS;
+                  return (
+                    <div
+                      key={s.name}
+                      className={"rt-string-chip" + (selected ? " active" : "") + (tuned ? " in-tune" : "")}
+                    >
+                      {s.name}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="rt-target">
+              <span>Corda mais próxima</span>
+              <strong>{reading && reading.active ? reading.stringName : "—"}</strong>
+              <span>
+                {reading && reading.active
+                  ? `${reading.stringCents >= 0 ? "+" : ""}${reading.stringCents.toFixed(1)} cents`
+                  : "Aguardando sinal"}
+              </span>
+            </div>
+
+            <p className="rt-hint">Toque uma corda por vez, o mais próximo do microfone possível.</p>
+          </aside>
         </div>
 
-        <button
-          className={"rt-footswitch" + (running ? " on" : "")}
-          onClick={() => (running ? stop() : start())}
-        >
-          {running ? "Parar" : "Iniciar Afinador"}
-        </button>
-
-        {error && <div className="rt-error">{error}</div>}
-        {!error && (
-          <div className="rt-hint">
-            Toque uma corda por vez, o mais próximo do microfone possível.
-          </div>
-        )}
+        <footer className="rt-footer">
+          <button
+            type="button"
+            className={"rt-footswitch" + (running ? " on" : "")}
+            onClick={() => (running ? stop() : start())}
+          >
+            {running ? "Parar afinador" : "Iniciar afinador"}
+          </button>
+          <p className="rt-footer-note">
+            {running ? "Microfone ativo · ajuste uma corda de cada vez." : "Permita o acesso ao microfone para começar."}
+          </p>
+          {error && <div className="rt-error" role="alert">{error}</div>}
+        </footer>
       </div>
       </div>
     </div>
@@ -567,31 +659,20 @@ function VUGauge({ angle, inTune, color }) {
 
   return (
     <svg viewBox="0 0 400 195" width="100%" height="100%">
-      <defs>
-        <linearGradient id="rt-arc-grad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#e2543f" />
-          <stop offset="40%" stopColor="#3db8e8" />
-          <stop offset="50%" stopColor="#7fd858" />
-          <stop offset="60%" stopColor="#3da4e8" />
-          <stop offset="100%" stopColor="#e2543f" />
-        </linearGradient>
-      </defs>
-
       {/* Arco de fundo */}
       <path
         d={`M ${toXY(-45, r).x} ${toXY(-45, r).y} A ${r} ${r} 0 0 1 ${toXY(45, r).x} ${toXY(45, r).y}`}
-        stroke="rgba(255,255,255,0.22)"
+        stroke="#e2e7ec"
         strokeWidth="10"
         fill="none"
         strokeLinecap="round"
       />
       <path
         d={`M ${toXY(-45, r).x} ${toXY(-45, r).y} A ${r} ${r} 0 0 1 ${toXY(45, r).x} ${toXY(45, r).y}`}
-        stroke="url(#rt-arc-grad)"
+        stroke="#b8c6d8"
         strokeWidth="4"
         fill="none"
         strokeLinecap="round"
-        opacity="0.85"
       />
 
       {/* Marcações */}
@@ -603,13 +684,13 @@ function VUGauge({ angle, inTune, color }) {
           <g key={t}>
             <line
               x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y}
-              stroke={t === 0 ? "#8ff0b6" : "rgba(255,255,255,0.75)"}
+              stroke={t === 0 ? "#315ce8" : "#8a97a8"}
               strokeWidth={t === 0 ? 3 : 1.5}
             />
             <text
               x={toXY(deg, r + 24).x}
               y={toXY(deg, r + 24).y}
-              fill="rgba(255,255,255,0.8)"
+              fill="#68778b"
               fontSize="10"
               fontFamily="'IBM Plex Mono', monospace"
               textAnchor="middle"
@@ -629,7 +710,7 @@ function VUGauge({ angle, inTune, color }) {
           strokeLinecap="round"
         />
       </g>
-      <circle cx={cx} cy={cy} r="7" fill={color} stroke="#4a6d99" strokeWidth="2" />
+      <circle cx={cx} cy={cy} r="7" fill={color} stroke="#fff" strokeWidth="2" />
       {inTune && <circle cx={cx} cy={cy} r="14" fill="none" stroke={color} strokeWidth="1.5" opacity="0.5" />}
     </svg>
   );
