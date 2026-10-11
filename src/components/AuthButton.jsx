@@ -13,7 +13,7 @@ export default function AuthButton({ compact = false }) {
     if (!user) {
         return (
             <div className={`auth-card${compact ? " compact" : ""}`}>
-                <button className="auth-login" onClick={signInWithGoogle} type="button">
+                <button className="auth-login" onClick={signInWithGoogle} type="button" disabled={!authConfigured}>
                     <span className="google-mark" aria-hidden="true">G</span>
                     <span>Entrar com Google</span>
                 </button>

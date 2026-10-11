@@ -20,6 +20,11 @@ export function AuthProvider({ children }) {
             if (sessionError) setError("Não foi possível recuperar sua sessão.");
             setSession(data.session);
             setLoading(false);
+        }).catch(() => {
+            if (!ativo) return;
+            setError("Não foi possível recuperar sua sessão. Verifique sua conexão e tente novamente.");
+            setSession(null);
+            setLoading(false);
         });
 
         const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
@@ -40,19 +45,27 @@ export function AuthProvider({ children }) {
             return { error: new Error("Supabase não configurado") };
         }
 
-        const { error: signInError } = await supabase.auth.signInWithOAuth({
-            provider: "google",
-            options: { redirectTo: window.location.origin },
-        });
-
-        if (signInError) setError("Não foi possível iniciar o login Google.");
-        return { error: signInError };
+        try {
+            const { error: signInError } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: { redirectTo: window.location.origin },
+            });
+            if (signInError) setError("Não foi possível iniciar o login Google.");
+            return { error: signInError };
+        } catch (signInError) {
+            setError("Não foi possível iniciar o login Google. Verifique sua conexão e tente novamente.");
+            return { error: signInError };
+        }
     }
 
     async function signOut() {
         if (!supabase) return;
-        const { error: signOutError } = await supabase.auth.signOut();
-        if (signOutError) setError("Não foi possível sair agora.");
+        try {
+            const { error: signOutError } = await supabase.auth.signOut();
+            if (signOutError) setError("Não foi possível sair agora.");
+        } catch {
+            setError("Não foi possível sair agora. Verifique sua conexão e tente novamente.");
+        }
     }
 
     const value = useMemo(() => ({
