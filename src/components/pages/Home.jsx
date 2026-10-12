@@ -6,6 +6,7 @@ import ReviewForm from "./ReviewForm";
 import ReviewsDisplay from "./ReviewsDisplay";
 import { registrarEvento } from "../../utils/usageStats";
 import FAQQuestion from "../FAQQuestion";
+import Markdown from "react-markdown";
 
 function rolarPara(id) {
     const reduzir = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -288,6 +289,9 @@ export default function Home({ setPage }) {
                     question="O RT é para violão ou guitarra?"
                     answer="O Riff Theory serve para os 2!"
                 />
+                <div className="simple-margin-top">
+                    <Markdown>Na dúvida, não fique se remoendo para achar a resposta! **Contate:** rifftheory6@gmail.com</Markdown>
+                </div>
             </div>
         </div>
     )

@@ -2134,3 +2134,6 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
     .site-review-actions { align-items: stretch; }
     .site-review-actions > button { width: 100%; }
 }
+.simple-margin-top {
+    margin-top: 10px;
+}
