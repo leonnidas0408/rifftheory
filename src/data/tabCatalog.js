@@ -3,6 +3,8 @@ const TAB_BASE = {
     capo: "Sem capotraste",
 };
 
+const CICLOS_DA_FRASE = 4;
+
 const TAB = (e, b = "", g = "", d = "", a = "", lowE = "") => {
     const linhas = [
         ["e", e],
@@ -13,7 +15,11 @@ const TAB = (e, b = "", g = "", d = "", a = "", lowE = "") => {
         ["E", lowE],
     ];
     const largura = Math.max(...linhas.map(([, linha]) => linha.length));
-    return linhas.map(([corda, linha]) => `${corda}|${linha.padEnd(largura, "-")}|`).join("\n");
+    return linhas.map(([corda, linha]) => {
+        const compasso = linha.padEnd(largura, "-");
+        const frase = Array.from({ length: CICLOS_DA_FRASE }, () => compasso).join("|");
+        return `${corda}|${frase}|`;
+    }).join("\n");
 };
 
 const ORIGINAL_LICENSE = "CC0 1.0 · composição e arranjo originais do Riff Theory";

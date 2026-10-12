@@ -7,15 +7,15 @@ function explicar(item) {
     const foco = item.tags[0] || "coordenação";
     const acordeTexto = item.chords.join(", ");
     if (item.kind === "Exercício original") {
-        return `Este estudo original foi criado para trabalhar ${foco}. A sequência usa ${acordeTexto} como base harmônica; toque cada mudança com som limpo e mantenha a mão direita constante antes de acelerar.`;
+        return `Este estudo original foi criado para trabalhar ${foco}. A frase completa usa ${acordeTexto} como base harmônica; percorra os quatro ciclos, toque cada mudança com som limpo e só acelere quando o ciclo final estiver firme.`;
     }
-    return `Este arranjo didático usa uma melodia tradicional sobre ${acordeTexto}. A linha foi simplificada para estudo no violão: primeiro memorize o desenho melódico, depois acrescente os acordes e ajuste o andamento ao seu nível.`;
+    return `Este arranjo didático fecha uma frase de melodia tradicional sobre ${acordeTexto}. A linha foi simplificada para estudo no violão: toque os quatro ciclos completos, memorize o desenho melódico e depois acrescente os acordes.`;
 }
 
 function comoEstudar(item) {
     const foco = item.tags.slice(0, 2).join(" e ") || "a coordenação";
     return [
-        `Comece em 60 BPM e toque ${foco} lentamente, sem parar entre os compassos.`,
+        `Comece em 60 BPM e toque os quatro ciclos de ${foco} lentamente, sem pular o final da frase.`,
         `Separe os trechos difíceis em ciclos de quatro batidas e confira se todas as notas soam claras.`,
         `Aumente o metrônomo de 5 em 5 BPM somente quando conseguir repetir o padrão três vezes sem erro.`,
     ];
@@ -38,7 +38,7 @@ function TabCard({ item, onOpen }) {
                 <span>Acordes: {item.chords.join(" · ")}</span>
             </div>
             <pre className="tab-pre" aria-label={`Tablatura de ${item.title}`}>{item.tab}</pre>
-            <p className="tab-notation-note">Leia de cima para baixo: e é a corda mais aguda. <code>-</code> sustenta o tempo · <code>x</code> abafa · <code>h</code> indica hammer-on.</p>
+            <p className="tab-notation-note">A frase está fechada em quatro ciclos. Leia de cima para baixo: e é a corda mais aguda. <code>-</code> sustenta o tempo · <code>x</code> abafa · <code>h</code> indica hammer-on.</p>
             <p className="tab-card-explanation">{explicar(item)}</p>
             <footer className="tab-card-footer">
                 <span className="tab-license">{item.license}</span>
@@ -68,7 +68,7 @@ function TabDetail({ item, onClose }) {
                 <div className="tab-detail-section">
                     <h3>Tablatura completa</h3>
                     <pre className="tab-pre tab-pre-detail" aria-label={`Tablatura completa de ${item.title}`}>{item.tab}</pre>
-                    <p className="tab-notation-note">As linhas seguem a afinação {item.tuning}. A corda mais aguda fica em cima; leia da esquerda para a direita.</p>
+                    <p className="tab-notation-note">Esta é a frase completa em quatro ciclos, não apenas um trecho. As linhas seguem a afinação {item.tuning}; a corda mais aguda fica em cima.</p>
                 </div>
                 <div className="tab-detail-section">
                     <h3>O que você vai praticar</h3>
@@ -99,9 +99,9 @@ export default function Tablaturas() {
             <section className="tab-hero" aria-labelledby="tab-title">
                 <span className="eyebrow">CATÁLOGO LOCAL · SEM SCRAPING</span>
                 <h1 id="tab-title">Cifras e tabs para tocar dentro do Riff Theory.</h1>
-                <p>Abra qualquer cartão para ver a tablatura completa, entender o objetivo do estudo e seguir um roteiro de prática. Nenhum resultado depende de outro site.</p>
+                <p>Abra qualquer cartão para ver uma frase completa, entender o objetivo do estudo e seguir um roteiro de prática. Nenhum resultado depende de outro site.</p>
                 <div className="tab-stats" aria-label="Resumo do catálogo">
-                    <strong>{TAB_CATALOG.length}<span> estudos disponíveis</span></strong>
+                    <strong>{TAB_CATALOG.length}<span> estudos completos</span></strong>
                     <strong>20–400<span> BPM para praticar</span></strong>
                     <strong>CC0 + DP<span> fontes permitidas</span></strong>
                 </div>
