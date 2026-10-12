@@ -5,11 +5,24 @@ import { GOOGLE_LOGIN_UI_ENABLED } from "../auth/featureFlags";
 
 // Área principal: abas de ferramentas no topo, página atual e o botão
 // flutuante que abre o assistente (chat).
-export default function Conteudo({ page, setPage, pageData }) {
+export default function Conteudo({ page, setPage, pageData, sidebarCollapsed, onToggleSidebar }) {
     const abas = Object.entries(pageData).filter(([, item]) => item.aba);
 
     return (
         <main className="conteudo">
+            {sidebarCollapsed && (
+                <button
+                    className="sidebar-toggle sidebar-toggle-reopen"
+                    type="button"
+                    onClick={onToggleSidebar}
+                    aria-label="Mostrar barra lateral"
+                    title="Mostrar barra lateral"
+                >
+                    <span aria-hidden="true" />
+                    <span aria-hidden="true" />
+                    <span aria-hidden="true" />
+                </button>
+            )}
             <div className="auth-mobile">
                 <span className="mobile-brand"><img src="/icon.jpg" alt="" title="Riff Theory" /><strong>riff<span>theory</span></strong></span>
                 {GOOGLE_LOGIN_UI_ENABLED && <AuthButton compact />}

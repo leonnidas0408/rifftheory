@@ -1,14 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import SidebarPages from "./SidebarPages";
 import BottomBar from "./BottomBarPages";
 import { isDesktop } from "react-device-detect";
 
 export default function NavbarAdapter({page, setPage, pageData, defaultPage}) {
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+        try {
+            return window.localStorage.getItem("riffTheorySidebarOculta") === "true";
+        } catch {
+            return false;
+        }
+    });
+    function alternarSidebar() {
+        setSidebarCollapsed((atual) => {
+            const proximo = !atual;
+            try {
+                window.localStorage.setItem("riffTheorySidebarOculta", String(proximo));
+            } catch {
+                // A preferência continua funcionando mesmo sem armazenamento local.
+            }
+            return proximo;
+        });
+    }
     return (
-        <div>
+        <div className={`app-shell${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
             {
                 isDesktop ?
-                <SidebarPages page={page} setPage={setPage} pageData={pageData} defaultPage={defaultPage}/>
+                <SidebarPages
+                    page={page}
+                    setPage={setPage}
+                    pageData={pageData}
+                    defaultPage={defaultPage}
+                    sidebarCollapsed={sidebarCollapsed}
+                    onToggleSidebar={alternarSidebar}
+                />
                 : <BottomBar page={page} setPage={setPage} pageData={pageData} defaultPage={defaultPage}/>
             }
         </div>

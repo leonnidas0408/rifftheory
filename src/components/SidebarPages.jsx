@@ -9,7 +9,7 @@ const EM_BREVE = [
     ["Riffs", "riffs"],
 ];
 
-export default function SidebarPages({ page, setPage, pageData }) {
+export default function SidebarPages({ page, setPage, pageData, sidebarCollapsed, onToggleSidebar }) {
     const itens = Object.entries(pageData).filter(
         ([, item]) => item.icone && !item.soMobile
     );
@@ -17,10 +17,23 @@ export default function SidebarPages({ page, setPage, pageData }) {
     return (
         <div>
             <aside className="sidebar">
-                <a className="brand-lockup" href="#inicio" onClick={(event) => { event.preventDefault(); setPage("Início"); }} aria-label="Riff Theory — início">
-                    <span className="brand-mark"><img src="/icon.jpg" alt="" title="Riff Theory" /></span>
-                    <span className="brand-copy"><strong>riff<span>theory</span></strong><small>STUDIO DE GUITARRA</small></span>
-                </a>
+                <div className="sidebar-topbar">
+                    <a className="brand-lockup" href="#inicio" onClick={(event) => { event.preventDefault(); setPage("Início"); }} aria-label="Riff Theory — início">
+                        <span className="brand-mark"><img src="/icon.jpg" alt="" title="Riff Theory" /></span>
+                        <span className="brand-copy"><strong>riff<span>theory</span></strong><small>STUDIO DE GUITARRA</small></span>
+                    </a>
+                    <button
+                        className="sidebar-toggle"
+                        type="button"
+                        onClick={onToggleSidebar}
+                        aria-label="Ocultar barra lateral"
+                        title="Ocultar barra lateral"
+                    >
+                        <span aria-hidden="true" />
+                        <span aria-hidden="true" />
+                        <span aria-hidden="true" />
+                    </button>
+                </div>
                 {GOOGLE_LOGIN_UI_ENABLED && (
                     <div className="sidebar-avatar">
                         <AuthButton />
@@ -47,7 +60,13 @@ export default function SidebarPages({ page, setPage, pageData }) {
             </aside>
 
             <div className="area-lateral">
-                <Conteudo page={page} setPage={setPage} pageData={pageData} />
+                <Conteudo
+                    page={page}
+                    setPage={setPage}
+                    pageData={pageData}
+                    sidebarCollapsed={sidebarCollapsed}
+                    onToggleSidebar={onToggleSidebar}
+                />
             </div>
         </div>
     );
