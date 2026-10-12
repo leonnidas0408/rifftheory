@@ -26,6 +26,7 @@ function lerAvaliacaoLocal() {
 export default function ReviewForm() {
     const [avaliacaoAnterior] = useState(() => lerAvaliacaoLocal());
     const [rating, setRating] = useState(() => avaliacaoAnterior?.rating || "");
+    const [hoverRating, setHoverRating] = useState(0);
     const [comment, setComment] = useState(() => avaliacaoAnterior?.comment || "");
     const [salva, setSalva] = useState(Boolean(avaliacaoAnterior));
     const [status, setStatus] = useState("");
@@ -82,15 +83,22 @@ export default function ReviewForm() {
                 <fieldset aria-describedby="site-review-local-note site-review-status">
                     <legend>Deixe sua avaliação</legend>
                     <span className="site-review-label">Sua nota</span>
-                    <div className="site-review-rating" role="group" aria-label="Escolha uma nota de 1 a 5 estrelas">
+                    <div className="site-review-rating" role="radiogroup" aria-label="Escolha uma nota de 1 a 5 estrelas" onMouseLeave={() => setHoverRating(0)}>
                         {ratingOptions.map((value) => (
-                            <label className="site-review-star" key={value}>
+                            <label
+                                className={`site-review-star${value <= (hoverRating || Number(rating)) ? " is-active" : ""}`}
+                                key={value}
+                                onMouseEnter={() => setHoverRating(value)}
+                            >
                                 <input
                                     type="radio"
                                     name="site-rating"
                                     value={value}
                                     checked={Number(rating) === value}
-                                    onChange={() => setRating(value)}
+                                    onChange={() => { setRating(value); setHoverRating(0); }}
+                                    onFocus={() => setHoverRating(value)}
+                                    onBlur={() => setHoverRating(0)}
+                                    aria-label={`${value} ${value === 1 ? "estrela" : "estrelas"}`}
                                     required
                                 />
                                 <span aria-hidden="true">★</span>

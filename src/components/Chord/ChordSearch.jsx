@@ -1,4 +1,8 @@
-// Busca no catálogo local de partituras verificadas; não consulta serviços externos.
+// src/components/Chord/ChordSearch.jsx
+// Componente visual + estado local da busca de cifras. Não faz requisição
+// de rede: consulta o catálogo local licenciado e delega a exibição para
+// ChordResults.
+
 import React, { useState } from "react";
 import Barra from "../Barra";
 import { buscarCifras } from "../../utils/cifras";
@@ -6,7 +10,8 @@ import { registrarEvento } from "../../utils/usageStats";
 import ChordResults from "./ChordResults";
 import { TAB_CATALOG } from "../../data/tabCatalog";
 
-const SUGESTOES = TAB_CATALOG.map((item) => item.title);
+// Músicas para começar sem digitar (só viram um termo de busca).
+const SUGESTOES = TAB_CATALOG.slice(0, 4).map((item) => item.title);
 
 export default function ChordSearch({ setPage }) {
     const [query, setQuery] = useState("");
@@ -17,7 +22,7 @@ export default function ChordSearch({ setPage }) {
         const termo = (typeof termoEscolhido === "string" ? termoEscolhido : query).trim();
 
         if (!termo) {
-            setErro("Digite o título, compositor ou número de catálogo da partitura.");
+            setErro("Digite o nome de uma música ou artista.");
             setResultados(null);
             return;
         }
@@ -32,14 +37,14 @@ export default function ChordSearch({ setPage }) {
         <>
             <Barra onBuscar={() => buscar()}>
                 <input
-                    type="search"
+                    type="text"
                     value={query}
-                    onChange={(event) => setQuery(event.target.value)}
+                    onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => registrarEvento("search_started", {}, { umaVezPorSessao: true })}
-                    onKeyDown={(event) => event.key === "Enter" && buscar()}
-                    placeholder="Busque a partitura por título, compositor ou BWV..."
+                    onKeyDown={(e) => e.key === "Enter" && buscar()}
+                    placeholder="Pesquise no catálogo local por título, acorde ou técnica..."
                     id="busca-cifra"
-                    aria-label="Buscar partitura verificada"
+                    aria-label="Buscar cifra"
                     autoComplete="off"
                     spellCheck="false"
                 />
@@ -48,15 +53,11 @@ export default function ChordSearch({ setPage }) {
             {erro && <div className="erro">{erro}</div>}
 
             {!resultados && (
-                <div className="sugestoes" aria-label="Partituras completas verificadas">
-                    <span className="subtitulo">
-                        {SUGESTOES.length === 1
-                            ? "Partitura completa verificada:"
-                            : "Partituras completas verificadas:"}
-                    </span>
-                    {SUGESTOES.map((titulo) => (
-                        <button key={titulo} className="pilula" onClick={() => buscar(titulo)}>
-                            {titulo}
+                <div className="sugestoes" aria-label="Sugestões de músicas">
+                    <span className="subtitulo">Sem ideia? Comece por uma destas:</span>
+                    {SUGESTOES.map((musica) => (
+                        <button key={musica} className="pilula" onClick={() => buscar(musica)}>
+                            {musica}
                         </button>
                     ))}
                 </div>
