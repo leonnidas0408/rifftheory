@@ -7,15 +7,15 @@ function explicar(item) {
     const foco = item.tags[0] || "coordenação";
     const acordeTexto = item.chords.join(", ");
     if (item.kind === "Exercício original") {
-        return `Este estudo original foi criado para trabalhar ${foco}. A forma A–A–B–A usa ${acordeTexto} como base harmônica; a seção B traz uma variação antes do retorno final. Toque cada mudança com som limpo e só acelere quando o ciclo final estiver firme.`;
+        return `Este estudo original foi criado para trabalhar ${foco}. A forma A–A–B–final usa ${acordeTexto} como base harmônica; a seção B traz uma variação e o último ciclo encerra a frase, sem voltar ao início.`;
     }
-    return `Este arranjo didático organiza uma melodia tradicional sobre ${acordeTexto} em A–A–B–A. A linha foi simplificada para estudo no violão: memorize a parte A, compare a variação B e depois volte ao final.`;
+    return `Este arranjo didático organiza uma melodia tradicional sobre ${acordeTexto} em A–A–B–final. A linha foi simplificada para estudo no violão: memorize a parte A, compare a variação B e pare na cadência final.`;
 }
 
 function comoEstudar(item) {
     const foco = item.tags.slice(0, 2).join(" e ") || "a coordenação";
     return [
-        `Comece em 60 BPM e toque a forma A–A–B–A de ${foco} lentamente, sem pular a seção B nem o retorno final.`,
+        `Comece em 60 BPM e toque a forma A–A–B–final de ${foco} lentamente, sem pular a seção B nem a cadência final.`,
         `Separe os trechos difíceis em ciclos de quatro batidas e confira se todas as notas soam claras.`,
         `Aumente o metrônomo de 5 em 5 BPM somente quando conseguir repetir o padrão três vezes sem erro.`,
     ];
@@ -38,7 +38,7 @@ function TabCard({ item, onOpen }) {
                 <span>Acordes: {item.chords.join(" · ")}</span>
             </div>
             <pre className="tab-pre" aria-label={`Tablatura de ${item.title}`}>{item.tab}</pre>
-            <p className="tab-notation-note">A forma é A–A–B–A: a terceira parte é uma variação, não uma cópia. Leia de cima para baixo: e é a corda mais aguda. <code>-</code> sustenta o tempo · <code>x</code> abafa · <code>h</code> indica hammer-on.</p>
+            <p className="tab-notation-note">A forma é A–A–B–final: a terceira parte varia e a última encerra, sem voltar ao início. Leia de cima para baixo: e é a corda mais aguda. <code>-</code> sustenta o tempo · <code>x</code> abafa · <code>h</code> indica hammer-on.</p>
             <p className="tab-card-explanation">{explicar(item)}</p>
             <footer className="tab-card-footer">
                 <span className="tab-license">{item.license}</span>
@@ -68,7 +68,7 @@ function TabDetail({ item, onClose }) {
                 <div className="tab-detail-section">
                     <h3>Tablatura completa</h3>
                     <pre className="tab-pre tab-pre-detail" aria-label={`Tablatura completa de ${item.title}`}>{item.tab}</pre>
-                    <p className="tab-notation-note">Esta é uma forma de estudo A–A–B–A, não apenas um trecho repetido. As linhas seguem a afinação {item.tuning}; a corda mais aguda fica em cima.</p>
+                    <p className="tab-notation-note">Esta é uma forma de estudo A–A–B–final, não apenas um trecho repetido. O último ciclo encerra a frase. As linhas seguem a afinação {item.tuning}; a corda mais aguda fica em cima.</p>
                 </div>
                 <div className="tab-detail-section">
                     <h3>O que você vai praticar</h3>

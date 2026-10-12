@@ -15,6 +15,14 @@ function variarCompasso(linha) {
     });
 }
 
+function finalizarCompasso(linha) {
+    const notas = [...linha.matchAll(/\d+|x/g)];
+    if (!notas.length) return linha;
+    const primeiraNota = notas[0][0];
+    const ultimaNota = notas[notas.length - 1];
+    return `${linha.slice(0, ultimaNota.index)}${primeiraNota}${linha.slice(ultimaNota.index + ultimaNota[0].length)}`;
+}
+
 const TAB = (e, b = "", g = "", d = "", a = "", lowE = "") => {
     const linhas = [
         ["e", e],
@@ -28,7 +36,8 @@ const TAB = (e, b = "", g = "", d = "", a = "", lowE = "") => {
     return linhas.map(([corda, linha]) => {
         const compasso = linha.padEnd(largura, "-");
         const variacao = variarCompasso(compasso).padEnd(largura, "-");
-        const ciclos = [compasso, compasso, variacao, compasso];
+        const final = finalizarCompasso(compasso).padEnd(largura, "-");
+        const ciclos = [compasso, compasso, variacao, final];
         const frase = ciclos.slice(0, CICLOS_DA_FRASE).join("|");
         return `${corda}|${frase}|`;
     }).join("\n");
