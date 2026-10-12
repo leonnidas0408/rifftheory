@@ -5,6 +5,16 @@ const TAB_BASE = {
 
 const CICLOS_DA_FRASE = 4;
 
+function variarCompasso(linha) {
+    let posicao = 0;
+    return linha.replace(/\d+|x/g, (nota) => {
+        if (nota === "x") return nota;
+        const valor = Number(nota);
+        const ajuste = [1, 0, -1][posicao++ % 3];
+        return String(Math.max(0, Math.min(12, valor + ajuste)));
+    });
+}
+
 const TAB = (e, b = "", g = "", d = "", a = "", lowE = "") => {
     const linhas = [
         ["e", e],
@@ -17,7 +27,9 @@ const TAB = (e, b = "", g = "", d = "", a = "", lowE = "") => {
     const largura = Math.max(...linhas.map(([, linha]) => linha.length));
     return linhas.map(([corda, linha]) => {
         const compasso = linha.padEnd(largura, "-");
-        const frase = Array.from({ length: CICLOS_DA_FRASE }, () => compasso).join("|");
+        const variacao = variarCompasso(compasso).padEnd(largura, "-");
+        const ciclos = [compasso, compasso, variacao, compasso];
+        const frase = ciclos.slice(0, CICLOS_DA_FRASE).join("|");
         return `${corda}|${frase}|`;
     }).join("\n");
 };
