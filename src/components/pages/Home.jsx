@@ -207,8 +207,6 @@ export default function Home({ setPage }) {
                 </div>
             </section>
 
-            <ReviewsSection />
-
             <div id="comecar" className="comecar">
                 <div className="comecar-topo">
                     <h2>Escolha um ponto de partida</h2>
@@ -261,6 +259,9 @@ export default function Home({ setPage }) {
                     <strong>Experimentar</strong>
                 </button>
             </div>
+            <footer className="reviews-footer">
+                <ReviewsSection />
+            </footer>
         </div>
     )
 }
