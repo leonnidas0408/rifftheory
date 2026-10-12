@@ -289,9 +289,7 @@ export default function Home({ setPage }) {
                     question="O RT é para violão ou guitarra?"
                     answer="O Riff Theory serve para os 2!"
                 />
-                <div className="simple-margin-top">
-                    <Markdown>Na dúvida, não fique se remoendo para achar a resposta! **Contate:** rifftheory6@gmail.com</Markdown>
-                </div>
+                <p className="simple-margin-top">Na dúvida, não fique se remoendo para achar a resposta! <strong>Contate:</strong> rifftheory6@gmail.com</p>
             </div>
         </div>
     )
