@@ -21,7 +21,8 @@
     "music-metadata": "^12.1.0",
     "react": "^19.2.8",
     "react-device-detect": "^2.2.3",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "pdf-parse": "^1.1.1",

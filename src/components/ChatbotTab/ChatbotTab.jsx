@@ -163,7 +163,7 @@ export default function ChatbotTab() {
                         </span>
 
                         <div className={`chatbot-bolha chatbot-bolha-${mensagem.autor}`}>
-                            <p>{mensagem.texto}</p>
+                            <Markdown>{mensagem.texto}</Markdown>
                             <time>{mensagem.hora}</time>
                         </div>
                     </div>
