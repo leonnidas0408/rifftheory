@@ -43,7 +43,7 @@ export default function App() {
                 />
             ),
             icone: "escalas",
-            aba: "lista",
+            aba: "escalas",
         },
 
         "Afinador": {
