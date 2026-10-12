@@ -4,8 +4,8 @@ import Barra from "../Barra";
 import AvatarUsuario from "../AvatarUsuario";
 import Icone from "../Icone";
 import { useAuth } from "../../auth/AuthContext";
-
 import "./ChatbotTab.css";
+import Markdown from "react-markdown";
 
 function horaAgora() {
     return new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
