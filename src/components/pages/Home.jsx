@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import Barra from "../Barra";
 import BracoInterativo from "../BracoInterativo";
 import ChordSearch from "../Chord/ChordSearch";
-import ReviewsSection from "./ReviewsSection";
+import ReviewsDisplay from "./ReviewsDisplay";
+import ReviewForm from "./ReviewForm";
 import { registrarEvento } from "../../utils/usageStats";
 
 function rolarPara(id) {
@@ -207,6 +208,8 @@ export default function Home({ setPage }) {
                 </div>
             </section>
 
+            <ReviewForm />
+
             <div id="comecar" className="comecar">
                 <div className="comecar-topo">
                     <h2>Escolha um ponto de partida</h2>
@@ -260,7 +263,7 @@ export default function Home({ setPage }) {
                 </button>
             </div>
             <footer className="reviews-footer">
-                <ReviewsSection />
+                <ReviewsDisplay />
             </footer>
         </div>
     )

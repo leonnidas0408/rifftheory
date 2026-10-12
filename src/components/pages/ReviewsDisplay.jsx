@@ -11,7 +11,6 @@ const reviews = [
     },
 ];
 
-const ratingOptions = [5, 4, 3, 2, 1];
 const averageRating = (
     reviews.reduce((total, review) => total + review.rating, 0) / reviews.length
 ).toFixed(1).replace(".", ",");
@@ -36,7 +35,7 @@ function GoogleWordmark({ compact = false }) {
     );
 }
 
-export default function ReviewsSection() {
+export default function ReviewsDisplay() {
     return (
         <section className="reviews-section google-reviews" aria-labelledby="reviews-title">
             <header className="google-reviews-heading">
@@ -75,33 +74,6 @@ export default function ReviewsSection() {
                     </article>
                 ))}
             </div>
-
-            <form className="site-review-form" aria-disabled="true">
-                <fieldset disabled>
-                    <legend>Deixe sua avaliação</legend>
-                    <label className="site-review-label">Sua nota</label>
-                    <div className="site-review-rating" role="group" aria-label="Escolha uma nota de 1 a 5 estrelas">
-                        {ratingOptions.map((rating) => (
-                            <label className="site-review-star" key={rating}>
-                                <input type="radio" name="site-rating" value={rating} aria-label={`${rating} estrelas`} />
-                                <span aria-hidden="true">★</span>
-                            </label>
-                        ))}
-                    </div>
-                    <label className="site-review-label" htmlFor="site-review-comment">Comentário</label>
-                    <textarea
-                        id="site-review-comment"
-                        name="comment"
-                        rows="3"
-                        maxLength="500"
-                        placeholder="O que você achou do site?"
-                    />
-                    <button className="site-review-submit" type="submit">Avaliar no Google</button>
-                </fieldset>
-                <p className="site-review-disabled-note" role="status">
-                    O envio de novas avaliações está desativado enquanto o login com Google não estiver funcionando.
-                </p>
-            </form>
         </section>
     );
 }
