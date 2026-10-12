@@ -1,10 +1,10 @@
-// Histórico local de itens verificados abertos pelo usuário.
-// Registros antigos são filtrados pela lista de partituras atualmente aprovada.
-import { TAB_CATALOG } from "../data/tabCatalog";
+// src/utils/recentAccess.js
+// Histórico local de músicas/cifras abertas pelo usuário, usado pelo bloco
+// "Últimos acessos" da Home. Não depende de backend: fica salvo no
+// localStorage do navegador, limitado aos N acessos mais recentes.
 
 const CHAVE_ARMAZENAMENTO = "riffTheoryUltimosAcessos";
 const MAX_ITENS = 5;
-const IDS_PERMITIDOS = new Set(TAB_CATALOG.map((item) => item.id));
 
 function lerArmazenamento() {
     try {
@@ -19,18 +19,23 @@ function gravarArmazenamento(lista) {
     try {
         localStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(lista));
     } catch {
-        // localStorage indisponível (modo privado, quota etc.) — falha silenciosa.
+        // localStorage indisponível (modo privado, quota etc.) — falha silenciosa
     }
 }
 
-/** Registra somente um item que continua presente no catálogo aprovado. */
+/**
+ * Registra o acesso a uma cifra/música. Remove duplicatas (mesmo title+source)
+ * e mantém a lista ordenada do mais recente pro mais antigo, limitada a
+ * MAX_ITENS.
+ * @param {{ title: string, source: string, url: string }} item
+ */
 export function registrarAcessoCifra(item) {
-    if (!item?.id || !IDS_PERMITIDOS.has(item.id)) return;
-
     const listaAtual = lerArmazenamento();
+
     const semDuplicata = listaAtual.filter(
-        (anterior) => !(anterior.title === item.title && anterior.source === item.source)
+        (a) => !(a.title === item.title && a.source === item.source)
     );
+
     const novaLista = [
         { ...item, timestamp: Date.now() },
         ...semDuplicata,
@@ -39,7 +44,9 @@ export function registrarAcessoCifra(item) {
     gravarArmazenamento(novaLista);
 }
 
-/** Retorna só entradas do catálogo atual, sem apagar o histórico persistido do usuário. */
+/**
+ * @returns {Array<{ title: string, source: string, url: string, timestamp: number }>}
+ */
 export function obterAcessosRecentes() {
-    return lerArmazenamento().filter((item) => IDS_PERMITIDOS.has(item?.id));
+    return lerArmazenamento();
 }
