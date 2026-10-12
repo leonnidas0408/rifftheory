@@ -3,11 +3,15 @@ const reviews = [
         author: "malu__2811",
         rating: 5,
         text: "Site fácil de navegar, com organização perfeita e transição clara entre os conteúdos. O ensino dos acordes é impecável, atendendo iniciantes e profissionais. Todos os recursos são gratuitos.",
+        description: "",
+        description_link: ""
     },
     {
         author: "ffernandocavalcante",
         rating: 5,
         text: "O site tem um design moderno, bonito e organizado, com uma interface intuitiva e fácil de navegar. Gostei da proposta de permitir que o usuário visualize os acordes diretamente no braço do instrumento e pratique de forma guiada. A trilha de quatro acordes é uma ideia interessante para facilitar o aprendizado, principalmente para iniciantes. Também achei muito positivo ter ferramentas como escalas, afinador e metrônomo reunidas no mesmo lugar. No geral, é uma plataforma muito promissora, prática e útil para quem deseja evoluir musicalmente. Como sugestão, seria interessante incluir mais exercícios interativos e um acompanhamento do progresso do aluno.",
+        description: "",
+        description_link: ""
     },
 ];
 
@@ -43,6 +47,7 @@ export default function ReviewsDisplay() {
                             </span>
                             <div className="google-review-author">
                                 <strong>{review.author}</strong>
+                                <a className="light-description" href={review.description_link}>{review.description}</a>
                                 <span className="google-review-stars" aria-label={`${review.rating} de 5 estrelas`}>
                                     {"★".repeat(review.rating)}
                                 </span>

@@ -1983,3 +1983,8 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 @media (max-width: 560px) {
     .site-review-entry { gap: 12px; margin: 18px 0; padding: 16px; }
 }
+
+.light-description {
+    color: rgb(166, 166, 166);
+    font-size: 12px;
+}
