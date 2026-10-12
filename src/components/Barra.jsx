@@ -1,9 +1,10 @@
 import React from "react";
 import Icone from "./Icone";
+import AvatarUsuario from "./AvatarUsuario";
 
 // Barra arredondada abaixo das abas: lupa à esquerda, conteúdo no meio
 // (campo de busca ou título) e, à direita, ícone da conta ou botão de busca.
-export default function Barra({ titulo, children, onBuscar, botaoBusca, accountContent }) {
+export default function Barra({ titulo, children, onBuscar, botaoBusca }) {
     return (
         <div className="barra">
             {onBuscar ? (
@@ -24,7 +25,7 @@ export default function Barra({ titulo, children, onBuscar, botaoBusca, accountC
                 </button>
             ) : (
                 <span className="barra-conta">
-                    {accountContent ?? <Icone nome="conta" tamanho={28} />}
+                    <AvatarUsuario tamanho={34} />
                 </span>
             )}
         </div>

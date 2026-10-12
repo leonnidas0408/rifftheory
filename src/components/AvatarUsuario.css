@@ -1,0 +1,21 @@
+.avatar-usuario-foto,
+.avatar-usuario-inicial {
+    flex: none;
+    border-radius: 50%;
+}
+
+.avatar-usuario-foto {
+    display: block;
+    object-fit: cover;
+    background: #eaf1ff;
+}
+
+.avatar-usuario-inicial {
+    display: grid;
+    place-items: center;
+    background: #eaf1ff;
+    color: var(--primaria-escura);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+}
