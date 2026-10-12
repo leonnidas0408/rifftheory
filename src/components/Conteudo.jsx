@@ -1,6 +1,7 @@
 import React from "react";
 import Icone from "./Icone";
 import AuthButton from "./AuthButton";
+import { GOOGLE_LOGIN_UI_ENABLED } from "../auth/featureFlags";
 
 // Área principal: abas de ferramentas no topo, página atual e o botão
 // flutuante que abre o assistente (chat).
@@ -11,7 +12,7 @@ export default function Conteudo({ page, setPage, pageData }) {
         <main className="conteudo">
             <div className="auth-mobile">
                 <span className="mobile-brand"><img src="/icon.jpg" alt="" /><strong>riff<span>theory</span></strong></span>
-                <AuthButton compact />
+                {GOOGLE_LOGIN_UI_ENABLED && <AuthButton compact />}
             </div>
             <nav className="abas" aria-label="Ferramentas">
                 {abas.map(([chave, item]) => (

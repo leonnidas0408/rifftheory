@@ -1,6 +1,7 @@
 import IconButton from "./IconButton";
 import Conteudo from "./Conteudo";
 import AuthButton from "./AuthButton";
+import { GOOGLE_LOGIN_UI_ENABLED } from "../auth/featureFlags";
 
 // Seções planejadas: aparecem no menu, mas ainda não têm página.
 const EM_BREVE = [
@@ -21,9 +22,11 @@ export default function SidebarPages({ page, setPage, pageData }) {
                     <span className="brand-mark"><img src="/icon.jpg" alt="" /></span>
                     <span className="brand-copy"><strong>riff<span>theory</span></strong><small>STUDIO DE GUITARRA</small></span>
                 </a>
-                <div className="sidebar-avatar">
-                    <AuthButton />
-                </div>
+                {GOOGLE_LOGIN_UI_ENABLED && (
+                    <div className="sidebar-avatar">
+                        <AuthButton />
+                    </div>
+                )}
 
                 <nav aria-label="Navegação principal">
                     <span className="nav-caption">SEU ESPAÇO</span>

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Barra from "../Barra";
 import Icone from "../Icone";
 import { useAuth } from "../../auth/AuthContext";
+import { GOOGLE_LOGIN_UI_ENABLED } from "../../auth/featureFlags";
 
 import "./ChatbotTab.css";
 
@@ -113,23 +114,34 @@ export default function ChatbotTab() {
             <div className="pagina chatbot-tab chatbot-gate">
                 <Barra titulo="Assistente de teoria" />
                 <div className="chatbot-gate-card">
-                    <span className="chatbot-gate-icon" aria-hidden="true">Acesso protegido</span>
+                    <span className="chatbot-gate-icon" aria-hidden="true">
+                        {GOOGLE_LOGIN_UI_ENABLED ? "Acesso protegido" : "Assistente temporariamente indisponível"}
+                    </span>
                     <div className="chatbot-gate-thonic">
                         <img src="/thonic.webp" alt="Thonic, assistente do Riff Theory" />
                         <div className="chatbot-gate-falas" aria-label="Apresentação do Thonic">
                             <p>Oi, eu sou o Thonic!</p>
                             <p>Te ajudo com acordes, escalas e teoria musical.</p>
-                            <p>Entre para a gente começar.</p>
+                            <p>{GOOGLE_LOGIN_UI_ENABLED ? "Entre para a gente começar." : "Volto em breve!"}</p>
                         </div>
                     </div>
-                    <h2>Entre para usar a IA</h2>
-                    <p>O assistente envia suas perguntas a um serviço de IA. Faça login com Google para continuar.</p>
-                    <button className="chatbot-login" type="button" onClick={signInWithGoogle}>
-                        <span className="google-mark" aria-hidden="true">G</span>
-                        Entrar com Google
-                    </button>
-                    {!authConfigured && <small>O login ainda precisa ser configurado neste ambiente.</small>}
-                    {authError && <div className="chatbot-erro" role="alert">{authError}</div>}
+                    {GOOGLE_LOGIN_UI_ENABLED ? (
+                        <>
+                            <h2>Entre para usar a IA</h2>
+                            <p>O assistente envia suas perguntas a um serviço de IA. Faça login com Google para continuar.</p>
+                            <button className="chatbot-login" type="button" onClick={signInWithGoogle}>
+                                <span className="google-mark" aria-hidden="true">G</span>
+                                Entrar com Google
+                            </button>
+                            {!authConfigured && <small>O login ainda precisa ser configurado neste ambiente.</small>}
+                            {authError && <div className="chatbot-erro" role="alert">{authError}</div>}
+                        </>
+                    ) : (
+                        <>
+                            <h2>Assistente temporariamente indisponível</h2>
+                            <p>Estamos ajustando o acesso. Tente novamente mais tarde.</p>
+                        </>
+                    )}
                 </div>
             </div>
         );
