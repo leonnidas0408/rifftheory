@@ -84,7 +84,7 @@ export default function Home({ setPage }) {
     return (
         <div className="pagina">
             <Barra titulo="Início"/>
-            <section className="hero">
+            <section className="tab-hero">
                 <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
                 <h1>Escolha um acorde. Veja a posição no braço e comece a tocar.</h1>
                 <p>
