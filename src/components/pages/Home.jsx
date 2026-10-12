@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Barra from "../Barra";
 import BracoInterativo from "../BracoInterativo";
 import ChordSearch from "../Chord/ChordSearch";
+import ReviewsSection from "./ReviewsSection";
 import { registrarEvento } from "../../utils/usageStats";
 
 function rolarPara(id) {
@@ -258,6 +259,9 @@ export default function Home({ setPage }) {
                     <strong>Experimentar</strong>
                 </button>
             </div>
+            <footer className="reviews-footer">
+                <ReviewsSection />
+            </footer>
         </div>
     )
 }
