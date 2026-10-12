@@ -3,7 +3,7 @@ import Icone from "./Icone";
 
 // Barra arredondada abaixo das abas: lupa à esquerda, conteúdo no meio
 // (campo de busca ou título) e, à direita, ícone da conta ou botão de busca.
-export default function Barra({ titulo, children, onBuscar, botaoBusca }) {
+export default function Barra({ titulo, children, onBuscar, botaoBusca, accountContent }) {
     return (
         <div className="barra">
             {onBuscar ? (
@@ -23,7 +23,9 @@ export default function Barra({ titulo, children, onBuscar, botaoBusca }) {
                     <Icone nome="busca" />
                 </button>
             ) : (
-                <span className="barra-conta"><Icone nome="conta" tamanho={28} /></span>
+                <span className="barra-conta">
+                    {accountContent ?? <Icone nome="conta" tamanho={28} />}
+                </span>
             )}
         </div>
     );
