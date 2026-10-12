@@ -1828,11 +1828,10 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 }
 .site-review-label { align-self: center; color: #53647a; font-size: 13px; font-weight: 600; }
 .site-review-rating { display: flex; justify-content: flex-end; gap: 3px; }
-.site-review-star { position: relative; display: inline-flex; padding: 3px; color: #53647a; font-size: 23px; line-height: 1; cursor: pointer; }
+.site-review-star { position: relative; display: inline-flex; padding: 3px; color: #c7ced9; font-size: 23px; line-height: 1; cursor: pointer; }
 .site-review-star input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.site-review-star input:checked + span { color: var(--primaria); }
+.site-review-star.is-active span { color: #fbbc04; }
 .site-review-star input:focus-visible + span { outline: 2px solid var(--primaria); outline-offset: 3px; border-radius: 2px; }
-.site-review-star:hover { color: var(--primaria); }
 .site-review-form textarea {
     grid-column: 1 / -1;
     width: 100%;
