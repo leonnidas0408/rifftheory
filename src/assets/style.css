@@ -177,9 +177,10 @@ svg.icone {
     flex-direction: column;
     justify-content: center;
     gap: 4px;
+    flex: 1;
     width: auto;
-    min-width: 66px;
-    padding: 8px 10px;
+    min-width: 0;
+    padding: 8px 3px;
     font-size: 11px;
     text-align: center;
 }
@@ -1827,9 +1828,11 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 }
 .site-review-label { align-self: center; color: #53647a; font-size: 13px; font-weight: 600; }
 .site-review-rating { display: flex; justify-content: flex-end; gap: 3px; }
-.site-review-star { position: relative; color: #c7ced9; font-size: 23px; line-height: 1; }
+.site-review-star { position: relative; display: inline-flex; padding: 3px; color: #53647a; font-size: 23px; line-height: 1; cursor: pointer; }
 .site-review-star input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.site-review-form fieldset:disabled .site-review-star { cursor: not-allowed; }
+.site-review-star input:checked + span { color: var(--primaria); }
+.site-review-star input:focus-visible + span { outline: 2px solid var(--primaria); outline-offset: 3px; border-radius: 2px; }
+.site-review-star:hover { color: var(--primaria); }
 .site-review-form textarea {
     grid-column: 1 / -1;
     width: 100%;
@@ -1854,13 +1857,30 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
     font-size: 13px;
     font-weight: 700;
 }
-.site-review-form fieldset:disabled .site-review-submit { opacity: .5; cursor: not-allowed; }
-.site-review-disabled-note {
+.site-review-actions { grid-column: 1 / -1; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.site-review-clear {
+    min-height: 38px;
+    padding: 9px 12px;
+    border: 1px solid #dadce0;
+    border-radius: 11px;
+    background: #fff;
+    color: #53647a;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.site-review-local-note,
+.site-review-status {
     margin-top: 12px;
     color: #78869a;
     font-size: 12px;
     line-height: 1.45;
 }
+.site-review-status:empty { display: none; }
+.site-review-status.is-error { color: #a12622; }
+.site-review-status.is-success { color: #245b37; }
+.site-review-submit:focus-visible,
+.site-review-clear:focus-visible { outline: 3px solid #315ce8; outline-offset: 3px; }
 @media (max-width: 900px) {
     .reviews-content { grid-template-columns: 1fr; }
     .reviews-summary { align-items: center; text-align: center; }
@@ -1929,7 +1949,10 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 .site-review-form { box-shadow: none; border-color: #dadce0; }
 .site-review-form legend { font-family: Arial, sans-serif; }
 .site-review-disabled-note { color: #5f6368; }
-.site-review-form fieldset:disabled .site-review-submit { background: #f1f3f4; color: #80868b; opacity: 1; }
+.site-review-local-note,
+.site-review-status { color: #5f6368; }
+.site-review-status.is-error { color: #a12622; }
+.site-review-status.is-success { color: #245b37; }
 @media (max-width: 900px) {
     .reviews-footer { padding: 20px; }
     .google-review-grid { grid-template-columns: 1fr; }
@@ -1941,7 +1964,7 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
     .google-review-card { padding: 15px; }
 }
 
-/* O formulário de envio é uma seção própria e permanece desativado. */
+/* O formulário de avaliação local é uma seção própria, sem envio ao servidor. */
 .site-review-entry {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(280px, 1.1fr);

@@ -42,14 +42,17 @@ sem essa variável o endpoint fica desabilitado (503), e outros usuários recebe
 
 - Visitante vê **Entrar com Google** na navegação.
 - Usuário autenticado vê nome, foto do Google e botão **Sair**.
-- O Chatbot pode ser usado por visitantes sem sessão Google; se houver uma sessão, a interface envia o access token.
-- A API do Chatbot não exige autenticação; limita o uso por IP em janelas curtas e valida tamanho/formato do histórico antes de chamar a Groq.
+- O Chatbot exige uma sessão Google válida; sem sessão, a interface apresenta o bloqueio de login.
+- A API do Chatbot valida o Bearer token no Supabase antes de chamar a Groq. Sem token ou com token inválido, responde HTTP 401; se as variáveis de autenticação do servidor estiverem ausentes ou a validação estiver indisponível, responde HTTP 503.
+- O formulário de avaliação salva nota e comentário somente no `localStorage` deste navegador. Os dados não são enviados ao servidor, não são agregados e não aparecem como avaliação pública.
 - O limitador em memória é de melhor esforço por instância serverless e não equivale a uma cota global persistente.
 - Sem variáveis Supabase, a aplicação informa que o login ainda não foi configurado em vez de simular autenticação.
 
 ## 5. Teste de aceite
 
-1. Abrir a aplicação sem sessão e confirmar que o Chatbot permite enviar uma pergunta.
-2. Confirmar que uma conversa sem token chega à API e que mensagens inválidas/grandes são rejeitadas.
-3. Confirmar que excesso de chamadas pelo mesmo IP retorna HTTP 429.
-4. Testar o login Google separadamente e confirmar que avatar e nome aparecem na navegação.
+1. Abrir a aplicação sem sessão e confirmar que o Chatbot bloqueia o envio e oferece login Google.
+2. Fazer uma chamada direta a `/api/chat` sem `Authorization` e confirmar HTTP 401, sem chamada à Groq.
+3. Confirmar que um token válido é verificado no Supabase antes da chamada à Groq e que tokens inválidos recebem HTTP 401.
+4. Confirmar que excesso de chamadas retorna HTTP 429 e que mensagens inválidas/grandes continuam sendo rejeitadas.
+5. Salvar e apagar uma avaliação; confirmar que nota e comentário persistem apenas no navegador atual e não são enviados ao servidor.
+6. Testar o login Google separadamente e confirmar que avatar e nome aparecem na navegação.

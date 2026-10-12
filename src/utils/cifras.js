@@ -1,14 +1,12 @@
 import { buscarNoCatalogo } from "../data/tabCatalog";
 
 /**
- * Busca apenas no catálogo mantido pelo Riff Theory.
- * O app não faz scraping, não abre Google e não reproduz cifras de terceiros.
+ * Pesquisa somente no catálogo local de partituras completas aprovadas.
+ * Não faz scraping nem cria acordes ou tablaturas a partir da busca.
  */
 export function buscarCifras(query) {
-    return buscarNoCatalogo(query).slice(0, 12).map((item) => ({
-        ...item,
-        title: item.title,
-        source: item.artist,
+    return buscarNoCatalogo(query).map((score) => ({
+        ...score,
         url: "#tablaturas",
     }));
 }

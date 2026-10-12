@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Barra from "../Barra";
 import BracoInterativo from "../BracoInterativo";
 import ChordSearch from "../Chord/ChordSearch";
+import ReviewForm from "./ReviewForm";
 import ReviewsDisplay from "./ReviewsDisplay";
 import { registrarEvento } from "../../utils/usageStats";
 
@@ -137,7 +138,7 @@ export default function Home({ setPage }) {
                 <div className="trust-grid" aria-label="Sinais de confiança">
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Sem cartão para testar</strong><span>A prática guiada e o braço interativo podem ser explorados sem cadastro.</span></div></div>
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Progresso no navegador</strong><span>Histórico e dados de prática ficam no dispositivo; não são enviados para uma conta.</span></div></div>
-                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Transparência no Chatbot</strong><span>Ao usar o assistente, a pergunta e o histórico recente são enviados à API para gerar a resposta.</span></div></div>
+                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Transparência no Chatbot</strong><span>O Thonic exige login Google. Ao enviar uma pergunta, ela e o histórico recente são enviados ao serviço de IA para gerar a resposta.</span></div></div>
                 </div>
             </section>
 
@@ -147,7 +148,7 @@ export default function Home({ setPage }) {
                     <h2 id="titulo-objecoes">Feito para testar sem compromisso</h2>
                 </div>
                 <div className="objecoes-grid">
-                    <div><strong>Preço</strong><span><b>Gratuito para experimentar.</b> A prática guiada e o Chatbot não pedem cartão nem login Google; limites de uso se aplicam ao assistente.</span></div>
+                    <div><strong>Preço</strong><span><b>Gratuito para experimentar.</b> A prática guiada não exige cadastro; o Chatbot exige login Google. Limites de uso se aplicam ao assistente.</span></div>
                     <div><strong>Setup</strong><span><b>Abra e toque.</b> Funciona no navegador, sem instalar programa ou configurar conta.</span></div>
                     <div><strong>Dados</strong><span><b>Prática e progresso ficam no navegador.</b> Perguntas e histórico recente só são enviados quando você usa o Chatbot.</span></div>
                     <div><strong>Troca de ferramenta</strong><span><b>Prática guiada dentro do app.</b> Use a busca apenas quando quiser partir de uma música.</span></div>
@@ -259,6 +260,7 @@ export default function Home({ setPage }) {
                     <strong>Experimentar</strong>
                 </button>
             </div>
+            <ReviewForm />
             <footer className="reviews-footer">
                 <ReviewsDisplay />
             </footer>
