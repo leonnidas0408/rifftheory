@@ -1,0 +1,60 @@
+.tabmaker-page { padding-bottom: 28px; }
+.tabmaker-heading { display: grid; gap: 8px; padding: 8px 0 18px; border-bottom: 1px solid var(--borda); }
+.tabmaker-heading h1 { color: var(--texto); font-size: clamp(27px, 4vw, 38px); line-height: 1.12; letter-spacing: -.035em; }
+.tabmaker-heading p { max-width: 780px; color: var(--texto-suave); font-size: 15px; line-height: 1.55; }
+.tabmaker-settings { display: grid; grid-template-columns: minmax(240px, 1.4fr) minmax(240px, 1fr); gap: 16px; padding: 4px 0; }
+.tabmaker-settings label { display: grid; gap: 7px; color: var(--texto); font-size: 13px; font-weight: 700; }
+.tabmaker-settings input,
+.tabmaker-settings select { width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid var(--borda); border-radius: 8px; background: #fff; color: var(--texto); font: inherit; font-size: 14px; }
+.tabmaker-editor,
+.tabmaker-output { display: grid; gap: 14px; padding: 18px 0; border-top: 1px solid var(--borda); }
+.tabmaker-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.tabmaker-toolbar h2 { color: var(--texto); font-size: 20px; letter-spacing: -.025em; }
+.tabmaker-toolbar p { margin-top: 4px; color: var(--texto-suave); font-size: 13px; line-height: 1.45; }
+.tabmaker-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.tabmaker-button { min-height: 40px; padding: 9px 13px; border: 1px solid transparent; border-radius: 8px; font-size: 13px; font-weight: 700; transition: background-color .15s ease, border-color .15s ease; }
+.tabmaker-button-primary { background: var(--primaria); color: #fff; }
+.tabmaker-button-primary:hover { background: var(--primaria-escura); }
+.tabmaker-button-secondary { border-color: var(--borda); background: #fff; color: var(--texto); }
+.tabmaker-button-secondary:hover:not(:disabled) { border-color: var(--primaria); }
+.tabmaker-button:disabled { opacity: .5; cursor: not-allowed; }
+.tabmaker-grid-wrap { max-width: 100%; overflow: auto; border: 1px solid var(--borda); border-radius: 8px; background: #fff; }
+.tabmaker-grid { width: max-content; min-width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+.tabmaker-grid th,
+.tabmaker-grid td { width: 42px; min-width: 42px; height: 44px; padding: 3px; border-bottom: 1px solid #d8e3f0; text-align: center; }
+.tabmaker-grid thead th { height: 36px; background: var(--painel-2); color: var(--texto-suave); font-size: 11px; font-weight: 700; }
+.tabmaker-grid tbody tr:last-child th,
+.tabmaker-grid tbody tr:last-child td { border-bottom: 0; }
+.tabmaker-grid .tabmaker-string-heading { position: sticky; left: 0; z-index: 1; width: 78px; min-width: 78px; border-right: 1px solid var(--borda); background: #f7faff; }
+.tabmaker-grid thead .tabmaker-string-heading { z-index: 2; }
+.tabmaker-grid tbody .tabmaker-string-heading { display: table-cell; color: var(--texto); font-size: 14px; font-weight: 700; vertical-align: middle; }
+.tabmaker-grid tbody .tabmaker-string-heading span { display: inline-block; min-width: 17px; text-align: center; }
+.tabmaker-grid tbody .tabmaker-string-heading small { display: block; margin-top: 1px; color: var(--texto-suave); font-size: 10px; font-weight: 500; }
+.tabmaker-grid th.tabmaker-measure-start,
+.tabmaker-grid td.tabmaker-measure-start { border-left: 2px solid var(--primaria); }
+.tabmaker-grid td { position: relative; border-bottom-color: #8ca3bf; }
+.tabmaker-grid td input { width: 100%; height: 34px; padding: 2px; border: 0; border-radius: 4px; outline: 0; background: transparent; color: var(--primaria-escura); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 15px; font-weight: 700; text-align: center; }
+.tabmaker-grid td input:focus-visible { outline: 2px solid var(--primaria); outline-offset: -1px; background: #eef5fe; }
+.tabmaker-scroll-hint,
+.tabmaker-guidance { color: var(--texto-suave); font-size: 12px; line-height: 1.5; }
+.tabmaker-guidance strong { color: var(--texto); }
+.tabmaker-preview { max-width: 100%; overflow: auto; padding: 14px; border: 1px solid var(--borda); border-radius: 8px; background: #fff; color: var(--texto); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.65; white-space: pre; }
+.tabmaker-status { min-height: 20px; color: var(--texto-suave); font-size: 12px; line-height: 1.5; }
+.tabmaker-button:focus-visible,
+.tabmaker-settings input:focus-visible,
+.tabmaker-settings select:focus-visible,
+.tabmaker-grid-wrap:focus-visible { outline: 3px solid var(--primaria); outline-offset: 2px; }
+@media (max-width: 680px) {
+    .tabmaker-settings { grid-template-columns: 1fr; gap: 12px; }
+    .tabmaker-toolbar { align-items: flex-start; flex-direction: column; }
+    .tabmaker-actions { justify-content: flex-start; width: 100%; }
+    .tabmaker-actions .tabmaker-button { flex: 1 1 auto; }
+    .tabmaker-grid { min-width: 600px; }
+    .tabmaker-grid th,
+    .tabmaker-grid td { width: 38px; min-width: 38px; }
+    .tabmaker-grid .tabmaker-string-heading { width: 64px; min-width: 64px; }
+    .tabmaker-preview { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tabmaker-button { transition: none; }
+}

@@ -1,141 +1,269 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Barra from "../Barra";
-import PrettyPanel from "../PrettyPanel";
-import { buscarNoCatalogo, TAB_CATALOG } from "../../data/tabCatalog";
+import "./TabMaker.css";
 
-function explicar(item) {
-    const foco = item.tags[0] || "coordenação";
-    const acordeTexto = item.chords.join(", ");
-    if (item.kind === "Exercício original") {
-        return `Este estudo original foi criado para trabalhar ${foco}. A forma A–A–B–final usa ${acordeTexto} como base harmônica; a seção B traz uma variação e o último ciclo encerra a frase, sem voltar ao início.`;
+const STORAGE_KEY = "riff-theory:tabmaker-draft:v1";
+const POSICOES_POR_COMPASSO = 8;
+const NOMES_CORDAS = ["e", "B", "G", "D", "A", "E"];
+const AFINACOES = {
+    standard: {
+        label: "Padrão · E A D G B E",
+        nomes: ["E4", "B3", "G3", "D3", "A2", "E2"],
+    },
+    dropD: {
+        label: "Drop D · D A D G B E",
+        nomes: ["E4", "B3", "G3", "D3", "A2", "D2"],
+    },
+    halfStep: {
+        label: "Meio tom abaixo · Eb Ab Db Gb Bb Eb",
+        nomes: ["Eb4", "Bb3", "Gb3", "Db3", "Ab2", "Eb2"],
+    },
+};
+
+function criarGrade(colunas = POSICOES_POR_COMPASSO) {
+    return Array.from({ length: 6 }, () => Array(colunas).fill(""));
+}
+
+function rascunhoVazio() {
+    return { title: "", tuning: "standard", notes: criarGrade() };
+}
+
+function lerRascunho() {
+    if (typeof window === "undefined") return rascunhoVazio();
+
+    try {
+        const salvo = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "null");
+        if (!salvo || !Array.isArray(salvo.notes) || salvo.notes.length !== 6) return rascunhoVazio();
+
+        const colunas = salvo.notes[0]?.length;
+        if (!Number.isInteger(colunas) || colunas < POSICOES_POR_COMPASSO || colunas > 128 || colunas % POSICOES_POR_COMPASSO !== 0) {
+            return rascunhoVazio();
+        }
+
+        const notes = salvo.notes.map((linha) => {
+            if (!Array.isArray(linha) || linha.length !== colunas) return null;
+            return linha.map((valor) => {
+                const texto = String(valor ?? "");
+                return /^(?:[0-9]|1\d|2[0-4])$/.test(texto) ? texto : "";
+            });
+        });
+        if (notes.some((linha) => !linha)) return rascunhoVazio();
+
+        return {
+            title: typeof salvo.title === "string" ? salvo.title.slice(0, 80) : "",
+            tuning: Object.hasOwn(AFINACOES, salvo.tuning) ? salvo.tuning : "standard",
+            notes,
+        };
+    } catch {
+        return rascunhoVazio();
     }
-    return `Este arranjo didático organiza uma melodia tradicional sobre ${acordeTexto} em A–A–B–final. A linha foi simplificada para estudo no violão: memorize a parte A, compare a variação B e pare na cadência final.`;
 }
 
-function comoEstudar(item) {
-    const foco = item.tags.slice(0, 2).join(" e ") || "a coordenação";
-    return [
-        `Comece em 60 BPM e toque a forma A–A–B–final de ${foco} lentamente, sem pular a seção B nem a cadência final.`,
-        `Separe os trechos difíceis em ciclos de quatro batidas e confira se todas as notas soam claras.`,
-        `Aumente o metrônomo de 5 em 5 BPM somente quando conseguir repetir o padrão três vezes sem erro.`,
-    ];
+function gerarTablatura(rascunho) {
+    const afinacao = AFINACOES[rascunho.tuning] || AFINACOES.standard;
+    const titulo = rascunho.title.trim() || "Sem título";
+    const cabecalho = `${titulo}\nAfinação: ${afinacao.label}\n`;
+    const linhas = rascunho.notes.map((notas, indice) => {
+        const compassos = [];
+        for (let inicio = 0; inicio < notas.length; inicio += POSICOES_POR_COMPASSO) {
+            const grupo = notas.slice(inicio, inicio + POSICOES_POR_COMPASSO);
+            compassos.push(grupo.map((nota) => (nota ? `-${nota}-`.padEnd(4, "-") : "----")).join(""));
+        }
+        return `${NOMES_CORDAS[indice]}|${compassos.join("|")}|`;
+    });
+    return `${cabecalho}\n${linhas.join("\n")}`;
 }
 
-function TabCard({ item, onOpen }) {
-    return (
-        <article className="tab-card">
-            <div className="tab-card-head">
-                <div>
-                    <span className="tab-kicker">{item.kind}</span>
-                    <h3>{item.title}</h3>
-                    <p>{item.artist}</p>
-                </div>
-                <span className="tab-difficulty">{item.difficulty}</span>
-            </div>
-            <div className="tab-meta">
-                <span>Afinação: {item.tuning}</span>
-                <span>{item.capo}</span>
-                <span>Acordes: {item.chords.join(" · ")}</span>
-            </div>
-            <pre className="tab-pre" aria-label={`Tablatura de ${item.title}`}>{item.tab}</pre>
-            <p className="tab-notation-note">A forma é A–A–B–final: a terceira parte varia e a última encerra, sem voltar ao início. Leia de cima para baixo: e é a corda mais aguda. <code>-</code> sustenta o tempo · <code>x</code> abafa · <code>h</code> indica hammer-on.</p>
-            <p className="tab-card-explanation">{explicar(item)}</p>
-            <footer className="tab-card-footer">
-                <span className="tab-license">{item.license}</span>
-                <span className="tab-tags">{item.tags.join(" · ")}</span>
-            </footer>
-            <button type="button" className="link-botao tab-open-button" onClick={() => onOpen(item)}>
-                Abrir tab e explicação
-            </button>
-        </article>
-    );
-}
-
-function TabDetail({ item, onClose }) {
-    const passos = comoEstudar(item);
-    return (
-        <div className="tab-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-            <section className="tab-modal" role="dialog" aria-modal="true" aria-labelledby="tab-modal-title">
-                <button type="button" className="tab-modal-close" onClick={onClose} aria-label="Fechar tablatura">×</button>
-                <span className="tab-kicker">{item.kind} · {item.difficulty}</span>
-                <h2 id="tab-modal-title">{item.title}</h2>
-                <p className="tab-modal-artist">{item.artist}</p>
-                <div className="tab-modal-meta">
-                    <span>Afinação: {item.tuning}</span>
-                    <span>{item.capo}</span>
-                    <span>Acordes: {item.chords.join(" · ")}</span>
-                </div>
-                <div className="tab-detail-section">
-                    <h3>Tablatura completa</h3>
-                    <pre className="tab-pre tab-pre-detail" aria-label={`Tablatura completa de ${item.title}`}>{item.tab}</pre>
-                    <p className="tab-notation-note">Esta é uma forma de estudo A–A–B–final, não apenas um trecho repetido. O último ciclo encerra a frase. As linhas seguem a afinação {item.tuning}; a corda mais aguda fica em cima.</p>
-                </div>
-                <div className="tab-detail-section">
-                    <h3>O que você vai praticar</h3>
-                    <p>{explicar(item)}</p>
-                </div>
-                <div className="tab-detail-section">
-                    <h3>Como estudar</h3>
-                    <ol className="tab-study-steps">{passos.map((passo) => <li key={passo}>{passo}</li>)}</ol>
-                </div>
-                <div className="tab-modal-license">{item.license}</div>
-            </section>
-        </div>
-    );
+function nomeArquivo(titulo) {
+    const base = titulo
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+    return `${base || "tablatura"}.txt`;
 }
 
 export default function Tablaturas() {
-    const [query, setQuery] = useState("");
-    const [filtro, setFiltro] = useState("Todos");
-    const [aberta, setAberta] = useState(null);
-    const resultados = useMemo(() => {
-        const base = buscarNoCatalogo(query);
-        return filtro === "Todos" ? base : base.filter((item) => item.kind === filtro);
-    }, [filtro, query]);
+    const [rascunho, setRascunho] = useState(lerRascunho);
+    const [status, setStatus] = useState("O rascunho fica salvo neste navegador; não é sincronizado entre dispositivos.");
+    const colunas = rascunho.notes[0]?.length || POSICOES_POR_COMPASSO;
+    const quantidadeCompassos = colunas / POSICOES_POR_COMPASSO;
+    const textoTab = useMemo(() => gerarTablatura(rascunho), [rascunho]);
+    const afinacao = AFINACOES[rascunho.tuning] || AFINACOES.standard;
+
+    useEffect(() => {
+        try {
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(rascunho));
+            setStatus("Rascunho salvo neste navegador; não é sincronizado entre dispositivos.");
+        } catch {
+            setStatus("O armazenamento local está indisponível. Use Copiar ou Baixar para não perder sua tablatura.");
+        }
+    }, [rascunho]);
+
+    function atualizar(campo, valor) {
+        setRascunho((atual) => ({ ...atual, [campo]: valor }));
+    }
+
+    function atualizarNota(corda, posicao, valor) {
+        if (valor !== "" && !/^\d{1,2}$/.test(valor)) return;
+        if (valor !== "" && Number(valor) > 24) {
+            setStatus("Use uma casa entre 0 e 24.");
+            return;
+        }
+
+        setRascunho((atual) => ({
+            ...atual,
+            notes: atual.notes.map((linha, indice) => (
+                indice === corda ? linha.map((nota, coluna) => (coluna === posicao ? valor : nota)) : linha
+            )),
+        }));
+    }
+
+    function adicionarCompasso() {
+        setRascunho((atual) => ({
+            ...atual,
+            notes: atual.notes.map((linha) => [...linha, ...Array(POSICOES_POR_COMPASSO).fill("")]),
+        }));
+    }
+
+    function removerCompasso() {
+        if (quantidadeCompassos <= 1) return;
+        setRascunho((atual) => ({
+            ...atual,
+            notes: atual.notes.map((linha) => linha.slice(0, -POSICOES_POR_COMPASSO)),
+        }));
+    }
+
+    async function copiarTablatura() {
+        try {
+            await navigator.clipboard.writeText(textoTab);
+            setStatus("Tablatura copiada para a área de transferência.");
+        } catch {
+            setStatus("Não foi possível copiar automaticamente. Selecione o texto da prévia ou baixe o arquivo.");
+        }
+    }
+
+    function baixarTablatura() {
+        const arquivo = new Blob([textoTab], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(arquivo);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = nomeArquivo(rascunho.title);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        setStatus("Arquivo de tablatura baixado.");
+    }
 
     return (
-        <div className="pagina">
-            <Barra titulo="Tablaturas" />
-            <section className="tab-hero" aria-labelledby="tab-title">
-                <span className="eyebrow">CATÁLOGO LOCAL · SEM SCRAPING</span>
-                <h1 id="tab-title">Cifras e tabs para tocar dentro do Riff Theory.</h1>
-                <p>Abra qualquer cartão para ver uma frase completa, entender o objetivo do estudo e seguir um roteiro de prática. Nenhum resultado depende de outro site.</p>
-                <div className="tab-stats" aria-label="Resumo do catálogo">
-                    <strong>{TAB_CATALOG.length}<span> estudos completos</span></strong>
-                    <strong>20–400<span> BPM para praticar</span></strong>
-                    <strong>CC0 + DP<span> fontes permitidas</span></strong>
-                </div>
+        <div className="pagina tabmaker-page">
+            <Barra titulo="TabMaker" />
+
+            <header className="tabmaker-heading">
+                <span className="eyebrow">EDITOR DE TABLATURA</span>
+                <h1>Escreva sua própria tab</h1>
+                <p>Edite as casas nas seis cordas. Cada compasso tem oito posições; notas simultâneas na mesma coluna formam acordes. O editor não gera nem atribui tablaturas automaticamente.</p>
+            </header>
+
+            <section className="tabmaker-settings" aria-label="Identificação da tablatura">
+                <label>
+                    Título
+                    <input
+                        type="text"
+                        maxLength={80}
+                        value={rascunho.title}
+                        onChange={(event) => atualizar("title", event.target.value)}
+                        placeholder="Ex.: riff em Mi menor"
+                    />
+                </label>
+                <label>
+                    Afinação
+                    <select value={rascunho.tuning} onChange={(event) => atualizar("tuning", event.target.value)}>
+                        {Object.entries(AFINACOES).map(([id, item]) => <option key={id} value={id}>{item.label}</option>)}
+                    </select>
+                </label>
             </section>
 
-            <section className="tab-library" aria-labelledby="tab-library-title">
-                <div className="tab-library-heading">
+            <section className="tabmaker-editor" aria-labelledby="tabmaker-editor-title">
+                <div className="tabmaker-toolbar">
                     <div>
-                        <span className="eyebrow">BIBLIOTECA</span>
-                        <h2 id="tab-library-title">Encontre uma cifra ou tablatura</h2>
+                        <h2 id="tabmaker-editor-title">Grade de tablatura</h2>
+                        <p>{quantidadeCompassos} {quantidadeCompassos === 1 ? "compasso" : "compassos"} · cordas da mais aguda para a mais grave</p>
                     </div>
-                    <span className="subtitulo">{resultados.length} resultado{resultados.length === 1 ? "" : "s"}</span>
+                    <div className="tabmaker-actions">
+                        <button className="tabmaker-button tabmaker-button-secondary" type="button" onClick={removerCompasso} disabled={quantidadeCompassos <= 1}>
+                            Remover compasso
+                        </button>
+                        <button className="tabmaker-button tabmaker-button-primary" type="button" onClick={adicionarCompasso}>
+                            + Compasso
+                        </button>
+                    </div>
                 </div>
-                <Barra>
-                    <input
-                        type="search"
-                        value={query}
-                        onChange={(event) => setQuery(event.target.value)}
-                        placeholder="Buscar título, artista, acorde ou técnica..."
-                        aria-label="Buscar no catálogo local de tablaturas"
-                    />
-                </Barra>
-                <div className="tab-filters" role="group" aria-label="Filtrar catálogo">
-                    {["Todos", "Exercício original", "Melodia tradicional"].map((option) => (
-                        <button key={option} type="button" className={`pilula${filtro === option ? " ligada" : ""}`} onClick={() => setFiltro(option)} aria-pressed={filtro === option}>{option}</button>
-                    ))}
+
+                <p className="tabmaker-scroll-hint">Em telas estreitas, deslize a grade para os lados para acessar todas as posições.</p>
+                <div className="tabmaker-grid-wrap" role="region" aria-label="Grade editável de seis cordas" tabIndex="0">
+                    <table className="tabmaker-grid">
+                        <thead>
+                            <tr>
+                                <th scope="col" className="tabmaker-string-heading">Corda</th>
+                                {Array.from({ length: colunas }, (_, posicao) => (
+                                    <th
+                                        scope="col"
+                                        className={posicao % POSICOES_POR_COMPASSO === 0 ? "tabmaker-measure-start" : ""}
+                                        key={posicao}
+                                        aria-label={`Compasso ${Math.floor(posicao / POSICOES_POR_COMPASSO) + 1}, posição ${posicao % POSICOES_POR_COMPASSO + 1}`}
+                                    >
+                                        {posicao % POSICOES_POR_COMPASSO + 1}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {NOMES_CORDAS.map((nome, corda) => (
+                                <tr key={nome}>
+                                    <th scope="row" className="tabmaker-string-heading">
+                                        <span>{nome}</span>
+                                        <small>{afinacao.nomes[corda]}</small>
+                                    </th>
+                                    {rascunho.notes[corda].map((nota, posicao) => (
+                                        <td className={posicao % POSICOES_POR_COMPASSO === 0 ? "tabmaker-measure-start" : ""} key={posicao}>
+                                            <input
+                                                type="text"
+                                                inputMode="numeric"
+                                                pattern="[0-9]*"
+                                                maxLength={2}
+                                                value={nota}
+                                                onChange={(event) => atualizarNota(corda, posicao, event.target.value)}
+                                                aria-label={`${nome}, ${afinacao.nomes[corda]}, compasso ${Math.floor(posicao / POSICOES_POR_COMPASSO) + 1}, posição ${posicao % POSICOES_POR_COMPASSO + 1}, casa de 0 a 24`}
+                                                autoComplete="off"
+                                            />
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
-                {resultados.length ? (
-                    <div className="tab-grid">{resultados.map((item) => <TabCard key={item.id} item={item} onOpen={setAberta} />)}</div>
-                ) : (
-                    <PrettyPanel><span className="subtitulo">Nenhum item local corresponde à busca. Tente outro título, acorde ou técnica.</span></PrettyPanel>
-                )}
+                <p className="tabmaker-guidance">Digite uma casa de <strong>0 a 24</strong>. Deixe em branco para não tocar a corda naquela posição. A mesma posição em mais de uma corda representa notas tocadas juntas.</p>
             </section>
-            {aberta && <TabDetail item={aberta} onClose={() => setAberta(null)} />}
+
+            <section className="tabmaker-output" aria-labelledby="tabmaker-output-title">
+                <div className="tabmaker-toolbar">
+                    <div>
+                        <h2 id="tabmaker-output-title">Prévia em texto</h2>
+                        <p>Formato simples de tablatura, pronto para copiar ou salvar.</p>
+                    </div>
+                    <div className="tabmaker-actions">
+                        <button className="tabmaker-button tabmaker-button-secondary" type="button" onClick={copiarTablatura}>Copiar</button>
+                        <button className="tabmaker-button tabmaker-button-primary" type="button" onClick={baixarTablatura}>Baixar .txt</button>
+                    </div>
+                </div>
+                <pre className="tabmaker-preview" aria-label="Prévia textual da tablatura">{textoTab}</pre>
+            </section>
+
+            <p className="tabmaker-status" role="status" aria-live="polite">{status}</p>
         </div>
     );
 }

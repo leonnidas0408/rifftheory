@@ -9,6 +9,11 @@ const reviews = [
         rating: 5,
         text: "O site tem um design moderno, bonito e organizado, com uma interface intuitiva e fácil de navegar. Gostei da proposta de permitir que o usuário visualize os acordes diretamente no braço do instrumento e pratique de forma guiada. A trilha de quatro acordes é uma ideia interessante para facilitar o aprendizado, principalmente para iniciantes. Também achei muito positivo ter ferramentas como escalas, afinador e metrônomo reunidas no mesmo lugar. No geral, é uma plataforma muito promissora, prática e útil para quem deseja evoluir musicalmente. Como sugestão, seria interessante incluir mais exercícios interativos e um acompanhamento do progresso do aluno.",
     },
+    {
+        author: "luis_m.012",
+        rating: 5,
+        text: "O site é muito bem organizado e fácil de usar, com uma proposta interessante para quem gosta de guitarra e música. A navegação é intuitiva, e dá pra perceber o cuidado colocado no desenvolvimento do projeto. Uma ótima iniciativa, principalmente para quem procura conteúdo relacionado ao mundo da guitarra. Recomendo!",
+    },
 ];
 
 const averageRating = (
