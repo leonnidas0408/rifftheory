@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import Barra from "../Barra";
+import AvatarUsuario from "../AvatarUsuario";
 import Icone from "../Icone";
 import { useAuth } from "../../auth/AuthContext";
 
@@ -25,33 +26,13 @@ const FALAS_THONIC = [
     { fala: "Uma dica para escalas?", pergunta: "Como escolho uma escala para improvisar?" },
 ];
 
-function AvatarPerfil({ url, nome }) {
-    const [imagemFalhou, setImagemFalhou] = useState(false);
-    const inicial = nome.trim().slice(0, 1).toUpperCase() || "?";
-
-    if (url && !imagemFalhou) {
-        return (
-            <img
-                className="chatbot-perfil-avatar"
-                src={url}
-                alt={`Foto de perfil de ${nome}`}
-                onError={() => setImagemFalhou(true)}
-            />
-        );
-    }
-
-    return <span className="chatbot-perfil-fallback" aria-label={`Perfil de ${nome}`}>{inicial}</span>;
-}
-
 export default function ChatbotTab() {
-    const { session, user, loading: authLoading, authConfigured, signInWithGoogle, error: authError, getAvatarUrl, getDisplayName } = useAuth();
+    const { session, loading: authLoading, authConfigured, signInWithGoogle, error: authError } = useAuth();
     const [mensagens, setMensagens] = useState([MENSAGEM_BOAS_VINDAS]);
     const [entrada, setEntrada] = useState("");
     const [carregando, setCarregando] = useState(false);
     const [erro, setErro] = useState("");
 
-    const avatarUrl = getAvatarUrl(user);
-    const nomeUsuario = getDisplayName(user);
     const fimDaListaRef = useRef(null);
 
     useEffect(() => {
@@ -153,10 +134,7 @@ export default function ChatbotTab() {
         <div className="pagina chatbot-tab">
             <div className="chatbot-topo">
                 <div className="chatbot-barra">
-                    <Barra
-                        titulo="Riff Theory"
-                        accountContent={<AvatarPerfil key={avatarUrl || nomeUsuario} url={avatarUrl} nome={nomeUsuario} />}
-                    />
+                    <Barra titulo="Riff Theory" />
                 </div>
 
                 <button
@@ -180,7 +158,7 @@ export default function ChatbotTab() {
                             {mensagem.autor === "bot" ? (
                                 <img src="/thonic.webp" alt="Thonic" />
                             ) : (
-                                <Icone nome="conta" tamanho={22} />
+                                <AvatarUsuario tamanho={42} />
                             )}
                         </span>
 
