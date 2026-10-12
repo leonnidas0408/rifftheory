@@ -21,7 +21,7 @@ export default function ReviewsDisplay() {
             <header className="google-reviews-heading">
                 <div className="secao-heading">
                     <span className="eyebrow">Opiniões da comunidade</span>
-                    <h2 id="reviews-title">Avaliações do Google</h2>
+                    <h2 id="reviews-title">Avaliações</h2>
                     <p>Experiências de quem já conheceu o Riff Theory.</p>
                 </div>
             </header>
