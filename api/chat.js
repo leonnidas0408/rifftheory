@@ -19,11 +19,21 @@ const path = require("path");
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 const MAX_TRECHOS_CONTEXTO = 4;
 const MAX_MENSAGENS_HISTORICO = 12; // limita o tamanho do payload enviado
+const MAX_TEXTO_MENSAGEM = 2000;
+const MAX_TEXTO_TOTAL = 8000;
+const MAX_TOKENS_RESPOSTA = 700;
+const LIMITE_JANELA_MS = 60 * 1000;
+const LIMITE_REQUISICOES = 5;
+const LIMITE_HORA_MS = 60 * 60 * 1000;
+const LIMITE_REQUISICOES_HORA = 30;
+
+// Limitador em memória de melhor esforço. Em funções serverless, cada instância
+// pode manter sua própria janela; para cotas globais, configure um rate limiter
+// persistente no gateway/edge da Vercel.
+const chamadasPorIp = new Map();
 
 const SYSTEM_PROMPT_BASE = `Você é o assistente de IA do Riff Theory, um app de violão/guitarra e teoria musical. Seu nome é Tonic.
 
@@ -115,23 +125,71 @@ function montarSystemPrompt(trechos) {
     return `${SYSTEM_PROMPT_BASE}\n\nTRECHOS DE REFERÊNCIA:\n${blocoTrechos}`;
 }
 
-async function validarSessao(req) {
-    const autorizacao = req.headers.authorization || "";
-    if (!autorizacao.startsWith("Bearer ")) return { ausente: true };
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return { configuracaoAusente: true };
-
-    try {
-        const resposta = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-            headers: {
-                apikey: SUPABASE_ANON_KEY,
-                Authorization: autorizacao,
-            },
-        });
-        if (!resposta.ok) return { invalida: true };
-        return { usuario: await resposta.json() };
-    } catch {
-        return { invalida: true };
+function obterIp(req) {
+    const encaminhado = req.headers["x-forwarded-for"];
+    if (typeof encaminhado === "string" && encaminhado.trim()) {
+        return encaminhado.split(",")[0].trim().slice(0, 64);
     }
+    const real = req.headers["x-real-ip"];
+    if (typeof real === "string" && real.trim()) return real.trim().slice(0, 64);
+    return req.socket?.remoteAddress || "desconhecido";
+}
+
+function excedeuLimite(req, agora = Date.now()) {
+    const ip = obterIp(req);
+    const recentes = (chamadasPorIp.get(ip) || []).filter(
+        (timestamp) => agora - timestamp < LIMITE_HORA_MS
+    );
+
+    if (recentes.filter((timestamp) => agora - timestamp < LIMITE_JANELA_MS).length >= LIMITE_REQUISICOES ||
+        recentes.length >= LIMITE_REQUISICOES_HORA) {
+        chamadasPorIp.set(ip, recentes);
+        return true;
+    }
+
+    recentes.push(agora);
+    chamadasPorIp.set(ip, recentes);
+
+    // Remove registros expirados para evitar crescimento ilimitado do Map.
+    if (chamadasPorIp.size > 5000) {
+        for (const [chave, timestamps] of chamadasPorIp) {
+            const ativos = timestamps.filter((timestamp) => agora - timestamp < LIMITE_HORA_MS);
+            if (ativos.length) chamadasPorIp.set(chave, ativos);
+            else chamadasPorIp.delete(chave);
+        }
+    }
+    return false;
+}
+
+function validarMensagens(mensagens) {
+    if (!Array.isArray(mensagens) || mensagens.length === 0) {
+        return { erro: "Nenhuma mensagem enviada.", status: 400 };
+    }
+    if (mensagens.length > MAX_MENSAGENS_HISTORICO) {
+        return { erro: "A conversa excedeu o limite de mensagens. Inicie uma nova conversa.", status: 413 };
+    }
+
+    let total = 0;
+    const validas = [];
+    for (const mensagem of mensagens) {
+        if (!mensagem || !["usuario", "bot"].includes(mensagem.autor) || typeof mensagem.texto !== "string") {
+            return { erro: "Formato de mensagem inválido.", status: 400 };
+        }
+        const texto = mensagem.texto.trim();
+        if (!texto || texto.length > MAX_TEXTO_MENSAGEM) {
+            return { erro: `Cada mensagem deve ter entre 1 e ${MAX_TEXTO_MENSAGEM} caracteres.`, status: 400 };
+        }
+        total += texto.length;
+        if (total > MAX_TEXTO_TOTAL) {
+            return { erro: "A conversa excedeu o tamanho máximo permitido.", status: 413 };
+        }
+        validas.push({ autor: mensagem.autor, texto });
+    }
+
+    if (!validas.some((mensagem) => mensagem.autor === "usuario")) {
+        return { erro: "Nenhuma pergunta do usuário encontrada.", status: 400 };
+    }
+    return { mensagens: validas };
 }
 
 module.exports = async function handler(req, res) {
@@ -140,13 +198,8 @@ module.exports = async function handler(req, res) {
         return;
     }
 
-    const sessao = await validarSessao(req);
-    if (sessao.configuracaoAusente) {
-        res.status(503).json({ erro: "Autenticação ainda não configurada no servidor." });
-        return;
-    }
-    if (sessao.ausente || sessao.invalida || !sessao.usuario) {
-        res.status(401).json({ erro: "Faça login com Google para usar o assistente." });
+    if (excedeuLimite(req)) {
+        res.status(429).json({ erro: "Limite de perguntas atingido. Aguarde um pouco e tente novamente." });
         return;
     }
 
@@ -159,12 +212,12 @@ module.exports = async function handler(req, res) {
         return;
     }
 
-    const { mensagens } = req.body || {};
-
-    if (!Array.isArray(mensagens) || mensagens.length === 0) {
-        res.status(400).json({ erro: "Nenhuma mensagem enviada." });
+    const validacao = validarMensagens(req.body?.mensagens);
+    if (validacao.erro) {
+        res.status(validacao.status).json({ erro: validacao.erro });
         return;
     }
+    const { mensagens } = validacao;
 
     const ultimaMensagemUsuario = [...mensagens]
         .reverse()
@@ -204,6 +257,7 @@ module.exports = async function handler(req, res) {
                 model: GROQ_MODEL,
                 messages: mensagensParaGroq,
                 temperature: 0.4,
+                max_tokens: MAX_TOKENS_RESPOSTA,
             }),
         });
 

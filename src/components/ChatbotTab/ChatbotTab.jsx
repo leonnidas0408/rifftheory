@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import Barra from "../Barra";
 import Icone from "../Icone";
 import { useAuth } from "../../auth/AuthContext";
-import { GOOGLE_LOGIN_UI_ENABLED } from "../../auth/featureFlags";
 
 import "./ChatbotTab.css";
 
@@ -27,7 +26,7 @@ const FALAS_THONIC = [
 ];
 
 export default function ChatbotTab() {
-    const { user, session, loading: authLoading, authConfigured, signInWithGoogle, error: authError } = useAuth();
+    const { session } = useAuth();
     const [mensagens, setMensagens] = useState([MENSAGEM_BOAS_VINDAS]);
     const [entrada, setEntrada] = useState("");
     const [carregando, setCarregando] = useState(false);
@@ -58,7 +57,7 @@ export default function ChatbotTab() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${session?.access_token || ""}`,
+                    ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
                 },
                 body: JSON.stringify({
                     // Manda só autor/texto pro backend remontar a conversa.
@@ -98,53 +97,6 @@ export default function ChatbotTab() {
         setMensagens([{ ...MENSAGEM_BOAS_VINDAS, hora: horaAgora() }]);
         setEntrada("");
         setErro("");
-    }
-
-    if (authLoading) {
-        return (
-            <div className="pagina chatbot-tab chatbot-gate">
-                <Barra titulo="Assistente de teoria" />
-                <div className="chatbot-gate-card">Verificando sua conta...</div>
-            </div>
-        );
-    }
-
-    if (!user) {
-        return (
-            <div className="pagina chatbot-tab chatbot-gate">
-                <Barra titulo="Assistente de teoria" />
-                <div className="chatbot-gate-card">
-                    <span className="chatbot-gate-icon" aria-hidden="true">
-                        {GOOGLE_LOGIN_UI_ENABLED ? "Acesso protegido" : "Assistente temporariamente indisponível"}
-                    </span>
-                    <div className="chatbot-gate-thonic">
-                        <img src="/thonic.webp" alt="Thonic, assistente do Riff Theory" />
-                        <div className="chatbot-gate-falas" aria-label="Apresentação do Thonic">
-                            <p>Oi, eu sou o Thonic!</p>
-                            <p>Te ajudo com acordes, escalas e teoria musical.</p>
-                            <p>{GOOGLE_LOGIN_UI_ENABLED ? "Entre para a gente começar." : "Volto em breve!"}</p>
-                        </div>
-                    </div>
-                    {GOOGLE_LOGIN_UI_ENABLED ? (
-                        <>
-                            <h2>Entre para usar a IA</h2>
-                            <p>O assistente envia suas perguntas a um serviço de IA. Faça login com Google para continuar.</p>
-                            <button className="chatbot-login" type="button" onClick={signInWithGoogle}>
-                                <span className="google-mark" aria-hidden="true">G</span>
-                                Entrar com Google
-                            </button>
-                            {!authConfigured && <small>O login ainda precisa ser configurado neste ambiente.</small>}
-                            {authError && <div className="chatbot-erro" role="alert">{authError}</div>}
-                        </>
-                    ) : (
-                        <>
-                            <h2>Assistente temporariamente indisponível</h2>
-                            <p>Estamos ajustando o acesso. Tente novamente mais tarde.</p>
-                        </>
-                    )}
-                </div>
-            </div>
-        );
     }
 
     return (
@@ -240,7 +192,7 @@ export default function ChatbotTab() {
                 </button>
             </form>
             <p className="chatbot-privacidade">
-                Para responder, sua pergunta e o histórico recente desta conversa são enviados ao serviço de IA. O progresso da prática continua local no navegador.
+                Não precisa entrar com Google. Para responder, sua pergunta e o histórico recente desta conversa são enviados ao serviço de IA; o progresso da prática continua local no navegador. Limites de uso se aplicam.
             </p>
         </div>
     );

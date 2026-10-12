@@ -42,17 +42,14 @@ sem essa variável o endpoint fica desabilitado (503), e outros usuários recebe
 
 - Visitante vê **Entrar com Google** na navegação.
 - Usuário autenticado vê nome, foto do Google e botão **Sair**.
-- O Chatbot mostra uma tela de login para visitantes.
-- A interface envia o access token na chamada da IA.
-- A API valida o token no Supabase antes de chamar a Groq.
-- Uma chamada sem token recebe HTTP 401.
+- O Chatbot pode ser usado por visitantes sem sessão Google; se houver uma sessão, a interface envia o access token.
+- A API do Chatbot não exige autenticação; limita o uso por IP em janelas curtas e valida tamanho/formato do histórico antes de chamar a Groq.
+- O limitador em memória é de melhor esforço por instância serverless e não equivale a uma cota global persistente.
 - Sem variáveis Supabase, a aplicação informa que o login ainda não foi configurado em vez de simular autenticação.
 
 ## 5. Teste de aceite
 
-1. Abrir a aplicação sem sessão: o botão de login deve aparecer.
-2. Clicar em **Entrar com Google** e concluir o consentimento.
-3. Confirmar que o avatar e o nome aparecem na navegação.
-4. Abrir o Chatbot e enviar uma pergunta.
-5. Sair da conta e confirmar que o Chatbot volta a ficar bloqueado.
-6. Fazer uma chamada direta a `/api/chat` sem `Authorization` e confirmar HTTP 401.
+1. Abrir a aplicação sem sessão e confirmar que o Chatbot permite enviar uma pergunta.
+2. Confirmar que uma conversa sem token chega à API e que mensagens inválidas/grandes são rejeitadas.
+3. Confirmar que excesso de chamadas pelo mesmo IP retorna HTTP 429.
+4. Testar o login Google separadamente e confirmar que avatar e nome aparecem na navegação.

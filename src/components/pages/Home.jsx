@@ -146,7 +146,7 @@ export default function Home({ setPage }) {
                     <h2 id="titulo-objecoes">Feito para testar sem compromisso</h2>
                 </div>
                 <div className="objecoes-grid">
-                    <div><strong>Preço</strong><span><b>Gratuito para experimentar.</b> A prática guiada não pede cartão nem cadastro; o Chatbot requer login Google.</span></div>
+                    <div><strong>Preço</strong><span><b>Gratuito para experimentar.</b> A prática guiada e o Chatbot não pedem cartão nem login Google; limites de uso se aplicam ao assistente.</span></div>
                     <div><strong>Setup</strong><span><b>Abra e toque.</b> Funciona no navegador, sem instalar programa ou configurar conta.</span></div>
                     <div><strong>Dados</strong><span><b>Prática e progresso ficam no navegador.</b> Perguntas e histórico recente só são enviados quando você usa o Chatbot.</span></div>
                     <div><strong>Troca de ferramenta</strong><span><b>Prática guiada dentro do app.</b> Use a busca apenas quando quiser partir de uma música.</span></div>
