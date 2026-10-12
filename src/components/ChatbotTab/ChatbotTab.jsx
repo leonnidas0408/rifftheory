@@ -26,7 +26,7 @@ const FALAS_THONIC = [
 ];
 
 export default function ChatbotTab() {
-    const { session } = useAuth();
+    const { session, loading: authLoading, authConfigured, signInWithGoogle, error: authError } = useAuth();
     const [mensagens, setMensagens] = useState([MENSAGEM_BOAS_VINDAS]);
     const [entrada, setEntrada] = useState("");
     const [carregando, setCarregando] = useState(false);
@@ -57,7 +57,7 @@ export default function ChatbotTab() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+                    Authorization: `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     // Manda só autor/texto pro backend remontar a conversa.
@@ -97,6 +97,36 @@ export default function ChatbotTab() {
         setMensagens([{ ...MENSAGEM_BOAS_VINDAS, hora: horaAgora() }]);
         setEntrada("");
         setErro("");
+    }
+
+    if (authLoading) {
+        return (
+            <div className="pagina chatbot-tab chatbot-gate">
+                <Barra titulo="Assistente de teoria" />
+                <div className="chatbot-gate-card" role="status" aria-live="polite">
+                    Verificando sua conta...
+                </div>
+            </div>
+        );
+    }
+
+    if (!session?.access_token) {
+        return (
+            <div className="pagina chatbot-tab chatbot-gate">
+                <Barra titulo="Assistente de teoria" />
+                <section className="chatbot-gate-card" aria-labelledby="chatbot-gate-title">
+                    <span className="chatbot-gate-icon" aria-hidden="true">Acesso protegido</span>
+                    <h2 id="chatbot-gate-title">Entre para usar o Thonic</h2>
+                    <p>O assistente responde sobre música e teoria musical. Faça login com Google para enviar perguntas.</p>
+                    <button className="chatbot-login" type="button" onClick={signInWithGoogle} disabled={!authConfigured}>
+                        <span className="google-mark" aria-hidden="true">G</span>
+                        Entrar com Google
+                    </button>
+                    {!authConfigured && <small>O login Google ainda não está configurado neste ambiente.</small>}
+                    {authError && <div className="chatbot-erro" role="alert">{authError}</div>}
+                </section>
+            </div>
+        );
     }
 
     return (
@@ -192,7 +222,7 @@ export default function ChatbotTab() {
                 </button>
             </form>
             <p className="chatbot-privacidade">
-                Não precisa entrar com Google. Para responder, sua pergunta e o histórico recente desta conversa são enviados ao serviço de IA; o progresso da prática continua local no navegador. Limites de uso se aplicam.
+                O login Google é obrigatório para usar o Thonic. Ao enviar uma pergunta, ela e o histórico recente desta conversa são enviados ao serviço de IA; o progresso da prática continua local no navegador. Limites de uso se aplicam.
             </p>
         </div>
     );

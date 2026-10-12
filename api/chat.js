@@ -125,6 +125,45 @@ function montarSystemPrompt(trechos) {
     return `${SYSTEM_PROMPT_BASE}\n\nTRECHOS DE REFERÊNCIA:\n${blocoTrechos}`;
 }
 
+async function validarSessao(req) {
+    const authorization = typeof req.headers?.authorization === "string" ? req.headers.authorization : "";
+    const tokenMatch = authorization.match(/^Bearer\s+(\S+)$/i);
+    if (!tokenMatch) {
+        return { status: 401, erro: "Faça login com Google para usar o assistente." };
+    }
+
+    const supabaseUrl = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseAnonKey) {
+        return { status: 503, erro: "A autenticação do assistente não está configurada no servidor." };
+    }
+
+    try {
+        const resposta = await fetch(`${supabaseUrl}/auth/v1/user`, {
+            headers: {
+                apikey: supabaseAnonKey,
+                Authorization: `Bearer ${tokenMatch[1]}`,
+            },
+        });
+
+        if (!resposta.ok) {
+            if (resposta.status === 401 || resposta.status === 403) {
+                return { status: 401, erro: "Sua sessão não é válida. Entre novamente com Google." };
+            }
+            return { status: 503, erro: "Não foi possível validar sua sessão agora. Tente novamente." };
+        }
+
+        const usuario = await resposta.json();
+        if (!usuario || typeof usuario.id !== "string" || !usuario.id) {
+            return { status: 401, erro: "Sua sessão não é válida. Entre novamente com Google." };
+        }
+
+        return { usuario };
+    } catch {
+        return { status: 503, erro: "Não foi possível validar sua sessão agora. Tente novamente." };
+    }
+}
+
 function obterIp(req) {
     const encaminhado = req.headers["x-forwarded-for"];
     if (typeof encaminhado === "string" && encaminhado.trim()) {
@@ -195,6 +234,12 @@ function validarMensagens(mensagens) {
 module.exports = async function handler(req, res) {
     if (req.method !== "POST") {
         res.status(405).json({ erro: "Método não permitido." });
+        return;
+    }
+
+    const sessao = await validarSessao(req);
+    if (sessao.erro) {
+        res.status(sessao.status).json({ erro: sessao.erro });
         return;
     }
 
