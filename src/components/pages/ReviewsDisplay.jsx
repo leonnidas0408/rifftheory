@@ -17,6 +17,8 @@ const reviews = [
         author: "luis_m.012",
         rating: 5,
         text: "O site é muito bem organizado e fácil de usar, com uma proposta interessante para quem gosta de guitarra e música. A navegação é intuitiva, e dá pra perceber o cuidado colocado no desenvolvimento do projeto. Uma ótima iniciativa, principalmente para quem procura conteúdo relacionado ao mundo da guitarra. Recomendo!",
+        description: "",
+        description_link: ""
     },
 ];
 
