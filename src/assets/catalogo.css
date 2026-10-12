@@ -1,0 +1,41 @@
+.tab-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 30px;
+    border-radius: var(--radius-lg);
+    background: var(--lateral-fundo);
+    color: #fff;
+}
+.tab-hero h1 { max-width: 20ch; font-size: clamp(30px, 5vw, 52px); letter-spacing: -.05em; line-height: .98; }
+.tab-hero p { max-width: 680px; color: #d9e5fb; line-height: 1.55; }
+.tab-stats { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 10px; }
+.tab-stats strong { color: #fff; font-size: 24px; }
+.tab-stats span { display: block; color: #b9c9e2; font-size: 12px; font-weight: 500; }
+.tab-library { display: flex; flex-direction: column; gap: 14px; }
+.tab-library-heading { display: flex; align-items: end; justify-content: space-between; gap: 14px; }
+.tab-library-heading h2 { margin-top: 5px; font-size: 26px; letter-spacing: -.04em; }
+.tab-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.tab-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.tab-card { display: flex; min-width: 0; flex-direction: column; gap: 13px; padding: 20px; border: 1px solid #e5eaf1; border-radius: 18px; background: #fff; box-shadow: 0 5px 18px rgba(24,34,48,.025); }
+.tab-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.tab-kicker { color: var(--primaria); font-size: 10px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+.tab-card h3 { margin-top: 4px; color: #202b3a; font-size: 21px; letter-spacing: -.03em; }
+.tab-card-head p { margin-top: 3px; color: var(--texto-suave); font-size: 14px; }
+.tab-difficulty { flex: none; padding: 5px 9px; border-radius: 999px; background: #edf1ff; color: var(--primaria-escura); font-size: 11px; font-weight: 700; }
+.tab-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; color: var(--texto-suave); font-size: 12px; line-height: 1.4; }
+.tab-pre { overflow-x: auto; margin: 0; padding: 14px; border-radius: 10px; background: #172432; color: #dbe8fb; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.65; }
+.tab-pre-compact { max-height: 150px; font-size: 10px; }
+.tab-card-footer { display: flex; flex-direction: column; gap: 5px; color: var(--texto-suave); font-size: 11px; line-height: 1.4; }
+.tab-license { color: #2e7653; }
+.tab-tags { color: var(--texto-suave); }
+.catalogo-aviso { padding: 10px 13px; border-radius: 10px; background: #eef5fe; color: var(--primaria-escura); font-size: 13px; }
+.resultado-cifra { align-items: flex-start; }
+.resultado-chords { color: var(--texto); font-size: 14px; }
+.resultado-licenca { color: #2e7653; font-size: 12px; line-height: 1.4; }
+@media (max-width: 760px) {
+    .tab-hero { padding: 23px 20px; }
+    .tab-grid { grid-template-columns: 1fr; }
+    .tab-library-heading { align-items: flex-start; flex-direction: column; }
+    .tab-card { padding: 16px; }
+}

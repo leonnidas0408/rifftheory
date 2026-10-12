@@ -7,7 +7,6 @@ import { GOOGLE_LOGIN_UI_ENABLED } from "../auth/featureFlags";
 const EM_BREVE = [
     ["Teoria", "teoria"],
     ["Riffs", "riffs"],
-    ["Tablaturas", "tablaturas"],
 ];
 
 export default function SidebarPages({ page, setPage, pageData }) {

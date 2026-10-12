@@ -10,8 +10,8 @@ import Barra from "../Barra";
 
 const SCHEDULE_AHEAD_TIME = 0.1;
 const LOOKAHEAD_MS = 25;
-const MIN_BPM = 30;
-const MAX_BPM = 260;
+const MIN_BPM = 20;
+const MAX_BPM = 400;
 const COMPASSOS = [2, 3, 4, 6];
 
 export default function Metronomo() {

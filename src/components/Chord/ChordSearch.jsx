@@ -1,23 +1,19 @@
 // src/components/Chord/ChordSearch.jsx
-// Componente visual + estado local da busca de cifras. Não faz nenhuma
-// requisição de rede — apenas monta os resultados via buscarCifras()
-// (src/utils/cifras.js) e delega a exibição para ChordResults.
+// Componente visual + estado local da busca de cifras. Não faz requisição
+// de rede: consulta o catálogo local licenciado e delega a exibição para
+// ChordResults.
 
 import React, { useState } from "react";
 import Barra from "../Barra";
 import { buscarCifras } from "../../utils/cifras";
 import { registrarEvento } from "../../utils/usageStats";
 import ChordResults from "./ChordResults";
+import { TAB_CATALOG } from "../../data/tabCatalog";
 
 // Músicas para começar sem digitar (só viram um termo de busca).
-const SUGESTOES = [
-    "Tempo Perdido Legião Urbana",
-    "Trem-Bala Ana Vilela",
-    "Evidências Chitãozinho e Xororó",
-    "Wonderwall Oasis",
-];
+const SUGESTOES = TAB_CATALOG.slice(0, 4).map((item) => item.title);
 
-export default function ChordSearch() {
+export default function ChordSearch({ setPage }) {
     const [query, setQuery] = useState("");
     const [resultados, setResultados] = useState(null);
     const [erro, setErro] = useState("");
@@ -46,7 +42,7 @@ export default function ChordSearch() {
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => registrarEvento("search_started", {}, { umaVezPorSessao: true })}
                     onKeyDown={(e) => e.key === "Enter" && buscar()}
-                    placeholder="Pesquise uma música ou artista para encontrar a cifra..."
+                    placeholder="Pesquise no catálogo local por título, acorde ou técnica..."
                     id="busca-cifra"
                     aria-label="Buscar cifra"
                     autoComplete="off"
@@ -67,7 +63,7 @@ export default function ChordSearch() {
                 </div>
             )}
 
-            {resultados && <ChordResults resultados={resultados} />}
+            {resultados && <ChordResults resultados={resultados} setPage={setPage} />}
         </>
     );
 }

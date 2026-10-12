@@ -125,7 +125,7 @@ export default function Home({ setPage }) {
                 <div className="prova-numeros">
                     <div className="prova-numero"><strong>1 clique</strong><span>para revelar a forma de um acorde no braço</span></div>
                     <div className="prova-numero"><strong>4 acordes</strong><span>em cada trilha guiada pronta para tocar</span></div>
-                    <div className="prova-numero"><strong>30–260</strong><span>BPM no metrônomo para praticar no seu ritmo</span></div>
+                    <div className="prova-numero"><strong>20–400</strong><span>BPM no metrônomo para praticar no seu ritmo</span></div>
                 </div>
                 <div className="prova-recursos">
                     <div><strong>1. Escolha</strong><span>Comece com uma trilha ou acorde pronto.</span></div>
@@ -225,7 +225,7 @@ export default function Home({ setPage }) {
                     <p className="cta-seguranca"><strong>Comece agora:</strong> escolha uma trilha e veja o primeiro acorde no braço — ou busque uma música quando já souber o que quer tocar.</p>
                 </div>
 
-                <ChordSearch />
+                <ChordSearch setPage={setPage} />
 
                 <div className="sugestoes">
                     <span className="subtitulo">Ou treine uma progressão no braço:</span>

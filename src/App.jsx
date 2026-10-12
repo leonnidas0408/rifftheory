@@ -4,6 +4,7 @@ import RiffTheoryTuner from "./components/pages/RiffTheoryTuner";
 import PaginaDeEscala from "./components/pages/PaginaDeEscala";
 import Dashboard from "./components/pages/Dashboard";
 import Metronomo from "./components/pages/Metronomo";
+import Tablaturas from "./components/pages/Tablaturas";
 import ChatbotTab from "./components/ChatbotTab/ChatbotTab";
 
 import NavbarAdapter from "./components/NavbarAdapter";
@@ -63,6 +64,11 @@ export default function App() {
             ),
             icone: "play",
             aba: "play"
+        },
+
+        "Tablaturas": {
+            page: <Tablaturas />,
+            icone: "tablaturas",
         },
 
         "Chatbot": {
