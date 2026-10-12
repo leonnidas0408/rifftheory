@@ -266,7 +266,7 @@ export default function Home({ setPage }) {
                 <ReviewsDisplay />
             </footer>
             <h1>FAQ</h1>
-            <div>
+            <div className="faq-list">
                 <span className="light-description">Nesse FAQ, RT serve como uma abreviação de Riff Theory.</span>
                 <FAQQuestion
                     question="Para usar o RT, precisa de cadastro?"
