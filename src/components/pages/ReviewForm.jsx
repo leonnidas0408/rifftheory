@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
-import { supabase } from "../../auth/supabase";
+import { getDisplayName, supabase } from "../../auth/supabase";
 
 const ratingOptions = [1, 2, 3, 4, 5];
 const REVIEW_UPDATED_EVENT = "riff:site-reviews-changed";
@@ -12,7 +12,6 @@ function notificarListaPublica() {
 
 export default function ReviewForm() {
     const { user, loading: authLoading, authConfigured, signInWithGoogle, error: authError } = useAuth();
-    const [displayName, setDisplayName] = useState("");
     const [rating, setRating] = useState("");
     const [hoverRating, setHoverRating] = useState(0);
     const [comment, setComment] = useState("");
@@ -24,10 +23,10 @@ export default function ReviewForm() {
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [status, setStatus] = useState("");
     const [error, setError] = useState(false);
+    const accountName = user ? getDisplayName(user) : "";
 
     useEffect(() => {
         let active = true;
-        setDisplayName("");
         setRating("");
         setComment("");
         setPublicConsent(false);
@@ -46,14 +45,13 @@ export default function ReviewForm() {
             try {
                 const { data, error: loadError } = await supabase
                     .from("site_reviews")
-                    .select("display_name, rating, comment")
+                    .select("rating, comment")
                     .eq("user_id", user.id)
                     .maybeSingle();
                 if (loadError) throw loadError;
                 if (!active) return;
 
                 if (data) {
-                    setDisplayName(data.display_name || "");
                     setRating(Number(data.rating));
                     setComment(typeof data.comment === "string" ? data.comment : "");
                     setSaved(true);
@@ -100,14 +98,14 @@ export default function ReviewForm() {
             return;
         }
 
-        const nome = displayName.trim();
+        const nome = accountName.trim();
         const nomeLength = Array.from(nome).length;
         const nota = Number(rating);
         const comentario = comment.trim();
 
-        if (nomeLength < 2 || nomeLength > 40 || nome.includes("@")) {
+        if (nomeLength < 2 || nomeLength > 254) {
             setError(true);
-            setStatus("Informe um nome público de 2 a 40 caracteres, sem e-mail ou @.");
+            setStatus("Não foi possível identificar um nome válido na sua conta Google.");
             return;
         }
         if (!Number.isInteger(nota) || nota < 1 || nota > 5) {
@@ -165,7 +163,6 @@ export default function ReviewForm() {
                 .eq("user_id", user.id);
             if (deleteError) throw deleteError;
 
-            setDisplayName("");
             setRating("");
             setComment("");
             setPublicConsent(false);
@@ -188,7 +185,7 @@ export default function ReviewForm() {
                 <span className="eyebrow">Sua opinião</span>
                 <h2 id="site-review-title">Avalie o Riff Theory</h2>
                 <p id="site-review-public-note">
-                    As avaliações enviadas aqui ficam visíveis para todos. Só publicamos o nome público que você escolher, sua nota e seu comentário — nunca o e-mail nem a foto do Google. Avaliações salvas anteriormente apenas neste navegador não serão publicadas automaticamente.
+                    As avaliações enviadas aqui ficam visíveis para todos. Publicamos o nome da sua conta Google ou, se ele não estiver disponível, o seu e-mail, além da nota e do comentário. A foto do Google nunca é publicada. Avaliações salvas anteriormente apenas neste navegador não serão publicadas automaticamente.
                 </p>
             </div>
 
@@ -196,7 +193,7 @@ export default function ReviewForm() {
                 <p className="site-review-status" role="status" aria-live="polite">Verificando sua sessão Google…</p>
             ) : !user ? (
                 <div className="site-review-login">
-                    <p>Entre com o Google para publicar e gerenciar sua avaliação. O login serve apenas para vincular a avaliação à sua conta; o perfil e o e-mail não aparecem no site.</p>
+                    <p>Entre com o Google para publicar e gerenciar sua avaliação. O nome da conta ou o e-mail será usado automaticamente como identificação pública; não há campo de nome editável.</p>
                     <button
                         className="site-review-submit site-review-login-button"
                         type="button"
@@ -219,15 +216,13 @@ export default function ReviewForm() {
                             id="site-review-name"
                             name="displayName"
                             type="text"
-                            autoComplete="nickname"
-                            minLength={2}
-                            maxLength={40}
-                            value={displayName}
-                            onChange={(evento) => setDisplayName(evento.target.value)}
+                            value={accountName}
+                            readOnly
+                            aria-readonly="true"
                             aria-describedby="site-review-name-help"
                             required
                         />
-                        <span id="site-review-name-help" className="site-review-field-help">Este nome será público. Não use e-mail nem inclua dados pessoais no comentário.</span>
+                        <span id="site-review-name-help" className="site-review-field-help">Este identificador vem da conta Google e não pode ser editado. Usamos o nome da conta; se ele não estiver disponível, usamos o e-mail.</span>
 
                         <span className="site-review-label">Sua nota</span>
                         <div className="site-review-rating" role="radiogroup" aria-label="Escolha uma nota de 1 a 5 estrelas" onMouseLeave={() => setHoverRating(0)}>
@@ -273,7 +268,7 @@ export default function ReviewForm() {
                                 onChange={(evento) => setPublicConsent(evento.target.checked)}
                                 required
                             />
-                            <span>Autorizo a publicação do nome público escolhido, da nota e do comentário para todos os visitantes.</span>
+                            <span>Autorizo a publicação do nome da minha conta Google ou e-mail, da nota e do comentário para todos os visitantes.</span>
                         </label>
 
                         <div className="site-review-actions">
