@@ -26,6 +26,7 @@
 .tab-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; color: var(--texto-suave); font-size: 12px; line-height: 1.4; }
 .tab-pre { overflow-x: auto; margin: 0; padding: 14px; border-radius: 10px; background: #172432; color: #dbe8fb; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.65; }
 .tab-pre-compact { max-height: 150px; font-size: 10px; }
+.tab-card-explanation { color: #50627b; font-size: 13px; line-height: 1.5; }
 .tab-card-footer { display: flex; flex-direction: column; gap: 5px; color: var(--texto-suave); font-size: 11px; line-height: 1.4; }
 .tab-license { color: #2e7653; }
 .tab-tags { color: var(--texto-suave); }
@@ -33,9 +34,23 @@
 .resultado-cifra { align-items: flex-start; }
 .resultado-chords { color: var(--texto); font-size: 14px; }
 .resultado-licenca { color: #2e7653; font-size: 12px; line-height: 1.4; }
+.tab-open-button { align-self: flex-start; border: 0; }
+.tab-modal-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 22px; background: rgba(16, 29, 47, .62); }
+.tab-modal { position: relative; overflow-y: auto; width: min(720px, 100%); max-height: min(800px, calc(100dvh - 44px)); display: flex; flex-direction: column; gap: 14px; padding: 30px; border-radius: 20px; background: #fff; color: var(--texto); box-shadow: 0 25px 80px rgba(7, 18, 33, .28); }
+.tab-modal-close { position: absolute; top: 13px; right: 16px; width: 35px; height: 35px; border-radius: 50%; background: #eef2f8; color: var(--texto); font-size: 25px; line-height: 1; }
+.tab-modal h2 { max-width: 90%; color: #202b3a; font-size: clamp(26px, 4vw, 38px); letter-spacing: -.045em; }
+.tab-modal-artist { margin-top: -8px; color: var(--texto-suave); }
+.tab-modal-meta { display: flex; flex-wrap: wrap; gap: 7px 14px; color: var(--texto-suave); font-size: 13px; }
+.tab-detail-section { display: flex; flex-direction: column; gap: 8px; padding-top: 7px; border-top: 1px solid #e7ecf3; }
+.tab-detail-section h3 { color: #202b3a; font-size: 17px; }
+.tab-detail-section p { color: #50627b; font-size: 14px; line-height: 1.55; }
+.tab-pre-detail { padding: 18px; font-size: 13px; }
+.tab-study-steps { display: flex; flex-direction: column; gap: 9px; padding-left: 21px; color: #50627b; font-size: 14px; line-height: 1.5; }
+.tab-modal-license { padding: 11px 13px; border-radius: 10px; background: #eaf6ef; color: #276845; font-size: 12px; line-height: 1.45; }
 @media (max-width: 760px) {
     .tab-hero { padding: 23px 20px; }
     .tab-grid { grid-template-columns: 1fr; }
     .tab-library-heading { align-items: flex-start; flex-direction: column; }
     .tab-card { padding: 16px; }
+    .tab-modal { padding: 24px 18px; }
 }
