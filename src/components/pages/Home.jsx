@@ -83,11 +83,11 @@ export default function Home({ setPage }) {
         <div className="pagina">
             <Barra titulo="Início"/>
             <section className="hero">
-                <div className="hero-kicker">Seu estúdio de guitarra em um só fluxo</div>
-                <h1>Toque a próxima música entendendo o que está no braço.</h1>
+                <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
+                <h1>Escolha um acorde. Veja a posição no braço e comece a tocar.</h1>
                 <p>
-                    Encontre uma cifra, veja os acordes no braço e descubra formas mais fáceis de
-                    tocar em minutos — sem alternar entre várias ferramentas.
+                    No primeiro clique, abra uma trilha de 4 acordes e veja a primeira forma no braço.
+                    Depois, avance acorde por acorde — sem alternar entre ferramentas.
                 </p>
                 <div className="hero-acoes">
                     <button
@@ -97,7 +97,7 @@ export default function Home({ setPage }) {
                             iniciarTrilha(PROGRESSOES[0]);
                         }}
                     >
-                        Começar agora
+                        Testar trilha de 4 acordes
                     </button>
                     <button
                         className="hero-secundaria"
@@ -111,7 +111,7 @@ export default function Home({ setPage }) {
                 </div>
                 <div className="hero-seguranca">
                     <span className="seguranca-icone" aria-hidden="true">✓</span>
-                    <span>Gratuito para começar · sem instalação · sem cadastro · prática e progresso locais.</span>
+                    <span>Gratuito para experimentar · sem cartão · sem cadastro para a prática guiada.</span>
                 </div>
             </section>
 
@@ -132,11 +132,11 @@ export default function Home({ setPage }) {
                     <div><strong>3. Toque</strong><span>Avance para o próximo acorde sem trocar de ferramenta.</span></div>
                 </div>
                 <div className="comparacao"><strong>Alternativa comum:</strong> buscar → abrir abas → copiar o acorde. <strong>No Riff Theory:</strong> escolher → visualizar → tocar.</div>
-                <div className="prova-credibilidade"><span><strong>Fluxo verificável:</strong> você pode testar o primeiro acorde sem criar conta e conferir o resultado no braço.</span></div>
+                <div className="prova-credibilidade"><span><strong>Confira no próprio app:</strong> o botão “Testar trilha de 4 acordes” abre uma sequência no braço interativo; não é necessário criar conta para testar a prática.</span></div>
                 <div className="trust-grid" aria-label="Sinais de confiança">
-                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Fluxo verificável</strong><span>Teste a experiência principal antes de decidir se ela serve para sua prática.</span></div></div>
-                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Progresso local</strong><span>Acordes, histórico e prática ficam no navegador; o Chatbot é a exceção.</span></div></div>
-                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Resultado visível</strong><span>O primeiro acorde aparece no braço ao iniciar a prática.</span></div></div>
+                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Sem cartão para testar</strong><span>A prática guiada e o braço interativo podem ser explorados sem cadastro.</span></div></div>
+                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Progresso no navegador</strong><span>Histórico e dados de prática ficam no dispositivo; não são enviados para uma conta.</span></div></div>
+                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Transparência no Chatbot</strong><span>Ao usar o assistente, a pergunta e o histórico recente são enviados à API para gerar a resposta.</span></div></div>
                 </div>
             </section>
 
@@ -146,9 +146,9 @@ export default function Home({ setPage }) {
                     <h2 id="titulo-objecoes">Feito para testar sem compromisso</h2>
                 </div>
                 <div className="objecoes-grid">
-                    <div><strong>Preço</strong><span><b>Gratuito para começar.</b> Não há cartão nem plano obrigatório nesta experiência.</span></div>
+                    <div><strong>Preço</strong><span><b>Gratuito para experimentar.</b> A prática guiada não pede cartão nem cadastro; o Chatbot requer login Google.</span></div>
                     <div><strong>Setup</strong><span><b>Abra e toque.</b> Funciona no navegador, sem instalar programa ou configurar conta.</span></div>
-                    <div><strong>Segurança</strong><span><b>Prática e progresso ficam no navegador.</b> Perguntas ao Chatbot são enviadas à API para gerar respostas.</span></div>
+                    <div><strong>Dados</strong><span><b>Prática e progresso ficam no navegador.</b> Perguntas e histórico recente só são enviados quando você usa o Chatbot.</span></div>
                     <div><strong>Troca de ferramenta</strong><span><b>Prática guiada dentro do app.</b> Use a busca apenas quando quiser partir de uma música.</span></div>
                 </div>
             </section>
@@ -185,7 +185,7 @@ export default function Home({ setPage }) {
                 <div className="secao-heading">
                     <span className="eyebrow">Antes e depois</span>
                     <h2 id="titulo-exemplos">Veja como o fluxo muda a prática</h2>
-                    <p>Exemplos baseados no que você consegue fazer hoje no app. Quando houver avaliações reais, elas entrarão aqui.</p>
+                    <p>Sem depoimentos ou resultados de usuários inventados: confira cada etapa diretamente no app antes de decidir se funciona para sua prática.</p>
                 </div>
                 <div className="exemplos-grade">
                     {EXEMPLOS_USO.map((exemplo) => (
@@ -248,6 +248,15 @@ export default function Home({ setPage }) {
                     abrirEscolha={abrirEscolha}
                     onVerEscalas={() => setPage?.("Escalas")}
                 />
+            </div>
+            <div className="mobile-cta-wrap">
+                <button className="mobile-cta" onClick={() => {
+                    registrarEvento("mobile_cta_clicked", { cta: "pratica_guiada" });
+                    iniciarTrilha(PROGRESSOES[0]);
+                }}>
+                    <span>Trilha guiada · 4 acordes</span>
+                    <strong>Experimentar</strong>
+                </button>
             </div>
         </div>
     )

@@ -11,7 +11,7 @@ export default function Conteudo({ page, setPage, pageData }) {
     return (
         <main className="conteudo">
             <div className="auth-mobile">
-                <span className="mobile-brand"><img src="/icon.jpg" alt="" /><strong>riff<span>theory</span></strong></span>
+                <span className="mobile-brand"><img src="/icon.jpg" alt="" title="Riff Theory" /><strong>riff<span>theory</span></strong></span>
                 {GOOGLE_LOGIN_UI_ENABLED && <AuthButton compact />}
             </div>
             <nav className="abas" aria-label="Ferramentas">

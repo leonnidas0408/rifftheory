@@ -19,7 +19,7 @@ export default function SidebarPages({ page, setPage, pageData }) {
         <div>
             <aside className="sidebar">
                 <a className="brand-lockup" href="#inicio" onClick={(event) => { event.preventDefault(); setPage("Início"); }} aria-label="Riff Theory — início">
-                    <span className="brand-mark"><img src="/icon.jpg" alt="" /></span>
+                    <span className="brand-mark"><img src="/icon.jpg" alt="" title="Riff Theory" /></span>
                     <span className="brand-copy"><strong>riff<span>theory</span></strong><small>STUDIO DE GUITARRA</small></span>
                 </a>
                 {GOOGLE_LOGIN_UI_ENABLED && (
