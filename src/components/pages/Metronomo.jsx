@@ -4,18 +4,12 @@ import Barra from "../Barra";
 /* ------------------------------------------------------------------ *
  *  METRÔNOMO — Web Audio API com scheduler de lookahead.
  *
- *  Por que não um setInterval simples tocando um beep a cada X ms?
- *  O event loop do JS não é preciso (throttle de aba em background,
- *  garbage collection, etc. atrasam o callback), então um metrônomo
- *  em setInterval "arrasta" com o tempo. A técnica padrão (a mesma
- *  usada por libs de áudio sério tipo Tone.js) é: um scheduler barato
- *  roda a cada poucos ms só pra AGENDAR os próximos beats com
- *  AudioContext.currentTime (que é preciso), e o próprio Web Audio
- *  garante o timing exato de quando o som toca.
+ *  O scheduler agenda os próximos pulsos com AudioContext.currentTime,
+ *  evitando a deriva de tempo de um setInterval simples.
  * ------------------------------------------------------------------ */
 
-const SCHEDULE_AHEAD_TIME = 0.1; // segundos: o quanto adiantado agendamos
-const LOOKAHEAD_MS = 25;         // de quanto em quanto tempo o scheduler roda
+const SCHEDULE_AHEAD_TIME = 0.1;
+const LOOKAHEAD_MS = 25;
 const MIN_BPM = 30;
 const MAX_BPM = 260;
 const COMPASSOS = [2, 3, 4, 6];
@@ -127,257 +121,445 @@ export default function Metronomo() {
     return (
         <div className="pagina">
             <Barra titulo="Metrônomo" />
-            <style>{`
-                .metro-panel {
-                    position: relative;
-                    max-width: 720px;
-                    width: 100%;
-                    margin: 8px auto 0;
-                    padding: 40px 34px 34px;
-                    text-align: center;
-                    border-radius: 22px;
-                    background:
-                        radial-gradient(circle at 18px 18px, #9db6da 0 5px, transparent 5.5px),
-                        radial-gradient(circle at calc(100% - 18px) 18px, #9db6da 0 5px, transparent 5.5px),
-                        radial-gradient(circle at 18px calc(100% - 18px), #9db6da 0 5px, transparent 5.5px),
-                        radial-gradient(circle at calc(100% - 18px) calc(100% - 18px), #9db6da 0 5px, transparent 5.5px),
-                        #e3eefc;
-                }
+            <div className="metro-root">
+                <style>{`
+                    .metro-root { width: 100%; }
+                    .metro-panel {
+                        box-sizing: border-box;
+                        width: 100%;
+                        max-width: 920px;
+                        margin: 12px auto 0;
+                        padding: 26px 30px;
+                        border: 1px solid #dce2e8;
+                        border-radius: 3px;
+                        color: #172432;
+                        background: #fff;
+                    }
+                    .metro-panel-head {
+                        display: flex;
+                        align-items: flex-start;
+                        justify-content: space-between;
+                        gap: 22px;
+                        padding-bottom: 20px;
+                        border-bottom: 1px solid #e2e7ec;
+                    }
+                    .metro-panel-intro .metro-kicker {
+                        color: #315ce8;
+                        font-size: 11px;
+                        font-weight: 750;
+                        letter-spacing: .12em;
+                    }
+                    .metro-panel-intro h2 {
+                        margin: 7px 0 5px;
+                        color: #172432;
+                        font-size: 22px;
+                        letter-spacing: -.025em;
+                    }
+                    .metro-panel-intro p {
+                        margin: 0;
+                        color: #68778b;
+                        font-size: 13px;
+                    }
+                    .metro-range-note {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 7px;
+                        color: #59687a;
+                        font-size: 12px;
+                        font-weight: 650;
+                    }
+                    .metro-range-note strong {
+                        color: #172432;
+                        font-size: 14px;
+                        font-variant-numeric: tabular-nums;
+                    }
+                    .metro-main-grid {
+                        display: grid;
+                        grid-template-columns: minmax(0, 1.2fr) minmax(245px, .8fr);
+                        border-bottom: 1px solid #e2e7ec;
+                    }
+                    .metro-readout {
+                        display: flex;
+                        min-width: 0;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 22px 22px 24px 10px;
+                        border-right: 1px solid #e2e7ec;
+                    }
+                    .metro-ring {
+                        display: flex;
+                        width: 204px;
+                        height: 204px;
+                        align-items: center;
+                        justify-content: center;
+                        border: 1px solid #dce2e8;
+                        border-radius: 50%;
+                        background: #fff;
+                        color: #172432;
+                    }
+                    .metro-ring.pulse { animation: metroPulse .18s ease-out; }
+                    .metro-ring.pulse.accent { animation-name: metroPulseAccent; }
+                    @keyframes metroPulse {
+                        0% { box-shadow: 0 0 0 0 rgba(49,92,232,.30); }
+                        100% { box-shadow: 0 0 0 15px rgba(49,92,232,0); }
+                    }
+                    @keyframes metroPulseAccent {
+                        0% { box-shadow: 0 0 0 0 rgba(25,132,91,.32); }
+                        100% { box-shadow: 0 0 0 18px rgba(25,132,91,0); }
+                    }
+                    .metro-ring-inner {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                    }
+                    .metro-bpm {
+                        color: #172432;
+                        font-size: 72px;
+                        font-weight: 700;
+                        font-variant-numeric: tabular-nums;
+                        letter-spacing: -.05em;
+                        line-height: .95;
+                    }
+                    .metro-bpm-label {
+                        margin-top: 8px;
+                        color: #68778b;
+                        font-size: 12px;
+                        font-weight: 700;
+                        letter-spacing: .08em;
+                    }
+                    .metro-beats {
+                        display: flex;
+                        justify-content: center;
+                        gap: 9px;
+                        margin-top: 19px;
+                    }
+                    .metro-beat-dot {
+                        width: 12px;
+                        height: 12px;
+                        border: 1px solid #cbd5e1;
+                        border-radius: 50%;
+                        background: #fff;
+                        transition: background .1s ease, border-color .1s ease, transform .1s ease;
+                    }
+                    .metro-beat-dot.active {
+                        transform: scale(1.18);
+                        border-color: #315ce8;
+                        background: #315ce8;
+                    }
+                    .metro-beat-dot.active.accent {
+                        border-color: #19845b;
+                        background: #19845b;
+                    }
+                    .metro-status {
+                        min-height: 16px;
+                        margin-top: 15px;
+                        color: #68778b;
+                        font-size: 11px;
+                        font-weight: 750;
+                        letter-spacing: .09em;
+                        text-align: center;
+                    }
+                    .metro-status.active { color: #315ce8; }
+                    .metro-status.accent { color: #19845b; }
+                    .metro-controls {
+                        display: flex;
+                        min-width: 0;
+                        flex-direction: column;
+                        gap: 22px;
+                        padding: 22px 2px 22px 22px;
+                    }
+                    .metro-control-group { min-width: 0; }
+                    .metro-control-heading {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        gap: 10px;
+                        margin-bottom: 12px;
+                    }
+                    .metro-label {
+                        color: #59687a;
+                        font-size: 12px;
+                        font-weight: 700;
+                    }
+                    .metro-control-value {
+                        color: #172432;
+                        font-size: 13px;
+                        font-weight: 700;
+                        font-variant-numeric: tabular-nums;
+                    }
+                    .metro-slider-row {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                    .metro-adjust-btn {
+                        display: grid;
+                        width: 36px;
+                        height: 36px;
+                        flex: none;
+                        place-items: center;
+                        border: 1px solid #dce2e8;
+                        border-radius: 3px;
+                        background: #fff;
+                        color: #315ce8;
+                        font-size: 20px;
+                        line-height: 1;
+                        cursor: pointer;
+                    }
+                    .metro-adjust-btn:hover { background: #f5f7fa; }
+                    .metro-adjust-btn:active { transform: scale(.96); }
+                    .metro-slider {
+                        flex: 1;
+                        min-width: 0;
+                        height: 4px;
+                        appearance: none;
+                        border-radius: 99px;
+                        outline: none;
+                        background: #dce2e8;
+                        accent-color: #315ce8;
+                    }
+                    .metro-slider::-webkit-slider-thumb {
+                        width: 18px;
+                        height: 18px;
+                        appearance: none;
+                        border: 2px solid #fff;
+                        border-radius: 50%;
+                        background: #315ce8;
+                        box-shadow: 0 0 0 1px #315ce8;
+                        cursor: pointer;
+                    }
+                    .metro-slider::-moz-range-thumb {
+                        width: 14px;
+                        height: 14px;
+                        border: 2px solid #fff;
+                        border-radius: 50%;
+                        background: #315ce8;
+                        box-shadow: 0 0 0 1px #315ce8;
+                        cursor: pointer;
+                    }
+                    .metro-slider:focus-visible,
+                    .metro-adjust-btn:focus-visible,
+                    .metro-compasso-btn:focus-visible,
+                    .metro-play:focus-visible,
+                    .metro-tap:focus-visible {
+                        outline: 2px solid #315ce8;
+                        outline-offset: 2px;
+                    }
+                    .metro-range-labels {
+                        display: flex;
+                        justify-content: space-between;
+                        margin: 7px 46px 0;
+                        color: #68778b;
+                        font-size: 10px;
+                        font-variant-numeric: tabular-nums;
+                    }
+                    .metro-compasso-row {
+                        display: grid;
+                        grid-template-columns: repeat(4, minmax(0, 1fr));
+                        gap: 7px;
+                    }
+                    .metro-compasso-btn {
+                        min-width: 0;
+                        padding: 10px 6px;
+                        border: 1px solid #dce2e8;
+                        border-radius: 3px;
+                        background: #fff;
+                        color: #475569;
+                        font-size: 13px;
+                        font-weight: 650;
+                        cursor: pointer;
+                    }
+                    .metro-compasso-btn:hover { background: #f8faff; }
+                    .metro-compasso-btn.active {
+                        border-color: #315ce8;
+                        background: #eef3ff;
+                        color: #2449c8;
+                        box-shadow: inset 0 -2px #315ce8;
+                    }
+                    .metro-hint {
+                        margin: -7px 0 0;
+                        color: #68778b;
+                        font-size: 12px;
+                        line-height: 1.5;
+                    }
+                    .metro-footer {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 9px;
+                        padding-top: 20px;
+                    }
+                    .metro-actions {
+                        display: flex;
+                        width: 100%;
+                        max-width: 430px;
+                        gap: 9px;
+                    }
+                    .metro-play,
+                    .metro-tap {
+                        min-height: 46px;
+                        border: 1px solid transparent;
+                        border-radius: 3px;
+                        font-size: 14px;
+                        font-weight: 700;
+                        cursor: pointer;
+                    }
+                    .metro-play {
+                        flex: 1;
+                        background: #315ce8;
+                        color: #fff;
+                    }
+                    .metro-play:hover { background: #2449c8; }
+                    .metro-play.stop { background: #bd4338; }
+                    .metro-play.stop:hover { background: #a9362d; }
+                    .metro-tap {
+                        min-width: 126px;
+                        padding: 0 16px;
+                        border-color: #dce2e8;
+                        background: #fff;
+                        color: #315ce8;
+                    }
+                    .metro-tap:hover { background: #f5f7fa; }
+                    .metro-footer-note {
+                        margin: 0;
+                        color: #68778b;
+                        font-size: 12px;
+                        text-align: center;
+                    }
+                    @media (max-width: 760px) {
+                        .metro-panel { padding: 21px 20px; }
+                        .metro-main-grid { grid-template-columns: 1fr; }
+                        .metro-readout { padding: 21px 6px 19px; border-right: 0; border-bottom: 1px solid #e2e7ec; }
+                        .metro-controls { padding: 20px 2px 20px; }
+                    }
+                    @media (max-width: 520px) {
+                        .metro-panel { margin-top: 8px; padding: 17px 14px; }
+                        .metro-panel-head { flex-direction: column; gap: 15px; }
+                        .metro-range-note { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; }
+                        .metro-ring { width: 184px; height: 184px; }
+                        .metro-bpm { font-size: 64px; }
+                        .metro-actions { flex-direction: column; }
+                        .metro-tap { min-height: 44px; }
+                    }
+                `}</style>
 
-                .metro-ring {
-                    width: 220px;
-                    height: 220px;
-                    margin: 0 auto 22px;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    border: 2px solid #7ea3dd;
-                    color: var(--texto);
-                }
+                <section className="metro-panel" aria-labelledby="metro-title">
+                    <header className="metro-panel-head">
+                        <div className="metro-panel-intro">
+                            <span className="metro-kicker">RITMO E ANDAMENTO</span>
+                            <h2 id="metro-title">Ajuste o pulso da sua prática</h2>
+                            <p>Defina o BPM, escolha o compasso e acompanhe cada batida.</p>
+                        </div>
+                        <div className="metro-range-note" aria-label="Faixa de andamento">
+                            <span>Faixa de andamento</span>
+                            <strong>{MIN_BPM}–{MAX_BPM} BPM</strong>
+                        </div>
+                    </header>
 
-                .metro-ring.pulse {
-                    animation: metroPulse .18s ease-out;
-                }
+                    <div className="metro-main-grid">
+                        <section className="metro-readout" aria-label="Visualização do andamento">
+                            <div
+                                className={`metro-ring${beatAtivo >= 0 ? " pulse" : ""}${beatAtivo === 0 ? " accent" : ""}`}
+                                key={`${beatAtivo}-${running ? "on" : "off"}`}
+                                aria-label={`${bpm} batidas por minuto`}
+                            >
+                                <div className="metro-ring-inner">
+                                    <div className="metro-bpm">{bpm}</div>
+                                    <div className="metro-bpm-label">BATIDAS POR MINUTO</div>
+                                </div>
+                            </div>
 
-                .metro-ring.pulse.accent {
-                    animation-name: metroPulseAccent;
-                }
+                            <div className="metro-beats" aria-label={`Compasso ${compasso}/4`}>
+                                {Array.from({ length: compasso }).map((_, i) => (
+                                    <span
+                                        key={i}
+                                        className={`metro-beat-dot${beatAtivo === i ? " active" : ""}${i === 0 ? " accent" : ""}`}
+                                        aria-hidden="true"
+                                    />
+                                ))}
+                            </div>
+                            <div className={`metro-status${running ? " active" : ""}${running && beatAtivo === 0 ? " accent" : ""}`}>
+                                {!running
+                                    ? "PRONTO PARA TOCAR"
+                                    : beatAtivo < 0
+                                        ? "METRÔNOMO ATIVO"
+                                        : beatAtivo === 0
+                                            ? "TEMPO FORTE"
+                                            : `BATIDA ${beatAtivo + 1}`}
+                            </div>
+                        </section>
 
-                @keyframes metroPulse {
-                    0%   { box-shadow: 0 0 0 0 rgba(47,111,224,.45); }
-                    100% { box-shadow: 0 0 0 16px rgba(47,111,224,0); }
-                }
+                        <aside className="metro-controls" aria-label="Controles do metrônomo">
+                            <section className="metro-control-group" aria-labelledby="metro-bpm-label">
+                                <div className="metro-control-heading">
+                                    <label className="metro-label" id="metro-bpm-label" htmlFor="metro-bpm">Andamento</label>
+                                    <span className="metro-control-value">{bpm} BPM</span>
+                                </div>
+                                <div className="metro-slider-row">
+                                    <button type="button" className="metro-adjust-btn" onClick={() => ajustar(-1)} aria-label="Diminuir um BPM">−</button>
+                                    <input
+                                        id="metro-bpm"
+                                        type="range"
+                                        className="metro-slider"
+                                        min={MIN_BPM}
+                                        max={MAX_BPM}
+                                        value={bpm}
+                                        aria-valuetext={`${bpm} BPM`}
+                                        onChange={(e) => setBpm(Number(e.target.value))}
+                                    />
+                                    <button type="button" className="metro-adjust-btn" onClick={() => ajustar(1)} aria-label="Aumentar um BPM">+</button>
+                                </div>
+                                <div className="metro-range-labels" aria-hidden="true">
+                                    <span>{MIN_BPM}</span>
+                                    <span>{MAX_BPM}</span>
+                                </div>
+                            </section>
 
-                @keyframes metroPulseAccent {
-                    0%   { box-shadow: 0 0 0 0 rgba(31,79,143,.6); }
-                    100% { box-shadow: 0 0 0 22px rgba(31,79,143,0); }
-                }
+                            <section className="metro-control-group" aria-labelledby="metro-compasso-label">
+                                <div className="metro-control-heading">
+                                    <span className="metro-label" id="metro-compasso-label">Compasso</span>
+                                    <span className="metro-control-value">{compasso} batidas</span>
+                                </div>
+                                <div className="metro-compasso-row" role="group" aria-label="Selecione o compasso">
+                                    {COMPASSOS.map((c) => (
+                                        <button
+                                            key={c}
+                                            type="button"
+                                            className={`metro-compasso-btn${compasso === c ? " active" : ""}`}
+                                            aria-pressed={compasso === c}
+                                            onClick={() => setCompasso(c)}
+                                        >
+                                            {c}/4
+                                        </button>
+                                    ))}
+                                </div>
+                            </section>
 
-                .metro-ring-inner {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                }
-
-                .metro-bpm {
-                    font-size: 64px;
-                    font-weight: 700;
-                    line-height: 1;
-                }
-
-                .metro-bpm-label {
-                    font-size: 20px;
-                    margin-top: 6px;
-                }
-
-                .metro-beats {
-                    display: flex;
-                    justify-content: center;
-                    gap: 16px;
-                    margin-bottom: 30px;
-                }
-
-                .metro-beat-dot {
-                    width: 18px;
-                    height: 18px;
-                    border-radius: 50%;
-                    background: #a4b9da;
-                    transition: background .1s ease, transform .1s ease;
-                }
-
-                .metro-beat-dot.active {
-                    background: var(--primaria);
-                    transform: scale(1.2);
-                }
-
-                .metro-beat-dot.active.accent {
-                    background: var(--primaria-escura);
-                }
-
-                .metro-bpm-controls {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 18px;
-                    margin-bottom: 24px;
-                }
-
-                .metro-bpm-btn {
-                    flex: none;
-                    width: 54px;
-                    height: 54px;
-                    border-radius: 50%;
-                    background: #cfdcf0;
-                    color: var(--texto);
-                    font-size: 28px;
-                    line-height: 1;
-                }
-
-                .metro-bpm-btn:active {
-                    transform: scale(.92);
-                }
-
-                input[type="range"].metro-slider {
-                    flex: 1;
-                    -webkit-appearance: none;
-                    appearance: none;
-                    height: 5px;
-                    border-radius: 5px;
-                    background: #8ea6cb;
-                    outline: none;
-                }
-
-                input[type="range"].metro-slider::-webkit-slider-thumb {
-                    -webkit-appearance: none;
-                    width: 30px;
-                    height: 30px;
-                    border-radius: 50%;
-                    background: var(--primaria);
-                    border: 3px solid #fff;
-                    cursor: pointer;
-                }
-
-                input[type="range"].metro-slider::-moz-range-thumb {
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 50%;
-                    background: var(--primaria);
-                    border: 3px solid #fff;
-                    cursor: pointer;
-                }
-
-                .metro-compasso-row {
-                    display: flex;
-                    justify-content: center;
-                    gap: 8px;
-                    margin-bottom: 22px;
-                }
-
-                .metro-compasso-btn {
-                    padding: 8px 16px;
-                    border-radius: 999px;
-                    background: #d6e4f8;
-                    color: var(--primaria-escura);
-                    font-size: 15px;
-                    font-weight: 600;
-                }
-
-                .metro-compasso-btn.active {
-                    background: var(--primaria-escura);
-                    color: #fff;
-                }
-
-                .metro-actions {
-                    display: flex;
-                    gap: 12px;
-                    max-width: 420px;
-                    margin: 0 auto;
-                }
-
-                .metro-play {
-                    flex: 1;
-                    padding: 15px;
-                    border-radius: 999px;
-                    background: var(--primaria-escura);
-                    color: #fff;
-                    font-size: 16px;
-                    font-weight: 700;
-                }
-
-                .metro-play.stop {
-                    background: var(--vermelho);
-                }
-
-                .metro-tap {
-                    padding: 15px 26px;
-                    border-radius: 999px;
-                    background: #cfdcf0;
-                    color: var(--primaria-escura);
-                    font-size: 16px;
-                    font-weight: 700;
-                }
-
-                .metro-tap:active {
-                    transform: scale(.95);
-                }
-            `}</style>
-
-            <div className="metro-panel">
-                <div className={`metro-ring${beatAtivo >= 0 ? " pulse" : ""}${beatAtivo === 0 ? " accent" : ""}`}
-                     key={beatAtivo + "-" + (running ? "on" : "off")}
-                >
-                    <div className="metro-ring-inner">
-                        <div className="metro-bpm">{bpm}</div>
-                        <div className="metro-bpm-label">BPM</div>
+                            <p className="metro-hint">Use “Tap tempo” para medir um ritmo tocando no pulso da música.</p>
+                        </aside>
                     </div>
-                </div>
 
-                <div className="metro-beats">
-                    {Array.from({ length: compasso }).map((_, i) => (
-                        <div
-                            key={i}
-                            className={`metro-beat-dot${beatAtivo === i ? " active" : ""}${i === 0 ? " accent" : ""}`}
-                        />
-                    ))}
-                </div>
-
-                <div className="metro-bpm-controls">
-                    <button className="metro-bpm-btn" onClick={() => ajustar(-1)}>−</button>
-                    <input
-                        type="range"
-                        className="metro-slider"
-                        min={MIN_BPM}
-                        max={MAX_BPM}
-                        value={bpm}
-                        onChange={(e) => setBpm(Number(e.target.value))}
-                    />
-                    <button className="metro-bpm-btn" onClick={() => ajustar(1)}>+</button>
-                </div>
-
-                <div className="metro-compasso-row">
-                    {COMPASSOS.map((c) => (
-                        <button
-                            key={c}
-                            className={`metro-compasso-btn${compasso === c ? " active" : ""}`}
-                            onClick={() => setCompasso(c)}
-                        >
-                            {c}/4
-                        </button>
-                    ))}
-                </div>
-
-                <div className="metro-actions">
-                    <button
-                        className={`metro-play${running ? " stop" : ""}`}
-                        onClick={() => (running ? stop() : start())}
-                    >
-                        {running ? "Parar" : "Iniciar"}
-                    </button>
-                    <button className="metro-tap" onClick={tapTempo}>
-                        Tap
-                    </button>
-                </div>
+                    <footer className="metro-footer">
+                        <div className="metro-actions">
+                            <button
+                                type="button"
+                                className={`metro-play${running ? " stop" : ""}`}
+                                onClick={() => (running ? stop() : start())}
+                            >
+                                {running ? "Parar metrônomo" : "Iniciar metrônomo"}
+                            </button>
+                            <button type="button" className="metro-tap" onClick={tapTempo}>
+                                Tap tempo
+                            </button>
+                        </div>
+                        <p className="metro-footer-note">
+                            {running
+                                ? "Metrônomo ativo · o primeiro pulso de cada compasso é acentuado."
+                                : "Clique em iniciar para ouvir o pulso no andamento escolhido."}
+                        </p>
+                    </footer>
+                </section>
             </div>
         </div>
     );
