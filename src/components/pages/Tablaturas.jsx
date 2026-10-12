@@ -37,7 +37,8 @@ function TabCard({ item, onOpen }) {
                 <span>{item.capo}</span>
                 <span>Acordes: {item.chords.join(" · ")}</span>
             </div>
-            <pre className="tab-pre" aria-label={`Resumo da tablatura de ${item.title}`}>{item.tab}</pre>
+            <pre className="tab-pre" aria-label={`Tablatura de ${item.title}`}>{item.tab}</pre>
+            <p className="tab-notation-note">Leia de cima para baixo: e é a corda mais aguda. <code>-</code> sustenta o tempo · <code>x</code> abafa · <code>h</code> indica hammer-on.</p>
             <p className="tab-card-explanation">{explicar(item)}</p>
             <footer className="tab-card-footer">
                 <span className="tab-license">{item.license}</span>
@@ -67,6 +68,7 @@ function TabDetail({ item, onClose }) {
                 <div className="tab-detail-section">
                     <h3>Tablatura completa</h3>
                     <pre className="tab-pre tab-pre-detail" aria-label={`Tablatura completa de ${item.title}`}>{item.tab}</pre>
+                    <p className="tab-notation-note">As linhas seguem a afinação {item.tuning}. A corda mais aguda fica em cima; leia da esquerda para a direita.</p>
                 </div>
                 <div className="tab-detail-section">
                     <h3>O que você vai praticar</h3>

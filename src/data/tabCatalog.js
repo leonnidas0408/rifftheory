@@ -3,8 +3,18 @@ const TAB_BASE = {
     capo: "Sem capotraste",
 };
 
-const TAB = (e, b = "", g = "", d = "", a = "", lowE = "") =>
-    [`e|${e}`, `B|${b}`, `G|${g}`, `D|${d}`, `A|${a}`, `E|${lowE}`].join("\n");
+const TAB = (e, b = "", g = "", d = "", a = "", lowE = "") => {
+    const linhas = [
+        ["e", e],
+        ["B", b],
+        ["G", g],
+        ["D", d],
+        ["A", a],
+        ["E", lowE],
+    ];
+    const largura = Math.max(...linhas.map(([, linha]) => linha.length));
+    return linhas.map(([corda, linha]) => `${corda}|${linha.padEnd(largura, "-")}|`).join("\n");
+};
 
 const ORIGINAL_LICENSE = "CC0 1.0 · composição e arranjo originais do Riff Theory";
 const TRADITIONAL_LICENSE = "Melodia tradicional em domínio público · arranjo de acordes original do Riff Theory";
