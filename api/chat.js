@@ -1,8 +1,7 @@
 // api/chat.js
 //
 // Função serverless (Vercel) que serve de ponte entre o front-end e a API
-// da Groq. A chave da API (GROQ_API_KEY) fica só aqui no servidor —
-// nunca é exposta pro navegador.
+// da Groq. As chaves ficam só no servidor — nunca são expostas ao navegador.
 //
 // O que ela faz:
 //   1. Recebe o histórico da conversa vindo do ChatbotTab.jsx.
@@ -25,15 +24,15 @@ const MAX_MENSAGENS_HISTORICO = 12; // limita o tamanho do payload enviado
 const MAX_TEXTO_MENSAGEM = 2000;
 const MAX_TEXTO_TOTAL = 8000;
 const MAX_TOKENS_RESPOSTA = 700;
-const LIMITE_JANELA_MS = 60 * 1000;
-const LIMITE_REQUISICOES = 5;
-const LIMITE_HORA_MS = 60 * 60 * 1000;
-const LIMITE_REQUISICOES_HORA = 30;
-
-// Limitador em memória de melhor esforço. Em funções serverless, cada instância
-// pode manter sua própria janela; para cotas globais, configure um rate limiter
-// persistente no gateway/edge da Vercel.
-const chamadasPorIp = new Map();
+const GROQ_API_KEY_ENV_NAMES = [
+    "GROQ_API_KEY",
+    "GROQ_API_KEY_2",
+    "GROQ_API_KEY_3",
+    "GROQ_API_KEY_4",
+    "GROQ_API_KEY_5",
+    "GROQ_API_KEY_6",
+];
+let indiceInicialChavesGroq = 0;
 
 const SYSTEM_PROMPT_BASE = `Você é o assistente de IA do Riff Theory, um app de violão/guitarra e teoria musical. Seu nome é Tonic.
 
@@ -125,53 +124,15 @@ function montarSystemPrompt(trechos) {
     return `${SYSTEM_PROMPT_BASE}\n\nTRECHOS DE REFERÊNCIA:\n${blocoTrechos}`;
 }
 
-function obterIp(req) {
-    const encaminhado = req.headers["x-forwarded-for"];
-    if (typeof encaminhado === "string" && encaminhado.trim()) {
-        return encaminhado.split(",")[0].trim().slice(0, 64);
-    }
-    const real = req.headers["x-real-ip"];
-    if (typeof real === "string" && real.trim()) return real.trim().slice(0, 64);
-    return req.socket?.remoteAddress || "desconhecido";
-}
-
-function excedeuLimite(req, agora = Date.now()) {
-    const ip = obterIp(req);
-    const recentes = (chamadasPorIp.get(ip) || []).filter(
-        (timestamp) => agora - timestamp < LIMITE_HORA_MS
-    );
-
-    if (recentes.filter((timestamp) => agora - timestamp < LIMITE_JANELA_MS).length >= LIMITE_REQUISICOES ||
-        recentes.length >= LIMITE_REQUISICOES_HORA) {
-        chamadasPorIp.set(ip, recentes);
-        return true;
-    }
-
-    recentes.push(agora);
-    chamadasPorIp.set(ip, recentes);
-
-    // Remove registros expirados para evitar crescimento ilimitado do Map.
-    if (chamadasPorIp.size > 5000) {
-        for (const [chave, timestamps] of chamadasPorIp) {
-            const ativos = timestamps.filter((timestamp) => agora - timestamp < LIMITE_HORA_MS);
-            if (ativos.length) chamadasPorIp.set(chave, ativos);
-            else chamadasPorIp.delete(chave);
-        }
-    }
-    return false;
-}
-
 function validarMensagens(mensagens) {
     if (!Array.isArray(mensagens) || mensagens.length === 0) {
         return { erro: "Nenhuma mensagem enviada.", status: 400 };
     }
-    if (mensagens.length > MAX_MENSAGENS_HISTORICO) {
-        return { erro: "A conversa excedeu o limite de mensagens. Inicie uma nova conversa.", status: 413 };
-    }
 
     let total = 0;
     const validas = [];
-    for (const mensagem of mensagens) {
+    const mensagensRecentes = mensagens.slice(-MAX_MENSAGENS_HISTORICO);
+    for (const mensagem of mensagensRecentes) {
         if (!mensagem || !["usuario", "bot"].includes(mensagem.autor) || typeof mensagem.texto !== "string") {
             return { erro: "Formato de mensagem inválido.", status: 400 };
         }
@@ -192,23 +153,71 @@ function validarMensagens(mensagens) {
     return { mensagens: validas };
 }
 
+function obterChavesGroq() {
+    return [...new Set(
+        GROQ_API_KEY_ENV_NAMES
+            .map((nome) => process.env[nome]?.trim())
+            .filter(Boolean)
+    )];
+}
+
+async function consultarGroq(mensagens) {
+    const chaves = obterChavesGroq();
+    if (!chaves.length) {
+        return {
+            erro: "Nenhuma chave da API da Groq está configurada no servidor.",
+            status: 500,
+        };
+    }
+
+    const inicio = indiceInicialChavesGroq % chaves.length;
+    indiceInicialChavesGroq = (inicio + 1) % chaves.length;
+
+    for (let tentativa = 0; tentativa < chaves.length; tentativa++) {
+        const apiKey = chaves[(inicio + tentativa) % chaves.length];
+
+        try {
+            const resposta = await fetch(GROQ_API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({
+                    model: GROQ_MODEL,
+                    messages: mensagens,
+                    temperature: 0.4,
+                    max_tokens: MAX_TOKENS_RESPOSTA,
+                }),
+            });
+
+            if (resposta.ok) return { dados: await resposta.json() };
+
+            console.error("Erro da API da Groq:", resposta.status);
+            if ([401, 403, 429].includes(resposta.status)) continue;
+
+            return {
+                erro: "O serviço de IA não respondeu corretamente. Tente novamente.",
+                status: 502,
+            };
+        } catch (erro) {
+            console.error("Erro ao chamar a API da Groq:", erro);
+            return {
+                erro: "Erro interno ao tentar falar com a IA. Tente novamente em instantes.",
+                status: 500,
+            };
+        }
+    }
+
+    return {
+        erro: "As chaves configuradas da Groq estão temporariamente indisponíveis. Tente novamente mais tarde.",
+        status: 502,
+    };
+}
+
 module.exports = async function handler(req, res) {
     if (req.method !== "POST") {
         res.status(405).json({ erro: "Método não permitido." });
-        return;
-    }
-
-    if (excedeuLimite(req)) {
-        res.status(429).json({ erro: "Limite de perguntas atingido. Aguarde um pouco e tente novamente." });
-        return;
-    }
-
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) {
-        res.status(500).json({
-            erro:
-                "A chave da API da Groq (GROQ_API_KEY) não está configurada no servidor.",
-        });
         return;
     }
 
@@ -236,7 +245,7 @@ module.exports = async function handler(req, res) {
 
     const systemPrompt = montarSystemPrompt(trechosRelevantes);
 
-    const historicoRecente = mensagens.slice(-MAX_MENSAGENS_HISTORICO);
+    const historicoRecente = mensagens;
 
     const mensagensParaGroq = [
         { role: "system", content: systemPrompt },
@@ -247,31 +256,13 @@ module.exports = async function handler(req, res) {
     ];
 
     try {
-        const respostaGroq = await fetch(GROQ_API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-                model: GROQ_MODEL,
-                messages: mensagensParaGroq,
-                temperature: 0.4,
-                max_tokens: MAX_TOKENS_RESPOSTA,
-            }),
-        });
-
-        if (!respostaGroq.ok) {
-            const detalhe = await respostaGroq.text();
-            console.error("Erro da API da Groq:", respostaGroq.status, detalhe);
-
-            res.status(502).json({
-                erro: "O serviço de IA não respondeu corretamente. Tente novamente.",
-            });
+        const resultado = await consultarGroq(mensagensParaGroq);
+        if (resultado.erro) {
+            res.status(resultado.status).json({ erro: resultado.erro });
             return;
         }
 
-        const dados = await respostaGroq.json();
+        const dados = resultado.dados;
         const textoResposta =
             dados?.choices?.[0]?.message?.content?.trim() ||
             "Não consegui gerar uma resposta agora. Tente reformular a pergunta.";
