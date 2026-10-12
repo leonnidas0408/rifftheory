@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Barra from "../Barra";
 import BracoInterativo from "../BracoInterativo";
 import ChordSearch from "../Chord/ChordSearch";
+import ReviewsSection from "./ReviewsSection";
 import { registrarEvento } from "../../utils/usageStats";
 
 function rolarPara(id) {
@@ -205,6 +206,8 @@ export default function Home({ setPage }) {
                     <p>O melhor feedback vem de quem usa o instrumento. Se uma etapa ficar confusa ou faltar um acorde, anote o caso concreto para a próxima rodada de melhorias.</p>
                 </div>
             </section>
+
+            <ReviewsSection />
 
             <div id="comecar" className="comecar">
                 <div className="comecar-topo">
