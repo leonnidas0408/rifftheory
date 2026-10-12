@@ -69,6 +69,7 @@ export default function App() {
         "Tablaturas": {
             page: <Tablaturas />,
             icone: "tablaturas",
+            aba: "tablaturas"
         },
 
         "Chatbot": {
