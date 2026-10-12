@@ -1887,10 +1887,6 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 .google-reviews-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .google-reviews-heading .secao-heading { gap: 5px; }
 .google-reviews-heading .secao-heading h2 { font-size: 23px; }
-.google-review-brand { display: inline-flex; align-items: center; gap: 7px; flex: none; color: #5f6368; font-size: 15px; font-weight: 600; }
-.google-review-brand-name { color: #5f6368; }
-.google-review-brand.compact { justify-content: center; width: 28px; height: 28px; font-size: 18px; }
-.google-blue { color: #4285f4; font-size: 24px; font-weight: 700; line-height: 1; }
 .google-review-summary {
     display: flex;
     align-items: center;
@@ -1941,30 +1937,9 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 @media (max-width: 560px) {
     .reviews-footer { margin-top: 22px; padding: 16px; }
     .google-reviews-heading { align-items: flex-start; }
-    .google-review-brand { font-size: 0; }
-    .google-review-brand.compact { font-size: 18px; }
     .google-review-summary { padding: 12px; }
     .google-review-card { padding: 15px; }
 }
-
-.google-letter { font-size: 18px; font-weight: 600; line-height: 1; }
-.google-letter-blue { color: #4285f4; }
-.google-letter-red { color: #ea4335; }
-.google-letter-yellow { color: #fbbc05; }
-.google-letter-green { color: #34a853; }
-.google-mark-g {
-    color: transparent;
-    background: conic-gradient(from 42deg, #4285f4 0 27%, #34a853 27% 51%, #fbbc04 51% 72%, #ea4335 72% 91%, #4285f4 91%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    font-size: 20px;
-    font-weight: 700;
-}
-@media (max-width: 560px) {
-    .google-review-brand:not(.compact) { gap: 3px; font-size: 12px; }
-    .google-letter { font-size: 15px; }
-}
-
 
 /* O formulário de envio é uma seção própria e permanece desativado. */
 .site-review-entry {

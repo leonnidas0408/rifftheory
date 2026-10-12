@@ -15,26 +15,6 @@ const averageRating = (
     reviews.reduce((total, review) => total + review.rating, 0) / reviews.length
 ).toFixed(1).replace(".", ",");
 
-function GoogleWordmark({ compact = false }) {
-    return (
-        <span className={`google-review-brand${compact ? " compact" : ""}`} aria-label="Google">
-            {compact ? (
-                <span className="google-mark-g">G</span>
-            ) : (
-                <>
-                    <span className="google-letter google-letter-blue">G</span>
-                    <span className="google-letter google-letter-red">o</span>
-                    <span className="google-letter google-letter-yellow">o</span>
-                    <span className="google-letter google-letter-blue">g</span>
-                    <span className="google-letter google-letter-green">l</span>
-                    <span className="google-letter google-letter-red">e</span>
-                    <span className="google-review-brand-name">Reviews</span>
-                </>
-            )}
-        </span>
-    );
-}
-
 export default function ReviewsDisplay() {
     return (
         <section className="reviews-section google-reviews" aria-labelledby="reviews-title">
@@ -44,7 +24,6 @@ export default function ReviewsDisplay() {
                     <h2 id="reviews-title">Avaliações do Google</h2>
                     <p>Experiências de quem já conheceu o Riff Theory.</p>
                 </div>
-                <GoogleWordmark />
             </header>
 
             <div className="google-review-summary" aria-label={`Nota média ${averageRating} de 5, com ${reviews.length} avaliações`}>
@@ -68,7 +47,6 @@ export default function ReviewsDisplay() {
                                     {"★".repeat(review.rating)}
                                 </span>
                             </div>
-                            <GoogleWordmark compact />
                         </header>
                         <p className="google-review-text">{review.text}</p>
                     </article>
