@@ -130,7 +130,7 @@ export default function Dashboard({ setPage }) {
                             <h3>O que você já praticou</h3>
                             <span className="subtitulo">Resultados da sua prática nos últimos 7 dias</span>
                         </div>
-                        <strong className="stats-total">{totalHoras.toFixed(1)}h</strong>
+                        <strong className="stats-total">{Math.floor(totalHoras)}h{Math.floor((totalHoras - Math.floor(totalHoras)) * 60)}m</strong>
                     </div>
 
                     {semProgresso ? (
