@@ -5,8 +5,7 @@ create table public.site_reviews (
     id uuid primary key default gen_random_uuid(),
     user_id uuid not null unique references auth.users (id) on delete cascade,
     display_name text not null
-        check (char_length(btrim(display_name)) between 2 and 40)
-        check (position('@' in display_name) = 0),
+        check (char_length(btrim(display_name)) between 2 and 254),
     rating smallint not null check (rating between 1 and 5),
     comment text not null default '' check (char_length(comment) <= 500),
     public_consent boolean not null check (public_consent is true),
@@ -41,6 +40,37 @@ create policy site_reviews_owner_update
 create policy site_reviews_owner_delete
     on public.site_reviews for delete to authenticated
     using ((select auth.uid()) = user_id);
+
+create function public.riff_sync_site_review_display_name()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+    account_name text;
+begin
+    select coalesce(
+        nullif(pg_catalog.btrim(raw_user_meta_data ->> 'full_name'), ''),
+        nullif(pg_catalog.btrim(raw_user_meta_data ->> 'name'), ''),
+        nullif(pg_catalog.btrim(email), '')
+    )
+    into account_name
+    from auth.users
+    where id = new.user_id;
+    if account_name is null then
+        raise exception 'Não foi possível identificar a conta Google desta avaliação.';
+    end if;
+    new.display_name := account_name;
+    return new;
+end;
+$$;
+
+revoke all on function public.riff_sync_site_review_display_name()
+    from public, anon, authenticated;
+create trigger site_reviews_sync_display_name
+    before insert or update of user_id, display_name on public.site_reviews
+    for each row execute function public.riff_sync_site_review_display_name();
 
 create function public.riff_set_site_reviews_updated_at()
 returns trigger
