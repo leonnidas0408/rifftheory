@@ -10,6 +10,8 @@ function horaAgora() {
     return new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 
+const MAX_MENSAGENS_CONTEXTO = 12;
+
 const MENSAGEM_BOAS_VINDAS = {
     autor: "bot",
     hora: horaAgora(),
@@ -60,8 +62,8 @@ export default function ChatbotTab() {
                     ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
                 },
                 body: JSON.stringify({
-                    // Manda só autor/texto pro backend remontar a conversa.
-                    mensagens: historicoAtualizado.map((m) => ({
+                    // Mantém a conversa visível sem limite; envia só o contexto recente.
+                    mensagens: historicoAtualizado.slice(-MAX_MENSAGENS_CONTEXTO).map((m) => ({
                         autor: m.autor,
                         texto: m.texto,
                     })),
@@ -192,7 +194,7 @@ export default function ChatbotTab() {
                 </button>
             </form>
             <p className="chatbot-privacidade">
-                Não precisa entrar com Google. Para responder, sua pergunta e o histórico recente desta conversa são enviados ao serviço de IA; o progresso da prática continua local no navegador. Limites de uso se aplicam.
+                Não precisa entrar com Google. O app não aplica uma cota fixa de mensagens por pessoa; a IA usa as últimas 12 mensagens como contexto. Os limites próprios da Groq ainda podem se aplicar.
             </p>
         </div>
     );
