@@ -1963,7 +1963,7 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
     .google-review-card { padding: 15px; }
 }
 
-/* O formulário de avaliação local é uma seção própria, sem envio ao servidor. */
+/* Formulário de avaliação pública, com consentimento explícito e gerenciamento pelo autor. */
 .site-review-entry {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(280px, 1.1fr);
@@ -1987,4 +1987,122 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 .light-description {
     color: rgb(166, 166, 166);
     font-size: 12px;
+}
+
+
+/* Avaliações Supabase: consentimento e campos públicos explícitos. */
+.site-review-form .site-review-name {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #dadce0;
+    border-radius: 11px;
+    background: #fff;
+    color: #202124;
+    font: inherit;
+    font-size: 14px;
+}
+.site-review-form .site-review-name:focus-visible,
+.site-review-form textarea:focus-visible,
+.site-review-consent input:focus-visible,
+.site-review-login-button:focus-visible,
+.site-review-delete-confirm-button:focus-visible {
+    outline: 3px solid #315ce8;
+    outline-offset: 2px;
+}
+.site-review-field-help {
+    grid-column: 1 / -1;
+    margin: -4px 0 2px;
+    color: #687386;
+    font-size: 12px;
+    line-height: 1.45;
+}
+.site-review-consent {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 4px 0;
+    color: #3c4043;
+    font-size: 13px;
+    line-height: 1.5;
+    cursor: pointer;
+}
+.site-review-consent input {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    margin: 2px 0 0;
+    accent-color: #315ce8;
+}
+.site-review-login {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid #dadce0;
+    border-radius: 14px;
+    background: #fff;
+}
+.site-review-login > p {
+    color: #5f6368;
+    font-size: 13px;
+    line-height: 1.55;
+}
+.site-review-login-button { grid-column: auto; cursor: pointer; }
+.site-review-submit:disabled,
+.site-review-clear:disabled,
+.site-review-delete-confirm-button:disabled {
+    opacity: .58;
+    cursor: not-allowed;
+}
+.site-review-delete-confirm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid #f0cbc8;
+    border-radius: 12px;
+    background: #fff8f7;
+}
+.site-review-delete-confirm > p {
+    color: #6e2521;
+    font-size: 13px;
+    line-height: 1.5;
+}
+.site-review-delete-confirm-button {
+    min-height: 38px;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 11px;
+    background: #a12622;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.google-review-date {
+    color: #80868b;
+    font-size: 11px;
+}
+.google-review-status {
+    margin: 0;
+    color: #5f6368;
+    font-size: 12px;
+    line-height: 1.45;
+}
+.google-review-status.is-error { color: #a12622; }
+.google-review-text {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+@media (max-width: 560px) {
+    .site-review-login { padding: 16px; }
+    .site-review-actions { align-items: stretch; }
+    .site-review-actions > button { width: 100%; }
 }
