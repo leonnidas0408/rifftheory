@@ -1988,3 +1988,31 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
     color: rgb(166, 166, 166);
     font-size: 12px;
 }
+
+.faq-question {
+    background-color: #0b1422;
+    width: 100%;
+    border-radius: 5px;
+    color: whitesmoke;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.faq-question-header {
+    background-color: #1c2732;
+    padding: 10px;
+}
+
+.faq-question-collapse {
+    padding: 5px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.faq-question-body {
+    padding: 10px;
+}
+
+.no-display {
+    display: none;
+}

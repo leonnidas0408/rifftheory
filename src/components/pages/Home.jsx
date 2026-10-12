@@ -5,6 +5,7 @@ import ChordSearch from "../Chord/ChordSearch";
 import ReviewForm from "./ReviewForm";
 import ReviewsDisplay from "./ReviewsDisplay";
 import { registrarEvento } from "../../utils/usageStats";
+import FAQQuestion from "../FAQQuestion";
 
 function rolarPara(id) {
     const reduzir = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -264,6 +265,30 @@ export default function Home({ setPage }) {
             <footer className="reviews-footer">
                 <ReviewsDisplay />
             </footer>
+            <h1>FAQ</h1>
+            <div>
+                <span className="light-description">Nesse FAQ, RT serve como uma abreviação de Riff Theory.</span>
+                <FAQQuestion
+                    question="Para usar o RT, precisa de cadastro?"
+                    answer="O cadastro é necessário somente para o plano premium e para usar o Thonic, nosso assistente de IA."
+                />
+                <FAQQuestion
+                    question="O que fica salvo no RT?"
+                    answer="Na nuvem, apenas sua conta fica salva. Localmente, ficam seus dados de uso e eles nunca são enviados."
+                />
+                <FAQQuestion
+                    question="Para que serve o chatbot?"
+                    answer="O nosso chatbot, o Thonic, serve para responder perguntas relacionadas a teoria musical. Na verdade, como ele foi feito pensando exatamente nisso, ele acabou sendo melhor do que outras IAs para responder perguntas desse tipo."
+                />
+                <FAQQuestion
+                    question="O RT funciona no celular?"
+                    answer="Sim! O Riff Theory tem compatibilidade total ao celular."
+                />
+                <FAQQuestion
+                    question="O RT é para violão ou guitarra?"
+                    answer="O Riff Theory serve para os 2!"
+                />
+            </div>
         </div>
     )
 }
