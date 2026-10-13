@@ -1,0 +1,197 @@
+/* Riff Theory — Braço interativo, escalas e cartões de acordes. Mantém a ordem original da cascata. */
+/* ==================================================   BRAÇO INTERATIVO
+   ========================================================= */
+
+.braco-topo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.braco-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.braco-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    align-items: baseline;
+    min-height: 22px;
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+#braco-nome {
+    color: var(--primaria-escura);
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.braco-scroll {
+    overflow-x: auto;
+}
+
+canvas#braco {
+    display: block;
+    min-width: 680px;
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.braco-controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.braco-controles button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--aba);
+    color: var(--primaria-escura);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.braco-controles button.limpar {
+    background: transparent;
+    color: var(--texto-suave);
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+#braco-janela {
+    min-width: 96px;
+    text-align: center;
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+
+/* ==================================================   ESCALAS: título, modos e acordes
+   ========================================================= */
+
+.escala-topo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.escala-selos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.escala-notas {
+    color: var(--texto-suave);
+    font-size: 17px;
+    letter-spacing: 0.5px;
+}
+
+.modos {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.modo {
+    flex: 1 0 auto;
+    min-width: 110px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--painel);
+    color: var(--texto-suave);
+    font-size: 15px;
+}
+
+.modo.ativo {
+    background: var(--primaria-escura);
+    color: #fff;
+    font-weight: 700;
+}
+
+.acordes {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.acorde-card {
+    flex: 1 0 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 6px 10px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: var(--painel);
+}
+
+.acorde-card:hover {
+    border-color: var(--borda);
+    background: #d9e8fc;
+}
+
+.acorde-card.ativo {
+    background: #cfe2fb;
+    border-color: var(--primaria);
+}
+
+.acorde-nome {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--texto);
+}
+
+.acorde-grau {
+    font-size: 13px;
+    color: var(--texto-suave);
+}
+
+svg.diagrama {
+    width: 64px;
+    height: 74px;
+    color: var(--texto);
+}
+
+.diagrama-vazio {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 74px;
+    font-size: 11px;
+    text-align: center;
+    color: var(--texto-suave);
+}
+
+.todos-acordes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 6px;
+    border-top: 1px solid var(--borda);
+}
+
+.todos-grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 8px;
+}
+
+

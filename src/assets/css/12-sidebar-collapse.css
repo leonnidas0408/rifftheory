@@ -1,0 +1,68 @@
+/* Riff Theory — Controle de recolhimento da barra lateral. Mantém a ordem original da cascata. */
+/* Controle da barra lateral: três barras no desktop, com preferência persistida. */
+.app-shell { min-height: 100dvh; }
+.sidebar { transition: width .24s ease, padding .24s ease, transform .24s ease, box-shadow .24s ease; }
+.sidebar-topbar {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+.sidebar-topbar .brand-lockup { min-width: 0; flex: 1; margin: 0; }
+.sidebar-toggle {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+    background: rgba(255,255,255,.06);
+    color: #dbe6f8;
+}
+.sidebar-toggle span {
+    display: block;
+    width: 14px;
+    height: 2px;
+    border-radius: 99px;
+    background: currentColor;
+}
+.sidebar-toggle:hover { background: rgba(255,255,255,.14); color: #fff; }
+.area-lateral { transition: margin-left .24s ease; }
+.app-shell.sidebar-collapsed .sidebar {
+    width: 0;
+    padding-right: 0;
+    padding-left: 0;
+    transform: translateX(-100%);
+    overflow: hidden;
+    border-right: 0;
+    box-shadow: none;
+    pointer-events: none;
+}
+.app-shell.sidebar-collapsed .area-lateral { margin-left: 0; }
+.sidebar-toggle-reopen {
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    z-index: 30;
+    border-color: #d7e1ef;
+    background: #fff;
+    color: #315ce8;
+    box-shadow: 0 6px 18px rgba(24,34,48,.12);
+}
+.sidebar-toggle-reopen:hover { border-color: #b8c7f7; background: #f5f7ff; color: #2449c8; }
+.app-shell.sidebar-collapsed .abas { margin-left: 52px; }
+
+.site-review-form .site-review-name[readonly] {
+    cursor: not-allowed;
+    background: #f8f9fc;
+    color: #3c4043;
+}
+
+@media (max-width: 900px) {
+    .app-shell.sidebar-collapsed .abas { margin-left: 0; }
+    .sidebar-toggle-reopen { display: none; }
+}

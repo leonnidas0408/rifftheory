@@ -1,0 +1,114 @@
+/* Riff Theory — Responsividade estrutural. Mantém a ordem original da cascata. */
+/* ==================================================   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .auth-mobile { display: flex; }
+
+    .conteudo {
+        padding: 14px 14px calc(var(--bottom-bar-h) + 96px + env(safe-area-inset-bottom));
+    }
+
+    .grade-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 34px 20px 22px;
+    }
+
+    .prova-valor {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .prova-recursos {
+        grid-column: auto;
+    }
+
+    .comparacao,
+    .prova-credibilidade,
+    .trust-grid {
+        grid-column: auto;
+    }
+
+    .prova-credibilidade {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .trust-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .exemplos-grade {
+        grid-template-columns: 1fr;
+    }
+
+    .objecoes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rotas-grade {
+        grid-template-columns: 1fr;
+    }
+
+    .beta-convite {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px 20px;
+    }
+
+    .indicadores {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fab-chat {
+        right: 16px;
+        bottom: calc(var(--bottom-bar-h) + 68px + env(safe-area-inset-bottom));
+    }
+
+    .barra-titulo {
+        font-size: 22px;
+    }
+
+    .mobile-cta-wrap {
+        display: block;
+        position: fixed;
+        right: 12px;
+        bottom: calc(var(--bottom-bar-h) + 12px + env(safe-area-inset-bottom));
+        left: 12px;
+        z-index: 14;
+    }
+    .mobile-cta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 12px;
+        padding: 11px 16px;
+        border: 1px solid rgba(255, 255, 255, .25);
+        border-radius: 999px;
+        background: var(--primaria-escura);
+        box-shadow: 0 8px 24px rgba(31, 79, 143, .28);
+        color: #fff;
+        text-align: left;
+    }
+    .mobile-cta span { font-size: 12px; color: #dbe8fb; }
+    .mobile-cta strong { font-size: 14px; white-space: nowrap; }
+}
+
+@media (max-width: 560px) {
+    .prova-numeros,
+    .prova-recursos,
+    .objecoes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-seguranca,
+    .cta-seguranca {
+        align-items: flex-start;
+    }
+}
+
+
