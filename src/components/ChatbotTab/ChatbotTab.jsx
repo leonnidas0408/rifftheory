@@ -4,21 +4,45 @@ import Barra from "../Barra";
 import AvatarUsuario from "../AvatarUsuario";
 import Icone from "../Icone";
 import { useAuth } from "../../auth/AuthContext";
+import { supabase } from "../../auth/supabase";
 import "./ChatbotTab.css";
 import Markdown from "react-markdown";
+
+const CONVERSA_STORAGE_PREFIXO = "riffTheoryThonicConversation:v1:";
+const MAX_MENSAGENS_SALVAS = 100;
 
 function horaAgora() {
     return new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 
-const MENSAGEM_BOAS_VINDAS = {
-    autor: "bot",
-    hora: horaAgora(),
-    texto:
-        "E aí! Meu nome é Thonic e eu sou o assistente do Riff Theory. Pode perguntar sobre teoria " +
-        "musical, escalas, acordes, harmonia, intervalos, técnica no violão/" +
-        "guitarra e afins — esse é o meu único assunto. 🎸",
-};
+function mensagemBoasVindas() {
+    return {
+        autor: "bot",
+        hora: horaAgora(),
+        texto:
+            "E aí! Meu nome é Thonic e eu sou o assistente do Riff Theory. Pode perguntar sobre teoria " +
+            "musical, escalas, acordes, harmonia, intervalos, técnica no violão/" +
+            "guitarra e afins — esse é o meu único assunto. 🎸",
+    };
+}
+
+function normalizarMensagens(valor) {
+    if (!Array.isArray(valor)) return [];
+
+    return valor
+        .filter((mensagem) => (
+            mensagem &&
+            (mensagem.autor === "usuario" || mensagem.autor === "bot") &&
+            typeof mensagem.texto === "string" &&
+            mensagem.texto.trim()
+        ))
+        .map((mensagem) => ({
+            autor: mensagem.autor,
+            texto: mensagem.texto.trim(),
+            hora: typeof mensagem.hora === "string" && mensagem.hora ? mensagem.hora : horaAgora(),
+        }))
+        .slice(-MAX_MENSAGENS_SALVAS);
+}
 
 const FALAS_THONIC = [
     { fala: "Quer destravar um acorde?", pergunta: "Como posso tocar um acorde fácil no violão?" },
@@ -27,23 +51,99 @@ const FALAS_THONIC = [
 ];
 
 export default function ChatbotTab() {
-    const { session, loading: authLoading, authConfigured, signInWithGoogle, error: authError } = useAuth();
-    const [mensagens, setMensagens] = useState([MENSAGEM_BOAS_VINDAS]);
+    const { session, user, loading: authLoading, authConfigured, signInWithGoogle, error: authError } = useAuth();
+    const [mensagens, setMensagens] = useState([]);
     const [entrada, setEntrada] = useState("");
     const [carregando, setCarregando] = useState(false);
+    const [carregandoConversa, setCarregandoConversa] = useState(false);
     const [erro, setErro] = useState("");
 
     const fimDaListaRef = useRef(null);
+    const conversaCarregadaRef = useRef(false);
+    const timerPersistenciaRef = useRef(null);
+
+    const storageKey = user?.id ? `${CONVERSA_STORAGE_PREFIXO}${user.id}` : null;
 
     useEffect(() => {
         fimDaListaRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [mensagens, carregando]);
 
+    useEffect(() => {
+        let ativo = true;
+        conversaCarregadaRef.current = false;
+        setMensagens([]);
+
+        if (!user?.id) return undefined;
+
+        async function carregarConversa() {
+            setCarregandoConversa(true);
+            let conversa = [];
+
+            try {
+                const local = window.localStorage.getItem(storageKey);
+                conversa = normalizarMensagens(local ? JSON.parse(local) : []);
+            } catch {
+                // O localStorage pode estar indisponível no modo privado.
+            }
+
+            if (supabase) {
+                const { data, error: loadError } = await supabase
+                    .from("thonic_conversations")
+                    .select("messages")
+                    .eq("user_id", user.id)
+                    .maybeSingle();
+
+                if (!loadError && data?.messages) {
+                    conversa = normalizarMensagens(data.messages);
+                }
+            }
+
+            if (!ativo) return;
+            setMensagens(conversa.length ? conversa : [mensagemBoasVindas()]);
+            conversaCarregadaRef.current = true;
+            setCarregandoConversa(false);
+        }
+
+        carregarConversa().catch(() => {
+            if (!ativo) return;
+            setMensagens([mensagemBoasVindas()]);
+            conversaCarregadaRef.current = true;
+            setCarregandoConversa(false);
+        });
+
+        return () => {
+            ativo = false;
+        };
+    }, [user?.id, storageKey]);
+
+    useEffect(() => {
+        if (!storageKey || !conversaCarregadaRef.current || !mensagens.length) return undefined;
+
+        const mensagensParaSalvar = normalizarMensagens(mensagens);
+        try {
+            window.localStorage.setItem(storageKey, JSON.stringify(mensagensParaSalvar));
+        } catch {
+            // O histórico remoto continua sendo usado quando o localStorage falhar.
+        }
+
+        window.clearTimeout(timerPersistenciaRef.current);
+        timerPersistenciaRef.current = window.setTimeout(async () => {
+            if (!supabase || !user?.id) return;
+            await supabase.from("thonic_conversations").upsert({
+                user_id: user.id,
+                messages: mensagensParaSalvar,
+                updated_at: new Date().toISOString(),
+            }, { onConflict: "user_id" });
+        }, 350);
+
+        return () => window.clearTimeout(timerPersistenciaRef.current);
+    }, [mensagens, storageKey, user?.id]);
+
     async function enviarMensagem(evento) {
         evento.preventDefault();
 
         const texto = entrada.trim();
-        if (!texto || carregando) return;
+        if (!texto || carregando || carregandoConversa) return;
 
         const novaMensagemUsuario = { autor: "usuario", texto, hora: horaAgora() };
         const historicoAtualizado = [...mensagens, novaMensagemUsuario];
@@ -61,8 +161,7 @@ export default function ChatbotTab() {
                     Authorization: `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
-                    // Manda só autor/texto pro backend remontar a conversa.
-                    mensagens: historicoAtualizado.map((m) => ({
+                    mensagens: historicoAtualizado.slice(-12).map((m) => ({
                         autor: m.autor,
                         texto: m.texto,
                     })),
@@ -94,8 +193,8 @@ export default function ChatbotTab() {
     }
 
     function novaConversa() {
-        if (carregando) return;
-        setMensagens([{ ...MENSAGEM_BOAS_VINDAS, hora: horaAgora() }]);
+        if (carregando || carregandoConversa) return;
+        setMensagens([mensagemBoasVindas()]);
         setEntrada("");
         setErro("");
     }
@@ -130,6 +229,17 @@ export default function ChatbotTab() {
         );
     }
 
+    if (carregandoConversa) {
+        return (
+            <div className="pagina chatbot-tab chatbot-gate">
+                <Barra titulo="Assistente de teoria" />
+                <div className="chatbot-gate-card" role="status" aria-live="polite">
+                    Recuperando sua conversa com o Thonic...
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="pagina chatbot-tab">
             <div className="chatbot-topo">
@@ -151,7 +261,7 @@ export default function ChatbotTab() {
             <div className="chatbot-mensagens">
                 {mensagens.map((mensagem, indice) => (
                     <div
-                        key={indice}
+                        key={`${mensagem.autor}-${indice}`}
                         className={`chatbot-linha chatbot-linha-${mensagem.autor}`}
                     >
                         <span className="chatbot-avatar">
@@ -224,7 +334,7 @@ export default function ChatbotTab() {
                 </button>
             </form>
             <p className="chatbot-privacidade">
-                O login Google é obrigatório para usar o Thonic. Ao enviar uma pergunta, ela e o histórico recente desta conversa são enviados ao serviço de IA; o progresso da prática continua local no navegador. Limites de uso se aplicam.
+                Sua conversa é salva na sua conta para continuar de onde parou quando você voltar. O login Google é obrigatório para usar o Thonic; limites de uso se aplicam.
             </p>
         </div>
     );
