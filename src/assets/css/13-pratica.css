@@ -1,0 +1,68 @@
+/* Riff Theory — área Prática: roadmap executável, áudio e especialização. */
+.roadmap-page { gap: 20px; }
+.roadmap-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: clamp(24px, 4vw, 52px); border: 1px solid #dfe6f0; background: linear-gradient(135deg, #f8fbff 0%, #eef3ff 100%); }
+.roadmap-hero h1 { max-width: 720px; margin: 8px 0 12px; color: #182230; font-size: clamp(32px, 5vw, 60px); line-height: .98; letter-spacing: -.05em; }
+.roadmap-hero p { max-width: 680px; margin: 0; color: #59687a; font-size: 17px; line-height: 1.55; }
+.roadmap-beta { display: grid; gap: 4px; min-width: 155px; padding: 14px; border-left: 3px solid #315ce8; color: #315ce8; }
+.roadmap-beta strong { font-size: 18px; }
+.roadmap-beta span { color: #59687a; font-size: 12px; }
+.roadmap-tabs { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 4px; border-bottom: 1px solid #dfe6f0; }
+.roadmap-tabs button { padding: 11px 14px; border-bottom: 2px solid transparent; color: #59687a; font-size: 13px; font-weight: 750; }
+.roadmap-tabs button:hover, .roadmap-tabs button.ativo { border-color: #315ce8; color: #2449c8; }
+.roadmap-section-heading { display: grid; gap: 7px; margin-bottom: 18px; }
+.roadmap-section-heading h2 { color: #202b3a; font-size: clamp(24px, 3vw, 34px); line-height: 1.05; }
+.roadmap-section-heading p { max-width: 740px; color: #59687a; line-height: 1.55; }
+.roadmap-grid { display: grid; gap: 14px; }
+.roadmap-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.roadmap-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.roadmap-card { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; padding: 20px; border: 1px solid #e3e8f0; background: #fff; }
+.roadmap-card.destaque { border-color: #b9c8f5; background: #f4f6ff; }
+.roadmap-card h3 { color: #202b3a; font-size: 19px; }
+.roadmap-card p, .roadmap-card span { color: #59687a; font-size: 14px; line-height: 1.5; }
+.roadmap-card .link-botao, .roadmap-card .pilula { margin-top: auto; }
+.roadmap-number { color: #315ce8 !important; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px !important; font-weight: 800; }
+.roadmap-page .pretty-panel { border-radius: 0; }
+.roadmap-progress { display: grid; gap: 14px; }
+.roadmap-progress-line { height: 5px; overflow: hidden; background: #e5eaf2; }
+.roadmap-progress-line span { display: block; height: 100%; background: #315ce8; }
+.roadmap-steps { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: #8390a2; font-size: 12px; font-weight: 700; }
+.roadmap-steps .feito { color: #245b37; }
+.roadmap-steps .ativo { color: #315ce8; }
+.roadmap-two-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.roadmap-controls { display: flex; align-items: end; flex-wrap: wrap; gap: 18px; }
+.roadmap-controls label { display: grid; gap: 6px; color: #59687a; font-size: 12px; font-weight: 750; }
+.roadmap-controls select { min-width: 130px; padding: 10px 12px; border: 1px solid #d8e0eb; background: #fff; color: #202b3a; }
+.roadmap-chip-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.roadmap-chip-list button, .roadmap-note-row button, .ear-options button { min-width: 48px; padding: 10px 13px; border: 1px solid #d8e0eb; background: #fff; color: #202b3a; font-weight: 750; }
+.roadmap-chip-list button:hover, .roadmap-chip-list button.selecionado, .roadmap-note-row button:hover, .ear-options button:hover { border-color: #315ce8; background: #edf1ff; color: #2449c8; }
+.roadmap-suggestion { display: grid; gap: 4px; margin-top: 18px; padding: 15px; border-left: 3px solid #315ce8; background: #f5f7fb; }
+.roadmap-suggestion strong { color: #202b3a; }
+.roadmap-suggestion span { color: #59687a; font-size: 13px; }
+.voicing-list, .roadmap-scale-picker, .roadmap-overlay-list { display: grid; gap: 8px; margin-bottom: 18px; }
+.voicing-list button, .roadmap-scale-picker button { display: grid; gap: 4px; padding: 12px; border: 1px solid #e2e7ef; background: #fff; text-align: left; }
+.voicing-list button:hover, .voicing-list button.selecionado, .roadmap-scale-picker button:hover, .roadmap-scale-picker button.selecionado { border-color: #315ce8; background: #f4f6ff; }
+.voicing-list strong, .roadmap-scale-picker button { color: #202b3a; }
+.voicing-list span, .roadmap-scale-picker small { color: #59687a; font-size: 12px; line-height: 1.4; }
+.voicing-list code { color: #315ce8; font-size: 12px; }
+.roadmap-notes { padding-top: 14px; border-top: 1px solid #e5eaf2; color: #59687a; font-size: 14px; line-height: 1.6; }
+.roadmap-notes strong { color: #202b3a; }
+.roadmap-targets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.roadmap-targets span { padding: 10px 12px; border: 1px solid #e0e6ef; color: #59687a; font-size: 13px; }
+.roadmap-targets span.alvo { border-color: #315ce8; background: #edf1ff; color: #2449c8; font-weight: 750; }
+.roadmap-note-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.roadmap-overlay-list div { display: grid; gap: 3px; padding: 11px 0; border-bottom: 1px solid #e5eaf2; }
+.roadmap-overlay-list strong { color: #202b3a; font-size: 13px; }
+.roadmap-overlay-list span { color: #59687a; font-size: 13px; }
+.estilo-card { min-height: 240px; }
+.estilo-card p { margin: 0; }
+.estilo-card strong { color: #202b3a; }
+.roadmap-mini { display: grid; gap: 5px; padding: 14px; border-left: 2px solid #b9c8f5; background: #f7f9fc; }
+.roadmap-mini strong { color: #202b3a; }
+.roadmap-mini span { color: #59687a; font-size: 13px; line-height: 1.45; }
+.ear-training { display: grid; gap: 18px; max-width: 680px; padding: 20px; border: 1px solid #dfe6f0; background: #f8fbff; }
+.ear-play { width: fit-content; padding: 13px 18px; background: #315ce8; color: #fff; font-weight: 800; }
+.ear-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.ear-training p { min-height: 22px; color: #59687a; font-size: 14px; }
+.ear-training p.sucesso { color: #245b37; font-weight: 750; }
+@media (max-width: 900px) { .roadmap-hero { align-items: flex-start; flex-direction: column; } .roadmap-grid-3, .roadmap-grid-2, .roadmap-two-columns { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .roadmap-hero { padding: 22px 18px; } .roadmap-hero h1 { font-size: 38px; } .roadmap-tabs { overflow-x: auto; flex-wrap: nowrap; } .roadmap-tabs button { flex: 0 0 auto; } .roadmap-steps { display: grid; grid-template-columns: repeat(2, 1fr); } .roadmap-controls { align-items: stretch; flex-direction: column; } .roadmap-controls label, .roadmap-controls select { width: 100%; } }
