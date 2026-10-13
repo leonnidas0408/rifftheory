@@ -15,3 +15,6 @@ Veja [nossos planos](TODO.md).
 ## Área Prática
 
 A área **Prática** reúne acordes alternativos com áudio local, harmonia aplicada, escalas por contexto, improvisação guiada, arpejos, sobreposições, estilos, timbres, equipamento e treino de ouvido.
+
+## Publicação
+A versão atual está publicada no projeto Vercel **Riff Theory** (`rifftheory`).
