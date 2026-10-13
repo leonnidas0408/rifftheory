@@ -185,7 +185,7 @@ export default function ReviewForm() {
                 <span className="eyebrow">Sua opinião</span>
                 <h2 id="site-review-title">Avalie o Riff Theory</h2>
                 <p id="site-review-public-note">
-                    As avaliações enviadas aqui ficam visíveis para todos. Publicamos o nome da sua conta Google ou, se ele não estiver disponível, o seu e-mail, além da nota e do comentário. A foto do Google nunca é publicada. Avaliações salvas anteriormente apenas neste navegador não serão publicadas automaticamente.
+                    As avaliações enviadas aqui ficam visíveis para todos. Publicamos o nome da sua conta Google ou, se ele não estiver disponível, o seu e-mail, além da nota e do comentário. A foto do Google nunca é publicada. Avaliações salvas anteriormente apenas neste navegador não serão publicadas automaticamente. Comentários devem ser relacionados ao site e podem ser moderados quando forem spam, incoerentes, ataques pessoais ou avaliações feitas por motivo alheio à experiência com o Riff Theory.
                 </p>
             </div>
 

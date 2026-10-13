@@ -39,6 +39,37 @@ function formatarData(value) {
     }).format(date);
 }
 
+function avaliacaoPublicaValida(review) {
+    const comentario = typeof review?.comment === "string" ? review.comment.trim() : "";
+    if (!comentario) return true;
+
+    const normalizado = comentario
+        .toLocaleLowerCase("pt-BR")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+    // Mantém críticas negativas legítimas; bloqueia somente sinais claros de
+    // avaliação por motivo pessoal, ataque ao autor ou conteúdo sem relação.
+    const sinaisDeMaFe = [
+        /so\s+porque\s+(?:e|foi)\s+(?:voce|seu|sua)/,
+        /por\s+ser\s+(?:voce|meu\s+amigo|minha\s+amiga)/,
+        /por\s+causa\s+do\s+dono/,
+        /avali(?:ei|ar)\s+(?:mal|negativo|negativamente)\s+de\s+proposito/,
+        /site\s+ruim\s+porque\s+(?:e|foi)\s+(?:dele|dela|seu|sua)/,
+    ];
+    if (sinaisDeMaFe.some((padrao) => padrao.test(normalizado))) return false;
+
+    const sinaisDeAtaquePessoal = [
+        /\b(?:idiota|incompetente|ladr[aã]o|fracassado|ot[aá]rio)\b/,
+        /\b(?:dono|criador|desenvolvedor)\b.{0,30}\b(?:burro|imbecil|incompetente)\b/,
+    ];
+    if (sinaisDeAtaquePessoal.some((padrao) => padrao.test(normalizado))) return false;
+
+    const assuntoDoSite = /\b(?:site|app|aplicativo|riff|teoria|musica|guitarra|violao|acorde|escala|afinador|metronomo|tablatura|pratica|navega|interface|conteudo|recurso)\b/;
+    const textoLongoSemAssunto = normalizado.length >= 18 && !assuntoDoSite.test(normalizado);
+    return !textoLongoSemAssunto;
+}
+
 export default function ReviewsDisplay() {
     const [communityReviews, setCommunityReviews] = useState([]);
     const [loading, setLoading] = useState(Boolean(supabase));
@@ -71,6 +102,7 @@ export default function ReviewsDisplay() {
                         && Number(review.rating) >= 1
                         && Number(review.rating) <= 5
                     ))
+                    .filter(avaliacaoPublicaValida)
                     .map((review) => ({
                         id: `community-${review.id}`,
                         author: review.display_name.trim(),
