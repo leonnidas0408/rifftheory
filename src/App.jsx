@@ -5,6 +5,7 @@ import PaginaDeEscala from "./components/pages/PaginaDeEscala";
 import Dashboard from "./components/pages/Dashboard";
 import Metronomo from "./components/pages/Metronomo";
 import Tablaturas from "./components/pages/Tablaturas";
+import Pratica from "./components/pages/Pratica";
 import ChatbotTab from "./components/ChatbotTab/ChatbotTab";
 
 import NavbarAdapter from "./components/NavbarAdapter";
@@ -70,6 +71,12 @@ export default function App() {
             page: <Tablaturas />,
             icone: "tablaturas",
             aba: "tablaturas"
+        },
+
+        "Prática": {
+            page: <Pratica />,
+            icone: "riffs",
+            aba: "riffs"
         },
 
         "Chatbot": {
