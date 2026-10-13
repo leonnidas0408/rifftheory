@@ -11,3 +11,7 @@ Nós, desenvolvedores do Riff Theory, temos muitos planos para o aplicativo. Que
 Um sonho ambicioso e de código aberto que é realizado pouco a pouco, o aplicativo não tem um público-alvo específico. Queremos que iniciantes, intermediários e profissionais possam se divertir e usar o app sem comprometê-lo com simplicidade ou complexidade exagerada.
 
 Veja [nossos planos](TODO.md).
+
+## Área Prática
+
+A área **Prática** reúne acordes alternativos com áudio local, harmonia aplicada, escalas por contexto, improvisação guiada, arpejos, sobreposições, estilos, timbres, equipamento e treino de ouvido.
