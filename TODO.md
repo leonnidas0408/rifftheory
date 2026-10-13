@@ -19,7 +19,7 @@ sugerida de implementação (1 → 5) indicada no mapa.
       impacta todas as outras áreas.
 - [ ] **Versão beta**: lançar uma versão enxuta o quanto antes para reduzir risco e acelerar a
       validação real; evitar gastar tempo demais antes de confirmar o que é mais útil.
-- [ ] **Testes com músicos**: validar com guitarristas, alunos e músicos de igreja antes de
+- [x] **Testes com músicos**: validar com guitarristas, alunos e músicos de igreja antes de
       ampliar o escopo; ajuda a descobrir o que realmente faz diferença no dia a dia e a corrigir
       prioridades com base em uso real (não só em suposição).
       
