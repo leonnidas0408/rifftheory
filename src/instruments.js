@@ -84,6 +84,7 @@ export function getInstrument(id = DEFAULT_INSTRUMENT_ID) {
 
 export function createInstrumentState(instrumentId = DEFAULT_INSTRUMENT_ID) {
     const instrument = getInstrument(instrumentId);
+    if (!instrument.strings) return {};
     return Object.fromEntries(
         instrument.strings.map(({ number }) => [number, { muted: true, fret: 0 }])
     );

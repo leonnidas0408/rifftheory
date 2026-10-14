@@ -129,7 +129,7 @@ export function atualizarBraco() {
                 : `${window.fretStart + 1}ª–${window.fretStart + F}ª casa`;
     }
 
-    desenharBraco(r);
+    if (instrumentoAtual().type === "strings") desenharBraco(r);
 }
 
 /**
