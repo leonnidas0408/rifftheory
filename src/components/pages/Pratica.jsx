@@ -65,6 +65,7 @@ export default function Pratica() {
     const [escala, setEscala] = useState(ESCALAS_CONTEXTUAIS[0]);
     const [ouvido, setOuvido] = useState(0);
     const [feedback, setFeedback] = useState("");
+    const [feedbackType, setFeedbackType] = useState("");
     const harmonia = useMemo(() => gerarHarmonia(chave), [chave]);
     const notas = useMemo(() => notasDaEscala(chave, escala.tipo), [chave, escala]);
     const sugestoes = useMemo(() => sugestoesParaAcorde(acorde), [acorde]);
@@ -78,7 +79,9 @@ export default function Pratica() {
     }
 
     function responderOuvido(resposta) {
-        setFeedback(resposta === audioOuvido.resposta ? "Acertou. Confie na sensação da tônica e repita." : `Quase. A resposta era ${audioOuvido.resposta}. Tente ouvir a nota mais estável.`);
+        const certo = resposta === audioOuvido.resposta;
+        setFeedback(certo ? "Acertou. Confie na sensação da tônica e repita." : `Quase. A resposta era ${audioOuvido.resposta}. Tente ouvir a nota mais estável.`);
+        setFeedbackType(certo ? "positive" : "negative");
     }
 
     return <div className="pagina roadmap-page">
@@ -111,6 +114,6 @@ export default function Pratica() {
 
         {aba === "estilos" && <><SectionTitle eyebrow="Especialização" title="O mesmo acorde muda com o contexto">Use estilo, timbre e equipamento como escolhas musicais, não como uma lista de compras.</SectionTitle><section className="roadmap-grid roadmap-grid-2">{ESTILOS.map((item) => <article className="roadmap-card estilo-card" key={item.nome}><h3>{item.nome}</h3><p><strong>Padrão:</strong> {item.padrão}</p><p><strong>Timbre:</strong> {item.timbre}</p><p><strong>Equipamento e pegada:</strong> {item.equipamento}</p><button className="pilula" onClick={() => tocarAcorde(acorde)}>Ouvir com a forma atual</button></article>)}</section><PrettyPanel><h3>Conteúdo avançado por camadas</h3><div className="roadmap-grid roadmap-grid-3">{AVANCADO.map((item) => <div key={item.titulo} className="roadmap-mini"><strong>{item.titulo}</strong><span>{item.texto}</span></div>)}</div></PrettyPanel></>}
 
-        {aba === "ouvido" && <><PrettyPanel><SectionTitle eyebrow="Tirar música de ouvido" title="Ouça três notas e encontre a tônica">O exercício é local: nenhum áudio é enviado. Toque o exemplo quantas vezes quiser, compare e escolha.</SectionTitle><div className="ear-training"><button className="ear-play" onClick={() => tocarNotas(audioOuvido.notas, 0.7)}>▶ Tocar exemplo</button><div className="ear-options">{["C", "Am", "G", "F"].map((item) => <button key={item} onClick={() => responderOuvido(item)}>{item}</button>)}</div><p className={feedback.startsWith("Acertou") ? "sucesso" : ""}>{feedback || "Escolha uma resposta depois de ouvir."}</p><button className="pilula" onClick={() => { setOuvido((ouvido + 1) % TREINO_OUVIDO.length); setFeedback(""); }}>Próximo exemplo</button></div></PrettyPanel><section className="roadmap-grid roadmap-grid-3">{["Iniciante: reconhecer tônica", "Intermediário: reconhecer qualidade", "Avançado: descobrir a progressão"].map((item, index) => <article className="roadmap-card" key={item}><span className="roadmap-number">0{index + 1}</span><h3>{item}</h3><p>{index === 0 ? "Comece com tríades lentas e cante a nota que parece repousar." : index === 1 ? "Compare maior e menor antes de acelerar o exercício." : "Anote os graus e confirme no instrumento depois."}</p></article>)}</section></>}
+        {aba === "ouvido" && <><PrettyPanel><SectionTitle eyebrow="Tirar música de ouvido" title="Ouça três notas e encontre a tônica">O exercício é local: nenhum áudio é enviado. Toque o exemplo quantas vezes quiser, compare e escolha.</SectionTitle><div className="ear-training"><button className="ear-play" onClick={() => tocarNotas(audioOuvido.notas, 0.7)}>▶ Tocar exemplo</button><div className="ear-options">{["C", "Am", "G", "F"].map((item) => <button key={item} onClick={() => responderOuvido(item)}>{item}</button>)}</div><p className={feedbackType === "positive" ? "sucesso" : "" + feedbackType === "negative" ? " sem-sucesso" : ""}>{feedback || "Escolha uma resposta depois de ouvir."}</p><button className="pilula" onClick={() => { setOuvido((ouvido + 1) % TREINO_OUVIDO.length); setFeedback(""); setFeedbackType("") }}>Próximo exemplo</button></div></PrettyPanel><section className="roadmap-grid roadmap-grid-3">{["Iniciante: reconhecer tônica", "Intermediário: reconhecer qualidade", "Avançado: descobrir a progressão"].map((item, index) => <article className="roadmap-card" key={item}><span className="roadmap-number">0{index + 1}</span><h3>{item}</h3><p>{index === 0 ? "Comece com tríades lentas e cante a nota que parece repousar." : index === 1 ? "Compare maior e menor antes de acelerar o exercício." : "Anote os graus e confirme no instrumento depois."}</p></article>)}</section></>}
     </div>;
 }

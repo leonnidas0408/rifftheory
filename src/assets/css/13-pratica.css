@@ -64,5 +64,6 @@
 .ear-options { display: flex; flex-wrap: wrap; gap: 8px; }
 .ear-training p { min-height: 22px; color: #59687a; font-size: 14px; }
 .ear-training p.sucesso { color: #245b37; font-weight: 750; }
+.ear-training p.sem-sucesso { color: rgb(169, 48, 48); font-weight: 750; }
 @media (max-width: 900px) { .roadmap-hero { align-items: flex-start; flex-direction: column; } .roadmap-grid-3, .roadmap-grid-2, .roadmap-two-columns { grid-template-columns: 1fr; } }
 @media (max-width: 560px) { .roadmap-hero { padding: 22px 18px; } .roadmap-hero h1 { font-size: 38px; } .roadmap-tabs { overflow-x: auto; flex-wrap: nowrap; } .roadmap-tabs button { flex: 0 0 auto; } .roadmap-steps { display: grid; grid-template-columns: repeat(2, 1fr); } .roadmap-controls { align-items: stretch; flex-direction: column; } .roadmap-controls label, .roadmap-controls select { width: 100%; } }
