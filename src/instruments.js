@@ -56,16 +56,6 @@ export const INSTRUMENTS = {
         keyCount: 37,
         chordShapes: false,
     },
-    keyboard: {
-        id: "keyboard",
-        type: "keys",
-        label: "Teclado",
-        shortLabel: "Teclado",
-        description: "Teclas · C3–C6",
-        startMidi: 48,
-        keyCount: 37,
-        chordShapes: false,
-    },
 };
 
 export const DEFAULT_INSTRUMENT_ID = "guitar";

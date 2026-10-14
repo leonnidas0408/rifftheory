@@ -77,6 +77,10 @@ function tutorialOcultoParaSempre() {
 function instrumentoPreferido() {
     try {
         const salvo = localStorage.getItem("riffTheoryInstrument");
+        if (salvo === "keyboard") {
+            localStorage.setItem("riffTheoryInstrument", "piano");
+            return "piano";
+        }
         if (salvo && Object.hasOwn(INSTRUMENTS, salvo)) return salvo;
         localStorage.setItem("riffTheoryInstrument", DEFAULT_INSTRUMENT_ID);
     } catch {

@@ -3,6 +3,8 @@ import NOTAS from "../assets/constants/NOTAS.json";
 
 const TECLAS_PRETAS = new Set([1, 3, 6, 8, 10]);
 const MAPA_TECLADO = "awsedftgyhujkolp;";
+const LARGURA_TECLA_BRANCA = 38;
+const LARGURA_TECLA_PRETA = 28;
 const ROTULOS_NOTAS = [
     ["Dó"], ["Dó#", "Réb"], ["Ré"], ["Ré#", "Mib"], ["Mi"], ["Fá"],
     ["Fá#", "Solb"], ["Sol"], ["Sol#", "Láb"], ["Lá"], ["Lá#", "Sib"], ["Si"],
@@ -38,6 +40,10 @@ function Teclado({ instrumento, onInteragir }) {
     const teclas = useMemo(
         () => Array.from({ length: instrumento.keyCount }, (_, i) => instrumento.startMidi + oitava * 12 + i),
         [instrumento, oitava],
+    );
+    const quantidadeBrancas = useMemo(
+        () => teclas.filter((midi) => !TECLAS_PRETAS.has(((midi % 12) + 12) % 12)).length,
+        [teclas],
     );
     const tocadasRef = useRef(new Map());
 
@@ -97,10 +103,19 @@ function Teclado({ instrumento, onInteragir }) {
                 <strong>{ativas.length ? ativas.map(nomeMidi).join(" · ") : "Pronto para tocar"}</strong>
             </div>
             <div className="teclado-scroll">
-                <div className="teclado" role="group" aria-label={`${instrumento.label} interativo`}>
+                <div
+                    className="teclado"
+                    role="group"
+                    aria-label={`${instrumento.label} interativo`}
+                    style={{ width: `${quantidadeBrancas * LARGURA_TECLA_BRANCA}px` }}
+                >
                     {teclas.map((midi, indice) => {
                         const pitch = ((midi % 12) + 12) % 12;
                         const preta = TECLAS_PRETAS.has(pitch);
+                        const brancasAntes = teclas.slice(0, indice).filter((nota) => !TECLAS_PRETAS.has(((nota % 12) + 12) % 12)).length;
+                        const left = preta
+                            ? brancasAntes * LARGURA_TECLA_BRANCA - LARGURA_TECLA_PRETA / 2
+                            : brancasAntes * LARGURA_TECLA_BRANCA;
                         const atalho = MAPA_TECLADO[indice];
                         const rotulo = ROTULOS_NOTAS[pitch];
                         return (
@@ -108,6 +123,7 @@ function Teclado({ instrumento, onInteragir }) {
                                 key={midi}
                                 type="button"
                                 className={`tecla ${preta ? "tecla-preta" : "tecla-branca"}${ativas.includes(midi) ? " selecionada" : ""}`}
+                                style={{ left: `${left}px`, width: `${preta ? LARGURA_TECLA_PRETA : LARGURA_TECLA_BRANCA}px` }}
                                 onPointerDown={() => pressionar(midi)}
                                 onPointerUp={() => pressionar(midi, true)}
                                 onPointerLeave={() => pressionar(midi, true)}
