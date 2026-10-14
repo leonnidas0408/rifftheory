@@ -23,7 +23,7 @@ function finalizarCompasso(linha) {
     return `${linha.slice(0, ultimaNota.index)}${primeiraNota}${linha.slice(ultimaNota.index + ultimaNota[0].length)}`;
 }
 
-const TAB = (e, b = "", g = "", d = "", a = "", lowE = "") => {
+const TAB = (e, b = "", g = "", d = "", a = "", lowE = "", ciclosDaFrase = CICLOS_DA_FRASE) => {
     const linhas = [
         ["e", e],
         ["B", b],
@@ -38,7 +38,7 @@ const TAB = (e, b = "", g = "", d = "", a = "", lowE = "") => {
         const variacao = variarCompasso(compasso).padEnd(largura, "-");
         const final = finalizarCompasso(compasso).padEnd(largura, "-");
         const ciclos = [compasso, compasso, variacao, final];
-        const frase = ciclos.slice(0, CICLOS_DA_FRASE).join("|");
+        const frase = ciclos.slice(0, ciclosDaFrase).join("|");
         return `${corda}|${frase}|`;
     }).join("\n");
 };
@@ -48,7 +48,7 @@ const TRADITIONAL_LICENSE = "Melodia tradicional em domínio público · arranjo
 
 export const TAB_CATALOG = [
     { id: "riff-01", title: "Pulso em Mi menor", artist: "Riff Theory", kind: "Exercício original", license: ORIGINAL_LICENSE, difficulty: "Iniciante", tags: ["aquecimento", "palhetada"], chords: ["Em", "C", "G", "D"], ...TAB_BASE, tab: TAB("0-0-3-0-0-3-", "0-1-3-1-0-1-", "0-0-0-0-0-0-", "2-2-0-2-2-0-", "2-3-2-3-2-3-", "0-0-0-0-0-0-") },
-    { id: "riff-02", title: "Alternância em Lá menor", artist: "Riff Theory", kind: "Exercício original", license: ORIGINAL_LICENSE, difficulty: "Iniciante", tags: ["troca de acordes", "ritmo"], chords: ["Am", "F", "C", "G"], ...TAB_BASE, tab: TAB("0-0-1-0-0-1-", "1-1-1-1-1-1-", "2-2-2-2-2-2-", "2-3-2-3-2-3-", "0-0-3-0-0-3-", "0-0-0-0-0-0-") },
+    { id: "riff-02", title: "Alternância em Lá menor", artist: "Riff Theory", kind: "Exercício original", license: ORIGINAL_LICENSE, difficulty: "Iniciante", tags: ["troca de acordes", "ritmo"], chords: ["Am", "F", "C", "G"], ...TAB_BASE, tab: TAB("0-0-1-0-0-1-", "1-1-1-1-1-1-", "2-2-2-2-2-2-", "2-3-2-3-2-3-", "0-0-3-0-0-3-", "0-0-0-0-0-0-", 1) },
     { id: "riff-03", title: "Arpejo aberto em Dó", artist: "Riff Theory", kind: "Exercício original", license: ORIGINAL_LICENSE, difficulty: "Iniciante", tags: ["arpejo", "cordas soltas"], chords: ["C", "G", "Am", "Em"], ...TAB_BASE, tab: TAB("0---0---0---0---", "1---1---1---1---", "0-----0-----0---", "2---------2-----", "3---------------", "----------------") },
     { id: "riff-04", title: "Baixo alternado em Sol", artist: "Riff Theory", kind: "Exercício original", license: ORIGINAL_LICENSE, difficulty: "Iniciante", tags: ["baixo alternado", "folk"], chords: ["G", "D", "Em", "C"], ...TAB_BASE, tab: TAB("3---3---2---0---", "0---3---3---1---", "0---2---2---0---", "0---0---4---2---", "2-------2---3---", "3---------------") },
     { id: "riff-05", title: "Pestana progressiva", artist: "Riff Theory", kind: "Exercício original", license: ORIGINAL_LICENSE, difficulty: "Intermediário", tags: ["pestana", "força"], chords: ["F", "G", "Am", "C"], ...TAB_BASE, tab: TAB("1-1-1-1-0-0-", "1-1-1-1-1-1-", "2-2-2-2-0-0-", "3-3-3-3-2-2-", "3-3-3-3-3-3-", "1-1-1-1-0-0-") },
