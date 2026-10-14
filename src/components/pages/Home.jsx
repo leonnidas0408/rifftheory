@@ -289,7 +289,7 @@ export default function Home({ setPage }) {
                     question="O RT é para violão ou guitarra?"
                     answer="O Riff Theory serve para os 2!"
                 />
-                <p className="simple-margin-top">Na dúvida, não fique se remoendo para achar a resposta! <strong>Contate:</strong> rifftheory6@gmail.com</p>
+                <p className="simple-margin-top">Na dúvida, não fique se remoendo para achar a resposta! Nosso e-mail de suporte e feedback é <strong>rifftheory6@gmail.com</strong></p>
             </div>
         </div>
     )
