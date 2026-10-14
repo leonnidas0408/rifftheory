@@ -59,15 +59,8 @@ function avaliacaoPublicaValida(review) {
     ];
     if (sinaisDeMaFe.some((padrao) => padrao.test(normalizado))) return false;
 
-    const sinaisDeAtaquePessoal = [
-        /\b(?:idiota|incompetente|ladr[aã]o|fracassado|ot[aá]rio)\b/,
-        /\b(?:dono|criador|desenvolvedor)\b.{0,30}\b(?:burro|imbecil|incompetente)\b/,
-    ];
-    if (sinaisDeAtaquePessoal.some((padrao) => padrao.test(normalizado))) return false;
-
-    const assuntoDoSite = /\b(?:site|app|aplicativo|riff|teoria|musica|guitarra|violao|acorde|escala|afinador|metronomo|tablatura|pratica|navega|interface|conteudo|recurso)\b/;
-    const textoLongoSemAssunto = normalizado.length >= 18 && !assuntoDoSite.test(normalizado);
-    return !textoLongoSemAssunto;
+    const ataquePessoalAoResponsavel = /\b(?:dono|criador|desenvolvedor)\b.{0,30}\b(?:burro|imbecil|incompetente|idiota|fracassado)\b/;
+    return !ataquePessoalAoResponsavel.test(normalizado);
 }
 
 export default function ReviewsDisplay() {
