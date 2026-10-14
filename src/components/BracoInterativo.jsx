@@ -74,6 +74,17 @@ function tutorialOcultoParaSempre() {
     }
 }
 
+function instrumentoPreferido() {
+    try {
+        const salvo = localStorage.getItem("riffTheoryInstrument");
+        if (salvo && Object.hasOwn(INSTRUMENTS, salvo)) return salvo;
+        localStorage.setItem("riffTheoryInstrument", DEFAULT_INSTRUMENT_ID);
+    } catch {
+        // Sem armazenamento disponível, mantém o instrumento padrão nesta sessão.
+    }
+    return DEFAULT_INSTRUMENT_ID;
+}
+
 /**
  * Props do fluxo guiado (todas opcionais — sem elas o braço se comporta como antes):
  *  - guiado: liga estado demonstrativo, dicas por etapa e confirmação de progresso
@@ -99,13 +110,7 @@ export default function BracoInterativo({
     const [trilha, setTrilha] = useState(null);
     const [passos, setPassos] = useState(0);
     const [concluida, setConcluida] = useState(false);
-    const [instrumentId, setInstrumentId] = useState(() => {
-        try {
-            return localStorage.getItem("riffTheoryInstrument") || DEFAULT_INSTRUMENT_ID;
-        } catch {
-            return DEFAULT_INSTRUMENT_ID;
-        }
-    });
+    const [instrumentId, setInstrumentId] = useState(instrumentoPreferido);
     const [dicaOculta, setDicaOculta] = useState(tutorialOcultoParaSempre);
     const passosRef = useRef(0);
     const ultimoInicio = useRef(0);
