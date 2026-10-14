@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import PrettyPanel from "./PrettyPanel";
 import Braco from "./Braco";
+import InstrumentoVisualizador from "./InstrumentoVisualizador";
 import DiagramaAcorde from "./DiagramaAcorde";
 import Icone from "./Icone";
 import { atualizarBraco, carregarPreset, limparBraco, moverJanela, trocarInstrumento } from "../draw";
@@ -276,21 +277,29 @@ export default function BracoInterativo({
                 </p>
             )}
 
-            <div className="braco-info">
-                <span id="braco-nome">—</span>
-                <span id="braco-notas" />
-            </div>
+            {instrumento.type === "strings" && (
+                <div className="braco-info">
+                    <span id="braco-nome">—</span>
+                    <span id="braco-notas" />
+                </div>
+            )}
 
             <div className="braco-scroll">
-                <Braco onInteragir={aoInteragir} />
+                {instrumento.type === "strings" ? (
+                    <Braco onInteragir={aoInteragir} />
+                ) : (
+                    <InstrumentoVisualizador instrumento={instrumento} onInteragir={aoInteragir} />
+                )}
             </div>
 
-            <div className="braco-controles">
-                <button onClick={() => moverJanela(-1)}>‹ casa</button>
-                <span id="braco-janela">Aberta</span>
-                <button onClick={() => moverJanela(1)}>casa ›</button>
-                <button className="limpar" onClick={limparBraco}>limpar</button>
-            </div>
+            {instrumento.type === "strings" && (
+                <div className="braco-controles">
+                    <button onClick={() => moverJanela(-1)}>‹ casa</button>
+                    <span id="braco-janela">Aberta</span>
+                    <button onClick={() => moverJanela(1)}>casa ›</button>
+                    <button className="limpar" onClick={limparBraco}>limpar</button>
+                </div>
+            )}
 
             {proximo && (
                 <button className="link-botao proximo-acorde" onClick={proximoAcorde}>

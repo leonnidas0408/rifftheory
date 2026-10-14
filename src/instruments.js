@@ -1,6 +1,7 @@
 export const INSTRUMENTS = {
     guitar: {
         id: "guitar",
+        type: "strings",
         label: "Guitarra / violão",
         shortLabel: "Guitarra",
         description: "6 cordas · E A D G B E",
@@ -17,6 +18,7 @@ export const INSTRUMENTS = {
     },
     bass: {
         id: "bass",
+        type: "strings",
         label: "Baixo",
         shortLabel: "Baixo",
         description: "4 cordas · E A D G",
@@ -31,6 +33,7 @@ export const INSTRUMENTS = {
     },
     ukulele: {
         id: "ukulele",
+        type: "strings",
         label: "Ukulele",
         shortLabel: "Ukulele",
         description: "4 cordas · G C E A",
@@ -41,6 +44,34 @@ export const INSTRUMENTS = {
             { number: 4, name: "G", midi: 67, thickness: 1.1 },
         ],
         maxFret: 15,
+        chordShapes: false,
+    },
+    piano: {
+        id: "piano",
+        type: "keys",
+        label: "Piano",
+        shortLabel: "Piano",
+        description: "Teclas · C3–C5",
+        startMidi: 48,
+        keyCount: 25,
+        chordShapes: false,
+    },
+    keyboard: {
+        id: "keyboard",
+        type: "keys",
+        label: "Teclado",
+        shortLabel: "Teclado",
+        description: "Teclas · C3–C5",
+        startMidi: 48,
+        keyCount: 25,
+        chordShapes: false,
+    },
+    altoSax: {
+        id: "altoSax",
+        type: "wind",
+        label: "Saxofone alto",
+        shortLabel: "Sax alto",
+        description: "Sopro · digitação básica",
         chordShapes: false,
     },
 };
