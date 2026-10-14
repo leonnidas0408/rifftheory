@@ -311,3 +311,21 @@ svg.diagrama {
     grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
     gap: 8px;
 }
+
+/* Visualizadores instrumentais avançados */
+.instrumento-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.instrumento-toolbar-grupo { display: inline-flex; align-items: center; gap: 5px; }
+.controle-mini, .controle-toggle { padding: 7px 10px; border: 1px solid var(--borda); border-radius: 999px; background: #fff; color: var(--primaria-escura); font-size: 12px; font-weight: 700; }
+.controle-mini { width: 30px; padding-inline: 0; font-size: 16px; }
+.controle-toggle.ativo { border-color: var(--primaria); background: var(--primaria-escura); color: #fff; }
+.controle-status { color: var(--texto-suave); font-size: 12px; font-weight: 650; }
+.tecla small { position: absolute; left: 0; right: 0; bottom: 23px; font-size: 9px; opacity: .65; text-transform: uppercase; }
+.tecla-preta small { bottom: 10px; }
+.sax-maos { display: flex; flex-direction: column; gap: 10px; width: min(480px, 100%); }
+.sax-mao-label { color: #6a430d; font-size: 11px; font-weight: 800; text-align: center; text-transform: uppercase; }
+.sax-furos { display: grid; grid-template-columns: repeat(6, 1fr); gap: 9px; width: 100%; }
+.sax-furo-grafico { display: grid; place-items: center; aspect-ratio: 1; border: 2px solid rgba(103, 65, 13, .55); border-radius: 50%; background: #e6c36d; color: #79500e; font-weight: 800; box-shadow: inset 0 2px 2px rgba(255,255,255,.35); }
+.sax-furo-grafico.pressionado { background: #fff3bd; border-color: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,.35), inset 0 2px 2px rgba(255,255,255,.5); }
+.sax-notas { display: flex; flex-wrap: wrap; gap: 6px; }
+.sax-notas button { min-width: 48px; padding: 8px 10px; border: 1px solid var(--borda); border-radius: 6px; background: #fff; color: var(--primaria-escura); font-weight: 700; }
+.sax-notas button:hover, .sax-notas button.selecionada { border-color: var(--primaria); background: var(--primaria-escura); color: #fff; }
