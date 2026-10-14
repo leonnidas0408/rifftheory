@@ -1,0 +1,325 @@
+/* Riff Theory — Braço interativo, escalas e cartões de acordes. Mantém a ordem original da cascata. */
+/* ==================================================   BRAÇO INTERATIVO
+   ========================================================= */
+
+.braco-topo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.braco-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.instrumento-seletor {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.instrumento-seletor-cabecalho {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--texto);
+}
+
+.instrumento-seletor-cabecalho span {
+    color: var(--texto-suave);
+    font-size: 12px;
+}
+
+.instrumento-opcoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.instrumento-opcao {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 104px;
+    padding: 8px 11px;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-sm);
+    background: var(--painel);
+    color: var(--texto-suave);
+    text-align: left;
+}
+
+.instrumento-opcao strong { color: var(--texto); font-size: 13px; }
+.instrumento-opcao span { font-size: 11px; }
+.instrumento-opcao:hover { border-color: var(--primaria); }
+.instrumento-opcao.ativa { border-color: var(--primaria); background: var(--primaria-escura); color: #dce9ff; }
+.instrumento-opcao.ativa strong { color: #fff; }
+
+.instrumento-aviso {
+    padding: 12px 14px;
+    border-left: 3px solid var(--primaria);
+    background: var(--painel);
+    color: var(--texto-suave);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.instrumento-visualizador {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 16px;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--fundo), var(--painel-2));
+}
+
+.visualizador-legenda {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--texto-suave);
+    font-size: 13px;
+}
+
+.visualizador-legenda strong { color: var(--primaria-escura); }
+.visualizador-limpar { align-self: flex-start; color: var(--primaria-escura); font-size: 13px; text-decoration: underline; }
+.visualizador-limpar:disabled { color: var(--texto-suave); cursor: not-allowed; }
+
+.teclado-scroll { min-width: 0; max-width: 100%; overflow-x: auto; padding: 0 0 8px; overscroll-behavior-x: contain; }
+
+.teclado {
+    position: relative;
+    display: block;
+    gap: 0;
+    width: max-content;
+    min-width: 0;
+    height: 194px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.tecla {
+    position: absolute;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #d1d5db;
+    border-top: 0;
+    border-radius: 0 0 4px 4px;
+    color: #4b5563;
+    transition: background .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+
+.tecla-branca { height: 188px; background: linear-gradient(180deg, #fff 0%, #fff 86%, #f3f4f6 100%); z-index: 1; box-shadow: inset 0 -3px 0 rgba(15,23,42,.04); }
+.tecla-preta { height: 112px; background: linear-gradient(180deg, #08090b 0%, #15171b 78%, #282b30 100%); color: #fff; z-index: 2; border-color: #090a0c; border-radius: 0 0 6px 6px; box-shadow: 0 4px 5px rgba(15,23,42,.32), inset 0 -2px 0 rgba(255,255,255,.12); }
+.tecla-rotulo { position: absolute; right: 3px; bottom: 8px; left: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; font-size: 13px; line-height: 1.05; }
+.tecla-preta .tecla-rotulo { right: 1px; bottom: 8px; left: 1px; font-size: 10px; font-weight: 750; letter-spacing: -.2px; line-height: 1.05; }
+.tecla.selecionada { background: #dce7ff; color: #1745a5; box-shadow: inset 0 -4px 0 rgba(49,92,232,.22); }
+.tecla-preta.selecionada { background: linear-gradient(180deg, #315ce8, #2449c8); color: #fff; }
+.tecla:active { transform: translateY(3px); }
+
+.visualizador-nota { margin: 0; color: var(--texto-suave); font-size: 12px; line-height: 1.45; }
+
+.braco-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    align-items: baseline;
+    min-height: 22px;
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+#braco-nome {
+    color: var(--primaria-escura);
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.braco-scroll {
+    overflow-x: auto;
+}
+
+canvas#braco {
+    display: block;
+    min-width: 680px;
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.braco-controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.braco-controles button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--aba);
+    color: var(--primaria-escura);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.braco-controles button.limpar {
+    background: transparent;
+    color: var(--texto-suave);
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+#braco-janela {
+    min-width: 96px;
+    text-align: center;
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+
+/* ==================================================   ESCALAS: título, modos e acordes
+   ========================================================= */
+
+.escala-topo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.escala-selos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.escala-notas {
+    color: var(--texto-suave);
+    font-size: 17px;
+    letter-spacing: 0.5px;
+}
+
+.modos {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.modo {
+    flex: 1 0 auto;
+    min-width: 110px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--painel);
+    color: var(--texto-suave);
+    font-size: 15px;
+}
+
+.modo.ativo {
+    background: var(--primaria-escura);
+    color: #fff;
+    font-weight: 700;
+}
+
+.acordes {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.acorde-card {
+    flex: 1 0 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 6px 10px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: var(--painel);
+}
+
+.acorde-card:hover {
+    border-color: var(--borda);
+    background: #d9e8fc;
+}
+
+.acorde-card.ativo {
+    background: #cfe2fb;
+    border-color: var(--primaria);
+}
+
+.acorde-nome {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--texto);
+}
+
+.acorde-grau {
+    font-size: 13px;
+    color: var(--texto-suave);
+}
+
+svg.diagrama {
+    width: 64px;
+    height: 74px;
+    color: var(--texto);
+}
+
+.diagrama-vazio {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 74px;
+    font-size: 11px;
+    text-align: center;
+    color: var(--texto-suave);
+}
+
+.todos-acordes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 6px;
+    border-top: 1px solid var(--borda);
+}
+
+.todos-grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 8px;
+}
+
+/* Visualizadores instrumentais avançados */
+.instrumento-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.instrumento-toolbar-grupo { display: inline-flex; align-items: center; gap: 5px; }
+.controle-mini, .controle-toggle { padding: 7px 10px; border: 1px solid var(--borda); border-radius: 999px; background: #fff; color: var(--primaria-escura); font-size: 12px; font-weight: 700; }
+.controle-mini { width: 30px; padding-inline: 0; font-size: 16px; }
+.controle-toggle.ativo { border-color: var(--primaria); background: var(--primaria-escura); color: #fff; }
+.controle-status { color: var(--texto-suave); font-size: 12px; font-weight: 650; }
+.tecla small { position: absolute; left: 0; right: 0; bottom: 26px; font-size: 9px; opacity: .65; text-transform: uppercase; }
+.tecla-preta small { bottom: 2px; }

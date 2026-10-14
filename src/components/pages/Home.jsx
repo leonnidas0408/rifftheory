@@ -87,6 +87,11 @@ export default function Home({ setPage }) {
         <div className="pagina">
             <Barra titulo="Início"/>
             <section className="tab-hero">
+                <picture className="tab-hero-art" aria-hidden="true">
+                    <source media="(max-width: 560px)" srcSet="/hero-portrait.webp" />
+                    <source media="(max-width: 900px)" srcSet="/hero-square.webp" />
+                    <img src="/hero-wide.webp" alt="" width="2560" height="1440" fetchPriority="high" decoding="async" />
+                </picture>
                 <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
                 <h1>Escolha um acorde. Veja a posição no braço e comece a tocar.</h1>
                 <p>

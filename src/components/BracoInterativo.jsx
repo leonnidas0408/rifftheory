@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import PrettyPanel from "./PrettyPanel";
 import Braco from "./Braco";
+import InstrumentoVisualizador from "./InstrumentoVisualizador";
 import DiagramaAcorde from "./DiagramaAcorde";
 import Icone from "./Icone";
-import { atualizarBraco, carregarPreset, limparBraco, moverJanela } from "../draw";
+import { atualizarBraco, carregarPreset, limparBraco, moverJanela, trocarInstrumento } from "../draw";
 import { formaDoAcorde, formaPorNome } from "../utils/acordes";
 import { registrarEvento } from "../utils/usageStats";
 import NOTAS from "../assets/constants/NOTAS.json";
+import { DEFAULT_INSTRUMENT_ID, INSTRUMENTS, getInstrument } from "../instruments";
 
 const PASSOS_PARA_CONCLUIR = 3;
 const CHAVE_TUTORIAL_OCULTO = "riffTheoryTutorialOculto";
@@ -17,9 +19,18 @@ const QUALIDADES = [
     ["dim", "Diminutos", "°"],
 ];
 
-function TodosAcordes({ onEscolher }) {
+function TodosAcordes({ onEscolher, habilitado }) {
     const [qualidade, setQualidade] = useState("M");
     const sufixo = QUALIDADES.find(([q]) => q === qualidade)[2];
+
+    if (!habilitado) {
+        return (
+            <div className="instrumento-aviso">
+                As formas prontas de acordes estão disponíveis para guitarra e violão. Neste instrumento,
+                monte as notas diretamente no braço para explorar a sonoridade.
+            </div>
+        );
+    }
 
     return (
         <div className="todos-acordes">
@@ -63,6 +74,21 @@ function tutorialOcultoParaSempre() {
     }
 }
 
+function instrumentoPreferido() {
+    try {
+        const salvo = localStorage.getItem("riffTheoryInstrument");
+        if (salvo === "keyboard") {
+            localStorage.setItem("riffTheoryInstrument", "piano");
+            return "piano";
+        }
+        if (salvo && Object.hasOwn(INSTRUMENTS, salvo)) return salvo;
+        localStorage.setItem("riffTheoryInstrument", DEFAULT_INSTRUMENT_ID);
+    } catch {
+        // Sem armazenamento disponível, mantém o instrumento padrão nesta sessão.
+    }
+    return DEFAULT_INSTRUMENT_ID;
+}
+
 /**
  * Props do fluxo guiado (todas opcionais — sem elas o braço se comporta como antes):
  *  - guiado: liga estado demonstrativo, dicas por etapa e confirmação de progresso
@@ -88,10 +114,30 @@ export default function BracoInterativo({
     const [trilha, setTrilha] = useState(null);
     const [passos, setPassos] = useState(0);
     const [concluida, setConcluida] = useState(false);
+    const [instrumentId, setInstrumentId] = useState(instrumentoPreferido);
     const [dicaOculta, setDicaOculta] = useState(tutorialOcultoParaSempre);
     const passosRef = useRef(0);
     const ultimoInicio = useRef(0);
     const ultimaEscolha = useRef(abrirEscolha);
+    const instrumento = getInstrument(instrumentId);
+
+    useEffect(() => {
+        trocarInstrumento(instrumentId);
+    }, []);
+
+    function selecionarInstrumento(id) {
+        setInstrumentId(id);
+        try {
+            localStorage.setItem("riffTheoryInstrument", id);
+        } catch {
+            // A preferência permanece durante esta sessão.
+        }
+        trocarInstrumento(id);
+        setAtual(null);
+        setTrilha(null);
+        setDemo(false);
+        registrarEvento("instrument_selected", { instrumento: id });
+    }
 
     // Estado inicial demonstrativo: o braço nunca começa visualmente vazio.
     useEffect(() => {
@@ -213,27 +259,56 @@ export default function BracoInterativo({
                 </div>
             </div>
 
+            <div className="instrumento-seletor" role="group" aria-label="Escolha o instrumento do braço">
+                <div className="instrumento-seletor-cabecalho">
+                    <strong>Instrumento</strong>
+                    <span>{instrumento.description}</span>
+                </div>
+                <div className="instrumento-opcoes">
+                    {Object.values(INSTRUMENTS).map((opcao) => (
+                        <button
+                            key={opcao.id}
+                            type="button"
+                            className={`instrumento-opcao${instrumentId === opcao.id ? " ativa" : ""}`}
+                            aria-pressed={instrumentId === opcao.id}
+                            onClick={() => selecionarInstrumento(opcao.id)}
+                        >
+                            <strong>{opcao.shortLabel}</strong>
+                            <span>{opcao.description.split(" · ")[0]}</span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             {demo && (
                 <p className="braco-exemplo">
                     Exemplo: {atual}. Clique nas casas para mexer ou escolha outro acorde.
                 </p>
             )}
 
-            <div className="braco-info">
-                <span id="braco-nome">—</span>
-                <span id="braco-notas" />
-            </div>
+            {instrumento.type === "strings" && (
+                <div className="braco-info">
+                    <span id="braco-nome">—</span>
+                    <span id="braco-notas" />
+                </div>
+            )}
 
             <div className="braco-scroll">
-                <Braco onInteragir={aoInteragir} />
+                {instrumento.type === "strings" ? (
+                    <Braco onInteragir={aoInteragir} />
+                ) : (
+                    <InstrumentoVisualizador instrumento={instrumento} onInteragir={aoInteragir} />
+                )}
             </div>
 
-            <div className="braco-controles">
-                <button onClick={() => moverJanela(-1)}>‹ casa</button>
-                <span id="braco-janela">Aberta</span>
-                <button onClick={() => moverJanela(1)}>casa ›</button>
-                <button className="limpar" onClick={limparBraco}>limpar</button>
-            </div>
+            {instrumento.type === "strings" && (
+                <div className="braco-controles">
+                    <button onClick={() => moverJanela(-1)}>‹ casa</button>
+                    <span id="braco-janela">Aberta</span>
+                    <button onClick={() => moverJanela(1)}>casa ›</button>
+                    <button className="limpar" onClick={limparBraco}>limpar</button>
+                </div>
+            )}
 
             {proximo && (
                 <button className="link-botao proximo-acorde" onClick={proximoAcorde}>
@@ -267,7 +342,7 @@ export default function BracoInterativo({
                 </div>
             )}
 
-            {todos && <TodosAcordes onEscolher={escolher} />}
+            {todos && <TodosAcordes onEscolher={escolher} habilitado={instrumento.chordShapes} />}
 
             {!(guiado && dicaOculta) && (
                 <div className="dica-bloco">

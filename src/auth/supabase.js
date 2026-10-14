@@ -20,5 +20,8 @@ export function getAvatarUrl(user) {
 }
 
 export function getDisplayName(user) {
-    return user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "Músico";
+    const accountName = user?.user_metadata?.full_name || user?.user_metadata?.name;
+    if (typeof accountName === "string" && accountName.trim()) return accountName.trim();
+    if (typeof user?.email === "string" && user.email.trim()) return user.email.trim();
+    return "Músico";
 }

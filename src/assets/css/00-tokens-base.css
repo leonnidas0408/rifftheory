@@ -1,0 +1,80 @@
+/* Riff Theory — Tokens e estilos base. Mantém a ordem original da cascata. */
+/* ==================================================   TOKENS — paleta do layout de referência (lateral azul-escura,
+   conteúdo azul bem claro, ações em azul médio)
+   ========================================================= */
+
+:root {
+    --lateral: #21406d;
+    --lateral-fundo: linear-gradient(180deg, #24446f, #1a3562);
+    --lateral-ativo: #3f78e6;
+
+    --fundo: #f3f8ff;
+    --painel: #e3eefc;
+    --painel-2: #eef5fe;
+    --borda: #cddff5;
+    --aba: #dbe8fb;
+
+    --texto: #183055;
+    --texto-suave: #5d7597;
+
+    --primaria: #2f6fe0;
+    --primaria-escura: #1f4f8f;
+
+    --vermelho: #d2453a;
+    --verde: #2e9d63;
+
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+
+    --sidebar-w: 248px;
+    --bottom-bar-h: 74px;
+}
+
+
+/* ==================================================   BASE
+   ========================================================= */
+
+@font-face {
+    font-family: "AlteHaas";
+    src: url("fonts/AlteHaasGroteskRegular.ttf");
+    font-display: swap;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    font-family: "AlteHaas", "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    background: var(--fundo);
+    color: var(--texto);
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+}
+
+button {
+    cursor: pointer;
+    border: 0;
+    color: inherit;
+    background: none;
+}
+
+button:disabled {
+    cursor: default;
+}
+
+:focus-visible {
+    outline: 2px solid var(--primaria);
+    outline-offset: 2px;
+}
+
+svg.icone {
+    flex: none;
+    display: block;
+}
+
+

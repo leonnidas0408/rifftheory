@@ -1,0 +1,75 @@
+/* Riff Theory — Ajustes visuais do braço e componentes musicais. Mantém a ordem original da cascata. */
+/* Fretboard, cards musicais e feedback */
+.acorde-card { border-color: #e8edf4; background: #f8f9fc; }
+.acorde-card:hover { border-color: #b8c7f7; background: #f0f3ff; }
+.acorde-card.ativo { border-color: #315ce8; background: #edf1ff; }
+.acorde-nome, #braco-nome { color: #202b3a; }
+.modo, .braco-controles button { border: 1px solid #e2e8f0; background: #f7f9fc; color: #53647a; }
+.modo.ativo { border-color: #315ce8; background: #315ce8; color: #fff; }
+.braco-controles button:hover { border-color: #b8c7f7; background: #f0f3ff; }
+.indicadores div { border: 1px solid #e7ebf2; border-radius: 13px; background: #f9fafc; }
+.indicadores strong, .stats-total { color: #315ce8; }
+.stat-bar { background: linear-gradient(180deg, #315ce8, #9bb0ff); }
+.recent-item { border: 1px solid #e6ebf2; background: #f8f9fc; }
+.recent-item:hover, a.recent-item:hover, button.recent-item:hover { background: #f0f3ff; }
+.estado-vazio { border: 1px dashed #d8e0ec; border-radius: 14px; background: #f9fafc; }
+.conquista { border-color: #c9ead5; background: #eef9f2; color: #176b45; }
+.fab-chat { right: 30px; bottom: 28px; width: 54px; height: 54px; border: 3px solid #fff; border-radius: 18px; background: #315ce8; box-shadow: 0 10px 24px rgba(49,92,232,.28); }
+.fab-chat:hover { transform: translateY(-3px) rotate(-3deg); background: #2449c8; }
+
+/* Mobile: marca visível, navegação inferior confortável e conteúdo fluido */
+.auth-mobile { align-items: center; justify-content: space-between; margin: -2px 0 9px; }
+.mobile-brand { display: inline-flex; align-items: center; gap: 8px; color: #182230; }
+.mobile-brand img { width: 34px; height: 34px; border: 1px solid #e7ebf1; border-radius: 11px; object-fit: cover; }
+.mobile-brand strong { font-size: 16px; }
+.auth-card.compact { min-width: 0; padding: 0; border: 0; background: transparent; }
+.auth-card.compact .auth-login, .auth-card.compact .auth-logout { min-height: 36px; padding: 8px 11px; border: 1px solid #e1e7f0; border-radius: 11px; background: #fff; color: #334155; font-size: 12px; }
+.auth-card.compact .auth-hint { max-width: 150px; text-align: right; }
+.bottom-bar { height: calc(var(--bottom-bar-h) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,.08); background: #111827; box-shadow: 0 -10px 26px rgba(20,31,48,.1); }
+.bottom-bar .icon-button { min-width: 61px; min-height: 54px; gap: 5px; padding: 7px 6px; color: #a8b4c6; font-size: 10px; }
+.bottom-bar .icon-button.selected { border-radius: 12px; background: rgba(76,112,239,.22); color: #c6d2ff; box-shadow: none; }
+.mobile-cta { border: 1px solid rgba(255,255,255,.12); border-radius: 15px; background: #182230; box-shadow: 0 8px 24px rgba(24,34,48,.22); }
+.mobile-cta strong { color: #a9f08d; }
+
+@media (max-width: 900px) {
+    .conteudo { padding: 13px 16px calc(var(--bottom-bar-h) + 98px + env(safe-area-inset-bottom)); }
+    /* No mobile/tablet, the fixed bottom bar already contains these destinations. */
+    .abas { display: none; }
+    .hero { min-height: 290px; padding: 34px 25px; }
+    .hero::before { inset: 0 0 0 30%; }
+    .prova-valor { padding: 20px; }
+    .prova-numeros, .prova-recursos { gap: 8px; }
+    .comecar { padding: 19px; }
+    .fab-chat { right: 17px; bottom: calc(var(--bottom-bar-h) + 66px + env(safe-area-inset-bottom)); }
+    .mobile-cta { border-radius: 13px; }
+}
+@media (max-width: 560px) {
+    .conteudo { padding-inline: 13px; }
+    .hero { min-height: 300px; padding: 28px 20px 25px; border-radius: 22px; }
+    .hero::before { inset: 0 0 0 24%; }
+    .hero::after { right: 1%; width: 42%; opacity: .45; }
+    .hero h1 { max-width: 15ch; font-size: clamp(34px, 10vw, 44px); }
+    .hero p { max-width: 43ch; font-size: 14px; }
+    .hero-seguranca { align-items: flex-start; font-size: 10px; }
+    .hero-acoes { align-items: flex-start; }
+    .link-botao.hero-cta { padding-inline: 16px; }
+    .prova-valor { padding: 17px; border-radius: 18px; }
+    .prova-intro h2, .secao-heading h2 { font-size: 23px; }
+    .prova-numero { padding: 12px 10px; }
+    .prova-numero strong { font-size: 23px; }
+    .prova-numero span { font-size: 10px; }
+    .prova-recursos { gap: 12px; }
+    .trust-grid { gap: 8px; }
+    .rotas-grade, .exemplos-grade { gap: 10px; }
+    .rota-card, .exemplo-card { padding: 16px; }
+    .objecoes-grid { gap: 8px; }
+    .objecoes-grid > div { padding: 12px; }
+    .comecar { padding: 16px; }
+    .comecar-topo h2 { font-size: 22px; }
+    .bottom-bar .icon-button { min-width: 55px; padding-inline: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+

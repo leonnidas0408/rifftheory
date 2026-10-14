@@ -44,7 +44,7 @@ sem essa variável o endpoint fica desabilitado (503), e outros usuários recebe
 - Usuário autenticado vê nome, foto do Google e botão **Sair**.
 - O Chatbot exige uma sessão Google válida; sem sessão, a interface apresenta o bloqueio de login.
 - A API do Chatbot valida o Bearer token no Supabase antes de chamar a Groq. Sem token ou com token inválido, responde HTTP 401; se as variáveis de autenticação do servidor estiverem ausentes ou a validação estiver indisponível, responde HTTP 503.
-- O formulário de avaliação salva nota e comentário somente no `localStorage` deste navegador. Os dados não são enviados ao servidor, não são agregados e não aparecem como avaliação pública.
+- O formulário de avaliação exige login Google e publica a nota, o comentário e o nome da conta Google; se o nome não estiver disponível, publica o e-mail da conta. Esse identificador é somente leitura no formulário e também é derivado novamente por um trigger do Supabase.
 - O limitador em memória é de melhor esforço por instância serverless e não equivale a uma cota global persistente.
 - Sem variáveis Supabase, a aplicação informa que o login ainda não foi configurado em vez de simular autenticação.
 
@@ -54,5 +54,5 @@ sem essa variável o endpoint fica desabilitado (503), e outros usuários recebe
 2. Fazer uma chamada direta a `/api/chat` sem `Authorization` e confirmar HTTP 401, sem chamada à Groq.
 3. Confirmar que um token válido é verificado no Supabase antes da chamada à Groq e que tokens inválidos recebem HTTP 401.
 4. Confirmar que excesso de chamadas retorna HTTP 429 e que mensagens inválidas/grandes continuam sendo rejeitadas.
-5. Salvar e apagar uma avaliação; confirmar que nota e comentário persistem apenas no navegador atual e não são enviados ao servidor.
+5. Salvar e apagar uma avaliação; confirmar que o identificador público vem da conta Google, não pode ser digitado e que a avaliação pública é atualizada/removida corretamente.
 6. Testar o login Google separadamente e confirmar que avatar e nome aparecem na navegação.

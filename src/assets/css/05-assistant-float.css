@@ -1,0 +1,25 @@
+/* Riff Theory — Botão flutuante do assistente. Mantém a ordem original da cascata. */
+/* ==================================================   BOTÃO FLUTUANTE DO ASSISTENTE
+   ========================================================= */
+
+.fab-chat {
+    position: fixed;
+    right: 26px;
+    bottom: 26px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--primaria);
+    color: #fff;
+    box-shadow: 0 10px 26px rgba(31, 79, 143, 0.4);
+    z-index: 15;
+    transition: transform 0.15s;
+}
+
+.fab-chat:hover {
+    transform: scale(1.06);
+}
+
+
