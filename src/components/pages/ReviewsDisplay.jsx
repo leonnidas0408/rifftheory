@@ -48,6 +48,11 @@ function avaliacaoPublicaValida(review) {
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
 
+    // Regra de privacidade: o nome do responsável e suas variações diretas
+    // não devem aparecer no texto público das avaliações.
+    const nomeDoResponsavel = /\b(?:leonnidas|leonidas|leonid)\b/;
+    if (nomeDoResponsavel.test(normalizado)) return false;
+
     // Mantém críticas negativas legítimas; bloqueia somente sinais claros de
     // avaliação por motivo pessoal, ataque ao autor ou conteúdo sem relação.
     const sinaisDeMaFe = [
