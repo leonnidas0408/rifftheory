@@ -33,9 +33,8 @@
 
 @media (max-width: 900px) {
     .conteudo { padding: 13px 16px calc(var(--bottom-bar-h) + 98px + env(safe-area-inset-bottom)); }
-    .abas { width: 100%; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 18px; scrollbar-width: none; }
-    .abas::-webkit-scrollbar { display: none; }
-    .aba { flex: 0 0 auto; padding-inline: 12px; font-size: 12px; }
+    /* No mobile/tablet, the fixed bottom bar already contains these destinations. */
+    .abas { display: none; }
     .hero { min-height: 290px; padding: 34px 25px; }
     .hero::before { inset: 0 0 0 30%; }
     .prova-valor { padding: 20px; }
