@@ -1,15 +1,11 @@
 import * as util from "./util";
 import FORMAS from "./assets/constants/FORMAS.json";
 import NOTAS from "./assets/constants/NOTAS.json";
+import { createInstrumentState, getInstrument } from "./instruments";
 
-const OPEN_MIDI = {
-    6: 40, // Mi (E2) - corda mais grave
-    5: 45, // Lá (A2)
-    4: 50, // Ré (D3)
-    3: 55, // Sol (G3)
-    2: 59, // Si (B3)
-    1: 64  // Mi (E4) - corda mais aguda
-}; // E2 A2 D3 G3 B3 E4
+function instrumentoAtual() {
+    return getInstrument(window.instrumentId);
+}
 
 // Paleta do layout claro: braço de madeira sobre o painel azul-claro, tônica
 // em branco e demais notas em azul.
@@ -33,19 +29,12 @@ const CORES = {
 // Exibe o nome da nota dentro das bolinhas (botão "Mostrar notas").
 window.mostrarNotas = false;
 
-window.estado = {
-    1: { muted: true, fret: 0 },
-    2: { muted: true, fret: 0 },
-    3: { muted: true, fret: 0 },
-    4: { muted: true, fret: 0 },
-    5: { muted: true, fret: 0 },
-    6: { muted: true, fret: 0 },
-};
+window.instrumentId = window.instrumentId || "guitar";
+window.estado = createInstrumentState(window.instrumentId);
 
 // Constantes de grade — usadas tanto no desenho (desenharBraco) quanto na
 // interpretação do clique (trata), por isso precisam ser as mesmas.
-const C = 6,
-    F = 12,
+const F = 12,
     MX = 20,
     MY = 38;
 
@@ -67,7 +56,8 @@ window.fretStart = 0; // primeira casa da janela visível (0 = a partir da pesta
  *  entre a casa 0 (pestana) e a casa 12 — já que a janela mostra F=12 casas,
  *  fretStart=12 cobre as casas 13-24, a última janela possível. */
 export function moverJanela(delta) {
-    window.fretStart = Math.max(0, Math.min(12, window.fretStart + delta));
+    const limite = Math.max(0, instrumentoAtual().maxFret - F);
+    window.fretStart = Math.max(0, Math.min(limite, window.fretStart + delta));
     window.estado = util.estadoPadrao(window.fretStart);
     atualizarBraco();
 }
@@ -84,7 +74,7 @@ export function limparBraco() {
 export function carregarPreset(key) {
     window.estado = util.estadoPadrao(window.fretStart);
     const forma = typeof key === "string" ? FORMAS[key] : key;
-    if (forma) {
+    if (forma && instrumentoAtual().chordShapes && forma.c.every(([corda]) => window.estado[corda])) {
         const { c: casas, i: inicio } = forma;
         window.fretStart = inicio || 0; // "i" define a janela (posição/pestana) recomendada para a forma
         casas.forEach(([corda, casa]) => {
@@ -93,6 +83,14 @@ export function carregarPreset(key) {
     } else {
         window.fretStart = 0;
     }
+    atualizarBraco();
+}
+
+export function trocarInstrumento(instrumentId) {
+    const instrumento = getInstrument(instrumentId);
+    window.instrumentId = instrumento.id;
+    window.fretStart = 0;
+    window.estado = createInstrumentState(instrumento.id);
     atualizarBraco();
 }
 
@@ -175,7 +173,10 @@ function desenharMadeira(ctx, UW, UH) {
  */
 export function desenharBraco(reconhecido) {
     const canvas = document.getElementById("braco");
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
+    const instrumento = instrumentoAtual();
+    const C = instrumento.strings.length;
     const W = canvas.width,
         H = canvas.height;
 
@@ -191,10 +192,11 @@ export function desenharBraco(reconhecido) {
 
     desenharMadeira(ctx, UW, UH);
 
-    // nome de cada corda (E B G D A E, da mais aguda para a mais grave)
+    // A corda mais grave fica no topo; a numeração continua sendo 1 = aguda.
     for (let i = 0; i < C; i++) {
         const y = MY + i * dy;
-        const nome = NOTAS[OPEN_MIDI[C - i] % 12];
+        const cordaInfo = instrumento.strings.find(({ number }) => number === C - i);
+        const nome = cordaInfo.name;
 
         ctx.fillStyle = CORES.etiqueta;
         ctx.beginPath();
@@ -289,13 +291,14 @@ export function desenharBraco(reconhecido) {
         }
     }
 
-    // cordas horizontais (topo = 6ª corda, Mi grave; mais grossas nas graves)
+    // Cordas horizontais: a mais grave fica no topo.
     for (let i = 0; i < C; i++) {
         const corda = C - i;
+        const cordaInfo = instrumento.strings.find(({ number }) => number === corda);
         const y = MY + i * dy;
 
         ctx.strokeStyle = CORES.corda;
-        ctx.lineWidth = 0.9 + corda * 0.22;
+        ctx.lineWidth = cordaInfo.thickness;
 
         ctx.beginPath();
         ctx.moveTo(NECK_X, y);
@@ -309,7 +312,7 @@ export function desenharBraco(reconhecido) {
     // pestana automática: quando 3+ cordas soam na mesma casa, desenha a barra
     const porCasa = {};
 
-    for (let corda = 1; corda <= 6; corda++) {
+    for (const { number: corda } of instrumento.strings) {
         const st = window.estado[corda];
 
         if (!st.muted && st.fret > 0) {
@@ -348,9 +351,9 @@ export function desenharBraco(reconhecido) {
         ctx.fill();
     });
 
-    // Para cada uma das 6 cordas, desenha os estados possíveis
-    for (let corda = 1; corda <= 6; corda++) {
-
+    // Para cada corda, desenha os estados possíveis
+    for (const cordaInfo of instrumento.strings) {
+        const corda = cordaInfo.number;
         const st = window.estado[corda];
         const xi = C - corda;
         const y = MY + xi * dy;
@@ -375,7 +378,7 @@ export function desenharBraco(reconhecido) {
             continue;
         }
 
-        const pc = (((OPEN_MIDI[corda] + st.fret) % 12) + 12) % 12;
+        const pc = (((cordaInfo.midi + st.fret) % 12) + 12) % 12;
         const nomeNota = NOTAS[pc];
         const ehTonica = root !== null && pc === root;
 
@@ -447,6 +450,8 @@ export function desenharBraco(reconhecido) {
 export function trata(clientX, clientY) {
 
     const canvas = document.getElementById("braco");
+    if (!canvas) return;
+    const C = instrumentoAtual().strings.length;
     const rect = canvas.getBoundingClientRect();
 
     const scaleX = canvas.width / rect.width;

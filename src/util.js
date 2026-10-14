@@ -15,15 +15,11 @@ import FORMAS from "./assets/constants/FORMAS.json";
 import FORMULAS from "./assets/constants/FORMULAS.json";
 import NOTAS from "./assets/constants/NOTAS.json";
 import ROMANOS from "./assets/constants/ROMANOS.json";
+import { createInstrumentState, getInstrument } from "./instruments";
 
-const OPEN_MIDI = {
-    6: 40, // Mi (E2) - corda mais grave
-    5: 45, // Lá (A2)
-    4: 50, // Ré (D3)
-    3: 55, // Sol (G3)
-    2: 59, // Si (B3)
-    1: 64  // Mi (E4) - corda mais aguda
-}; // E2 A2 D3 G3 B3 E4
+function instrumentoAtual() {
+    return getInstrument(window.instrumentId);
+}
 
 const SIN = {
     "m": "menor",
@@ -36,14 +32,8 @@ const SIN = {
     "jonio": "ionico",
     "": "maior"
 };
-window.estado = {
-    1: { muted: true, fret: 0 },
-    2: { muted: true, fret: 0 },
-    3: { muted: true, fret: 0 },
-    4: { muted: true, fret: 0 },
-    5: { muted: true, fret: 0 },
-    6: { muted: true, fret: 0 },
-};
+window.instrumentId = window.instrumentId || "guitar";
+window.estado = createInstrumentState(window.instrumentId);
 window.fretStart = 0;
 
 export function parsear(txt) {
@@ -141,17 +131,14 @@ export function calcCampoHarmonico(nota, tipo) {
 }
 
 /**
- * Cria um window.estado "limpo" para as 6 cordas do braço: todas abafadas (muted=true)
+ * Cria um window.estado "limpo" para as cordas do instrumento: todas abafadas (muted=true)
  * e na casa 0. É usado ao trocar de janela de trastes, ao limpar o braço e
  * como base antes de aplicar uma forma pré-cadastrada (FORMAS).
  * O parâmetro `inicio` não é usado no corpo da função (mantido pela assinatura
  * da chamada em draw.js), o window.estado inicial é sempre o mesmo.
  */
 export function estadoPadrao(inicio) {
-    const muteInicial = true; // por padrão nenhuma corda soa até o usuário tocar
-    const novo = {};
-    for (let c = 1; c <= 6; c++) novo[c] = { muted: muteInicial, fret: 0 };
-    return novo;
+    return createInstrumentState(window.instrumentId);
 }
 
 /**
@@ -168,11 +155,14 @@ export function estadoPadrao(inicio) {
  * ou null se nenhuma fórmula bater com as notas soantes.
  */
 export function reconhecerAcorde() {
+    const instrumento = instrumentoAtual();
     const soantes = [];
     for (const cordaStr in window.estado) {
         const st = window.estado[cordaStr];
         if (st.muted) continue;
-        const midi = OPEN_MIDI[cordaStr] + st.fret;
+        const corda = instrumento.strings.find(({ number }) => number === Number(cordaStr));
+        if (!corda) continue;
+        const midi = corda.midi + st.fret;
         soantes.push({ corda: +cordaStr, midi, pc: ((midi % 12) + 12) % 12 });
     }
     if (!soantes.length) return { label: null, notas: [], rootPc: null };
@@ -223,7 +213,7 @@ export function reconhecerAcorde() {
  * - Clique acima da primeira linha de trastes (y < MY-8) = clique no "cabeçalho" da
  *   corda (abre/abafa a corda solta), sinalizado por header: true.
  * - Caso contrário, arredonda para a casa mais próxima dentro da janela visível.
- * Retorna null se o clique caiu fora da área das 6 cordas.
+ * Retorna null se o clique caiu fora da área das cordas do instrumento.
  */
 export function coordParaCasa(x, y, C, MX, MY, dx, dy, F) {
     const xi = Math.round((x - MX) / dx);

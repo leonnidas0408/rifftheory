@@ -3,10 +3,11 @@ import PrettyPanel from "./PrettyPanel";
 import Braco from "./Braco";
 import DiagramaAcorde from "./DiagramaAcorde";
 import Icone from "./Icone";
-import { atualizarBraco, carregarPreset, limparBraco, moverJanela } from "../draw";
+import { atualizarBraco, carregarPreset, limparBraco, moverJanela, trocarInstrumento } from "../draw";
 import { formaDoAcorde, formaPorNome } from "../utils/acordes";
 import { registrarEvento } from "../utils/usageStats";
 import NOTAS from "../assets/constants/NOTAS.json";
+import { DEFAULT_INSTRUMENT_ID, INSTRUMENTS, getInstrument } from "../instruments";
 
 const PASSOS_PARA_CONCLUIR = 3;
 const CHAVE_TUTORIAL_OCULTO = "riffTheoryTutorialOculto";
@@ -17,9 +18,18 @@ const QUALIDADES = [
     ["dim", "Diminutos", "°"],
 ];
 
-function TodosAcordes({ onEscolher }) {
+function TodosAcordes({ onEscolher, habilitado }) {
     const [qualidade, setQualidade] = useState("M");
     const sufixo = QUALIDADES.find(([q]) => q === qualidade)[2];
+
+    if (!habilitado) {
+        return (
+            <div className="instrumento-aviso">
+                As formas prontas de acordes estão disponíveis para guitarra e violão. Neste instrumento,
+                monte as notas diretamente no braço para explorar a sonoridade.
+            </div>
+        );
+    }
 
     return (
         <div className="todos-acordes">
@@ -88,10 +98,36 @@ export default function BracoInterativo({
     const [trilha, setTrilha] = useState(null);
     const [passos, setPassos] = useState(0);
     const [concluida, setConcluida] = useState(false);
+    const [instrumentId, setInstrumentId] = useState(() => {
+        try {
+            return localStorage.getItem("riffTheoryInstrument") || DEFAULT_INSTRUMENT_ID;
+        } catch {
+            return DEFAULT_INSTRUMENT_ID;
+        }
+    });
     const [dicaOculta, setDicaOculta] = useState(tutorialOcultoParaSempre);
     const passosRef = useRef(0);
     const ultimoInicio = useRef(0);
     const ultimaEscolha = useRef(abrirEscolha);
+    const instrumento = getInstrument(instrumentId);
+
+    useEffect(() => {
+        trocarInstrumento(instrumentId);
+    }, []);
+
+    function selecionarInstrumento(id) {
+        setInstrumentId(id);
+        try {
+            localStorage.setItem("riffTheoryInstrument", id);
+        } catch {
+            // A preferência permanece durante esta sessão.
+        }
+        trocarInstrumento(id);
+        setAtual(null);
+        setTrilha(null);
+        setDemo(false);
+        registrarEvento("instrument_selected", { instrumento: id });
+    }
 
     // Estado inicial demonstrativo: o braço nunca começa visualmente vazio.
     useEffect(() => {
@@ -213,6 +249,27 @@ export default function BracoInterativo({
                 </div>
             </div>
 
+            <div className="instrumento-seletor" role="group" aria-label="Escolha o instrumento do braço">
+                <div className="instrumento-seletor-cabecalho">
+                    <strong>Instrumento</strong>
+                    <span>{instrumento.description}</span>
+                </div>
+                <div className="instrumento-opcoes">
+                    {Object.values(INSTRUMENTS).map((opcao) => (
+                        <button
+                            key={opcao.id}
+                            type="button"
+                            className={`instrumento-opcao${instrumentId === opcao.id ? " ativa" : ""}`}
+                            aria-pressed={instrumentId === opcao.id}
+                            onClick={() => selecionarInstrumento(opcao.id)}
+                        >
+                            <strong>{opcao.shortLabel}</strong>
+                            <span>{opcao.description.split(" · ")[0]}</span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             {demo && (
                 <p className="braco-exemplo">
                     Exemplo: {atual}. Clique nas casas para mexer ou escolha outro acorde.
@@ -267,7 +324,7 @@ export default function BracoInterativo({
                 </div>
             )}
 
-            {todos && <TodosAcordes onEscolher={escolher} />}
+            {todos && <TodosAcordes onEscolher={escolher} habilitado={instrumento.chordShapes} />}
 
             {!(guiado && dicaOculta) && (
                 <div className="dica-bloco">
