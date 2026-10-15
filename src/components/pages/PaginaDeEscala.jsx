@@ -130,6 +130,7 @@ export default function PaginaDeEscala() {
             {erro && <div className="erro">{erro}</div>}
 
             <PrettyPanel>
+                <h2>Escalas</h2>
                 <div className="escala-topo">
                     <div>
                         <h2>{nomeDaEscala(atual)}</h2>

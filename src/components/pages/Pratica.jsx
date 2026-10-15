@@ -265,6 +265,7 @@ export default function Pratica() {
 
       {aba === "harmonia" && (
         <>
+        <h2>Acordes</h2>
           <PrettyPanel>
             <SectionTitle
               eyebrow="Teoria que vira ação"
@@ -338,6 +339,7 @@ export default function Pratica() {
               </button>
             </PrettyPanel>
           </PrettyPanel>
+            <h2>Escala contextual</h2>
           <section className="roadmap-suggestion">
             <PrettyPanel>
               <h3>{escala.nome}</h3>
@@ -501,6 +503,7 @@ export default function Pratica() {
 
       {aba === "ouvido" && (
         <>
+        <h2>Treine para descobrir o acorde pelo som</h2>
           <PrettyPanel>
             <SectionTitle
               eyebrow="Tirar música de ouvido"
