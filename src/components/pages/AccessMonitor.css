@@ -1,0 +1,165 @@
+.access-monitor-page {
+    min-height: 100vh;
+    background: #f3f6fb;
+    color: #172337;
+}
+
+.access-monitor-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    padding: 0 clamp(18px, 4vw, 56px);
+    border-bottom: 1px solid #dce3ee;
+    background: #fff;
+    color: #63718a;
+    font-size: 13px;
+}
+
+.access-monitor-brand {
+    color: #1c3c9a;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.access-monitor-main {
+    width: min(1240px, calc(100% - 36px));
+    margin: 0 auto;
+    padding: 42px 0 64px;
+}
+
+.access-monitor-eyebrow {
+    margin: 0 0 8px;
+    color: #52678a;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+
+.access-monitor-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.access-monitor-heading h1 {
+    margin: 0;
+    color: #16243a;
+    font-size: clamp(30px, 4vw, 42px);
+    letter-spacing: -.04em;
+}
+
+.access-monitor-heading p,
+.access-monitor-panel-heading p {
+    margin: 8px 0 0;
+    color: #66758c;
+    line-height: 1.55;
+}
+
+.access-monitor-refresh {
+    min-height: 40px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 9px;
+    background: #2449c8;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.access-monitor-refresh:disabled {
+    cursor: wait;
+    opacity: .65;
+}
+
+.access-monitor-account {
+    display: flex;
+    justify-content: flex-end;
+    margin: 18px 0 24px;
+}
+
+.access-monitor-gate,
+.access-monitor-notice,
+.access-monitor-error {
+    margin: 22px 0;
+    padding: 20px 22px;
+    border: 1px solid #dce3ee;
+    border-radius: 14px;
+    background: #fff;
+    color: #57667d;
+}
+
+.access-monitor-gate h2 {
+    margin: 0 0 6px;
+    color: #1b2c45;
+    font-size: 19px;
+}
+
+.access-monitor-gate p { margin: 0; line-height: 1.55; }
+.access-monitor-error { border-color: #f1c4bd; background: #fff8f6; color: #8e3025; }
+
+.access-monitor-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 22px 0;
+}
+
+.access-monitor-metrics article {
+    display: flex;
+    min-height: 112px;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px;
+    border: 1px solid #e0e6ef;
+    border-radius: 14px;
+    background: white;
+}
+
+.access-monitor-metrics span { color: #687890; font-size: 13px; }
+.access-monitor-metrics strong { color: #2349c8; font-size: 30px; letter-spacing: -.04em; }
+
+.access-monitor-panel {
+    overflow: hidden;
+    border: 1px solid #e0e6ef;
+    border-radius: 15px;
+    background: #fff;
+}
+
+.access-monitor-panel-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 22px;
+    border-bottom: 1px solid #e8edf4;
+}
+
+.access-monitor-panel-heading h2 { margin: 0; color: #1b2c45; font-size: 19px; }
+.access-monitor-panel-heading p { font-size: 13px; }
+.access-monitor-panel-heading small { flex: none; color: #77859a; font-size: 11px; }
+.access-monitor-empty { padding: 22px; color: #687890; }
+.access-monitor-table-wrap { overflow-x: auto; }
+.access-monitor-table-wrap table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+.access-monitor-table-wrap th,
+.access-monitor-table-wrap td { padding: 13px 16px; border-bottom: 1px solid #edf0f5; text-align: left; }
+.access-monitor-table-wrap th { color: #64738a; font-size: 11px; font-weight: 800; letter-spacing: .04em; }
+.access-monitor-table-wrap td { color: #314057; font-size: 13px; }
+.access-monitor-table-wrap tr:last-child td { border-bottom: 0; }
+.access-monitor-table-wrap code { color: #2349c8; font-size: 12px; }
+.access-monitor-footnote { max-width: 84ch; margin: 16px 0 0; color: #6d7b91; font-size: 12px; line-height: 1.55; }
+
+@media (max-width: 820px) {
+    .access-monitor-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .access-monitor-panel-heading { flex-direction: column; }
+}
+
+@media (max-width: 520px) {
+    .access-monitor-main { width: calc(100% - 24px); padding-top: 28px; }
+    .access-monitor-heading { align-items: flex-start; flex-direction: column; }
+    .access-monitor-metrics article { min-height: 96px; padding: 14px; }
+    .access-monitor-metrics strong { font-size: 25px; }
+    .access-monitor-panel-heading { padding: 16px; }
+}

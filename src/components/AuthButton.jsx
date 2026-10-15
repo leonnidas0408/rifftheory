@@ -1,7 +1,7 @@
 import { useAuth } from "../auth/AuthContext";
 import "./AuthButton.css";
 
-export default function AuthButton({ compact = false }) {
+export default function AuthButton({ compact = false, redirectTo }) {
     const { user, loading, error, authConfigured, signInWithGoogle, signOut, getAvatarUrl, getDisplayName } = useAuth();
     const avatarUrl = getAvatarUrl(user);
     const name = getDisplayName(user);
@@ -13,7 +13,7 @@ export default function AuthButton({ compact = false }) {
     if (!user) {
         return (
             <div className={`auth-card${compact ? " compact" : ""}`}>
-                <button className="auth-login" onClick={signInWithGoogle} type="button" disabled={!authConfigured}>
+                <button className="auth-login" onClick={() => signInWithGoogle(redirectTo)} type="button" disabled={!authConfigured}>
                     <span className="google-mark" aria-hidden="true">G</span>
                     <span>Entrar com Google</span>
                 </button>

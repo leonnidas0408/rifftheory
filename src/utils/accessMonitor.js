@@ -10,12 +10,12 @@ function idAleatorio(prefixo) {
     return `${prefixo}_${aleatorio}`;
 }
 
-function lerOuCriar(chave, prefixo) {
+function lerOuCriar(chave, prefixo, armazenamento = window.localStorage) {
     try {
-        const atual = window.localStorage.getItem(chave);
+        const atual = armazenamento.getItem(chave);
         if (atual) return atual;
         const novo = idAleatorio(prefixo);
-        window.localStorage.setItem(chave, novo);
+        armazenamento.setItem(chave, novo);
         return novo;
     } catch {
         return idAleatorio(prefixo);
@@ -52,14 +52,14 @@ export async function registrarAcessoAnonimo() {
     if (!supabase || lerConsentimentoAcessos() !== "accepted") return;
 
     const deviceId = lerOuCriar(DEVICE_KEY, "device");
-    const sessionId = lerOuCriar(SESSION_KEY, "session");
+    const sessionId = lerOuCriar(SESSION_KEY, "session", window.sessionStorage);
 
     try {
         await supabase.rpc("register_anonymous_access", {
             p_device_id: deviceId,
             p_session_id: sessionId,
-            p_path: `${window.location.pathname}${window.location.search}`,
-            p_user_agent: navigator.userAgent,
+            p_path: window.location.pathname,
+            p_user_agent: null,
         });
     } catch {
         // Analytics nunca deve impedir o uso do site.

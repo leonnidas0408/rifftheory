@@ -2,6 +2,30 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { authConfigured, getAvatarUrl, getDisplayName, supabase } from "./supabase";
 
 const AuthContext = createContext(null);
+const LOGIN_RETURN_KEY = "riff-theory-login-return";
+
+function normalizarRotaInterna(value) {
+    try {
+        const url = new URL(value, window.location.origin);
+        if (url.origin !== window.location.origin) return "";
+        return `${url.pathname}${url.search}${url.hash}`;
+    } catch {
+        return "";
+    }
+}
+
+function consumirRotaDeRetorno() {
+    try {
+        const valor = window.sessionStorage.getItem(LOGIN_RETURN_KEY);
+        window.sessionStorage.removeItem(LOGIN_RETURN_KEY);
+        if (!valor) return "";
+        const salvo = JSON.parse(valor);
+        if (!salvo?.path || Number(salvo.expiresAt) < Date.now()) return "";
+        return normalizarRotaInterna(salvo.path);
+    } catch {
+        return "";
+    }
+}
 
 export function AuthProvider({ children }) {
     const [session, setSession] = useState(null);
@@ -18,6 +42,11 @@ export function AuthProvider({ children }) {
         supabase.auth.getSession().then(({ data, error: sessionError }) => {
             if (!ativo) return;
             if (sessionError) setError("Não foi possível recuperar sua sessão.");
+            const rotaDeRetorno = data.session ? consumirRotaDeRetorno() : "";
+            if (rotaDeRetorno && window.location.pathname === "/") {
+                window.location.replace(rotaDeRetorno);
+                return;
+            }
             setSession(data.session);
             setLoading(false);
         }).catch(() => {
@@ -38,7 +67,7 @@ export function AuthProvider({ children }) {
         };
     }, []);
 
-    async function signInWithGoogle() {
+    async function signInWithGoogle(redirectTo = window.location.origin) {
         setError("");
         if (!supabase) {
             setError("Login Google ainda não foi configurado neste ambiente.");
@@ -46,13 +75,24 @@ export function AuthProvider({ children }) {
         }
 
         try {
+            const rotaDeRetorno = normalizarRotaInterna(redirectTo);
+            if (rotaDeRetorno && rotaDeRetorno !== "/") {
+                window.sessionStorage.setItem(LOGIN_RETURN_KEY, JSON.stringify({
+                    path: rotaDeRetorno,
+                    expiresAt: Date.now() + 15 * 60 * 1000,
+                }));
+            }
             const { error: signInError } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: { redirectTo: window.location.origin },
             });
-            if (signInError) setError("Não foi possível iniciar o login Google.");
+            if (signInError) {
+                window.sessionStorage.removeItem(LOGIN_RETURN_KEY);
+                setError("Não foi possível iniciar o login Google.");
+            }
             return { error: signInError };
         } catch (signInError) {
+            try { window.sessionStorage.removeItem(LOGIN_RETURN_KEY); } catch { /* armazenamento opcional */ }
             setError("Não foi possível iniciar o login Google. Verifique sua conexão e tente novamente.");
             return { error: signInError };
         }
