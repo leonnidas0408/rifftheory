@@ -36,12 +36,13 @@ export default function AccessConsent() {
             <div>
                 <strong id="access-consent-title">Controle de acessos</strong>
                 <p>
-                    Se você permitir, usamos um identificador aleatório guardado neste navegador para contar entradas,
-                    sessões, dias ativos e frequência. O monitor não associa esses registros à conta, ao nome ou ao e-mail,
-                    e o Riff Theory não grava o IP nesse relatório. O identificador é pseudônimo, não um IP nem uma
-                    garantia de anonimato absoluto. Você pode recusar e usar o site normalmente; pode mudar esta escolha
-                    em “Privacidade e acessos”. Revogar interrompe registros futuros, mas não apaga automaticamente
-                    registros anteriores do banco.
+                    Se permitir, usamos um identificador aleatório assinado no servidor para contar entradas e sessões deste
+                    navegador. Os relatórios são diários, em horário de Brasília, e mantêm o histórico para acompanhar o
+                    crescimento. Não associamos o identificador à conta, nome ou e-mail e o Riff Theory não coleta nem
+                    armazena IP. Para reduzir registros automatizados, a verificação é feita pelo Cloudflare Turnstile, que
+                    pode processar dados técnicos da conexão durante o desafio. Você pode recusar e usar o site normalmente;
+                    pode mudar a escolha em “Privacidade e acessos”. Revogar interrompe registros futuros, mas não apaga
+                    automaticamente registros anteriores.
                 </p>
             </div>
             <div className="access-consent-actions">

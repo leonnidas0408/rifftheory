@@ -24,7 +24,14 @@ Transformar os itens do TODO em uma primeira versão funcional, prática e test�
 - `TODO.md`: status atualizado somente após validação do build.
 
 ## Restrições
-- Não alterar o fluxo de login, avaliações, Supabase ou chatbot.
+- Não alterar o fluxo de login, avaliações ou chatbot; as mudanças no Supabase ficam limitadas ao monitor de acessos já aprovado.
 - Não introduzir dependências novas.
 - Manter a cascata CSS modular e a interface em português.
 - Áudio deve ser local via Web Audio API, sem enviar dados para servidor.
+
+## Atualização de escopo — monitor de acessos (15/10/2026)
+- Manter a contagem consentida por identificador aleatório de navegador, sem usar contas Google para identificar visitantes.
+- Remover a gravação direta do cliente; aceitar gravações apenas via Edge Function com validação server-side do Cloudflare Turnstile, assinatura HMAC do identificador e limites por dispositivo.
+- O Riff Theory não coleta, armazena nem deriva IP. A Cloudflare pode processar dados técnicos da conexão ao executar o desafio.
+- Exibir totais por dia de São Paulo, navegadores pseudônimos únicos, sessões e média de entradas por navegador; preservar o histórico em vez de apagar contadores na virada do dia.
+- Exigir consentimento opcional; recusar ou revogar continua permitindo o uso do site.

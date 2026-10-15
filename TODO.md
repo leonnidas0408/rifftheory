@@ -142,3 +142,12 @@ sugerida de implementação (1 → 5) indicada no mapa.
 5. **Adicionar camadas de especialização** — estilo, timbre, equipamento, conteúdo avançado
 
 ---
+
+
+## Monitor de acessos — proteção antiabuso e métricas diárias
+
+- [x] Revogar a gravação direta do navegador para a role `anon`; somente `service_role` pode registrar entradas.
+- [x] Aplicar limite por identificador de dispositivo e criar relatórios por dia de São Paulo, sem apagar o histórico na virada do dia.
+- [x] Remover o uso de IP pelo Riff Theory e documentar o processamento técnico externo necessário ao Turnstile.
+- [ ] Configurar as chaves Turnstile, implantar a Edge Function e reativar a coleta protegida.
+- [ ] Publicar o painel atualizado e validar `/admin/acessos` com uma conta autorizada.
