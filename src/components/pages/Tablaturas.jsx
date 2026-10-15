@@ -243,7 +243,7 @@ export default function Tablaturas() {
 
     return (
         <div className="pagina tabmaker-page">
-            <Barra titulo="TabMaker" />
+            <Barra titulo="Criador de Tablaturas" />
 
             <header className="tabmaker-heading">
                 <span className="eyebrow">EDITOR DE TABLATURA</span>
