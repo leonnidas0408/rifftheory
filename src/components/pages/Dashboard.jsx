@@ -84,35 +84,6 @@ export default function Dashboard({ setPage }) {
     return (
         <div className="pagina"><div id="comecar" className="comecar">
             <Barra titulo="Dashboard"/>
-            <div className="comecar-topo">
-                <h2>Escolha um ponto de partida</h2>
-                <span className="subtitulo">Você pode mudar de caminho a qualquer momento.</span>
-                <div className="braco-acoes">
-                    <button className="pilula ligada" onClick={focarBusca}>
-                        Buscar uma música
-                    </button>
-                    <button className="pilula" onClick={abrirAcordes}>
-                        Ver acordes no braço
-                    </button>
-                    <button className="pilula" onClick={() => setPage?.("Escalas")}>
-                        Explorar escalas
-                    </button>
-                </div>
-                <p className="cta-seguranca"><strong>Comece agora:</strong> escolha uma trilha e veja o primeiro acorde no braço — ou busque uma música quando já souber o que quer tocar.</p>
-            </div>
-            <ChordSearch />
-            <div className="sugestoes">
-                <span className="subtitulo">Ou treine uma progressão no braço:</span>
-                {PROGRESSOES.map((acordes) => (
-                    <button
-                        key={acordes.join("-")}
-                        className="pilula"
-                        onClick={() => iniciarTrilha(acordes)}
-                    >
-                        {acordes.join(" – ")}
-                    </button>
-                ))}
-            </div>
         </div>
         <div id="secao-braco">
             <BracoInterativo

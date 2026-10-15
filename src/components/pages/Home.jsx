@@ -216,23 +216,6 @@ export default function Home({ setPage }) {
             </section>
 
             <div id="comecar" className="comecar">
-                <div className="comecar-topo">
-                    <h2>Escolha um ponto de partida</h2>
-                    <span className="subtitulo">Você pode mudar de caminho a qualquer momento.</span>
-                    <div className="braco-acoes">
-                        <button className="pilula ligada" onClick={focarBusca}>
-                            Buscar uma música
-                        </button>
-                        <button className="pilula" onClick={abrirAcordes}>
-                            Ver acordes no braço
-                        </button>
-                        <button className="pilula" onClick={() => setPage?.("Escalas")}>
-                            Explorar escalas
-                        </button>
-                    </div>
-                    <p className="cta-seguranca"><strong>Comece agora:</strong> escolha uma trilha e veja o primeiro acorde no braço — ou busque uma música quando já souber o que quer tocar.</p>
-                </div>
-
                 <ChordSearch setPage={setPage} />
 
                 <div className="sugestoes">
