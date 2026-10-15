@@ -182,7 +182,43 @@ export default function Pratica() {
 
       {aba === "começar" && (
         <>
+        <h2>O que essa trilha treina</h2>
+          <PrettyPanel>
+            <PrettyPanel>
+            <SectionTitle
+              eyebrow="Trilha de evolução"
+              title="Um passo de cada vez"
+            >
+              A trilha junta o básico, a aplicação e a especialização sem
+              esconder o próximo objetivo.
+            </SectionTitle>
+            <div className="roadmap-progress">
+              <div className="roadmap-progress-line">
+                <span style={{ width: "35%" }} />
+              </div>
+              <div className="roadmap-steps">
+                <span className="feito">1 · Formas e som</span>
+                <span className="ativo">2 · Harmonia aplicada</span>
+                <span>3 · Improviso</span>
+                <span>4 · Estilo e timbre</span>
+                <span>5 · Ouvido</span>
+              </div>
+            </div>
+          </PrettyPanel>
+          
           <section className="roadmap-grid roadmap-grid-3">
+            {AVANCADO.map((item) => (
+              <article className="roadmap-card" key={item.titulo}>
+                <Icone nome="info" tamanho={18} />
+                <h3>{item.titulo}</h3>
+                <p>{item.texto}</p>
+              </article>
+            ))}
+          </section>
+          </PrettyPanel>
+        <h2>Lições de prática</h2>
+          <PrettyPanel>
+            <section className="roadmap-grid roadmap-grid-3">
             <article className="roadmap-card destaque">
               <span className="roadmap-number">01</span>
               <h3>Primeiros acordes</h3>
@@ -223,36 +259,7 @@ export default function Pratica() {
               </button>
             </article>
           </section>
-          <PrettyPanel>
-            <SectionTitle
-              eyebrow="Trilha de evolução"
-              title="Um passo de cada vez"
-            >
-              A trilha junta o básico, a aplicação e a especialização sem
-              esconder o próximo objetivo.
-            </SectionTitle>
-            <div className="roadmap-progress">
-              <div className="roadmap-progress-line">
-                <span style={{ width: "35%" }} />
-              </div>
-              <div className="roadmap-steps">
-                <span className="feito">1 · Formas e som</span>
-                <span className="ativo">2 · Harmonia aplicada</span>
-                <span>3 · Improviso</span>
-                <span>4 · Estilo e timbre</span>
-                <span>5 · Ouvido</span>
-              </div>
-            </div>
-          </PrettyPanel>
-          <section className="roadmap-grid roadmap-grid-3">
-            {AVANCADO.map((item) => (
-              <article className="roadmap-card" key={item.titulo}>
-                <Icone nome="info" tamanho={18} />
-                <h3>{item.titulo}</h3>
-                <p>{item.texto}</p>
-              </article>
-            ))}
-          </section>
+        </PrettyPanel>
         </>
       )}
 
