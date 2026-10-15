@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
         };
     }, []);
 
-    async function signInWithGoogle() {
+    async function signInWithGoogle(redirectTo = window.location.origin) {
         setError("");
         if (!supabase) {
             setError("Login Google ainda não foi configurado neste ambiente.");
@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
         try {
             const { error: signInError } = await supabase.auth.signInWithOAuth({
                 provider: "google",
-                options: { redirectTo: window.location.origin },
+                options: { redirectTo },
             });
             if (signInError) setError("Não foi possível iniciar o login Google.");
             return { error: signInError };

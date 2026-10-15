@@ -12,8 +12,19 @@ import { iniciarRastreioDeUso } from "./utils/usageStats";
 import Home from "./components/pages/Home";
 import { AuthProvider } from "./auth/AuthContext";
 import AccessConsent from "./components/AccessConsent";
+import AccessMonitor from "./components/pages/AccessMonitor";
 
 export default function App() {
+    const isAccessMonitorRoute = window.location.pathname.replace(/\/+$/, "") === "/admin/acessos";
+
+    return (
+        <AuthProvider>
+            {isAccessMonitorRoute ? <AccessMonitor /> : <RiffTheoryApp />}
+        </AuthProvider>
+    );
+}
+
+function RiffTheoryApp() {
     const [page, setPage] = useState("Início");
 
     useEffect(() => {
@@ -33,7 +44,7 @@ export default function App() {
     };
 
     return (
-        <AuthProvider>
+        <>
             <NavbarAdapter
                 page={page}
                 setPage={setPage}
@@ -41,6 +52,6 @@ export default function App() {
                 defaultPage="Início"
             />
             <AccessConsent />
-        </AuthProvider>
+        </>
     );
 }
