@@ -9,7 +9,6 @@ import "./AccessConsent.css";
 
 export default function AccessConsent() {
     const [consentimento, setConsentimento] = useState(lerConsentimentoAcessos);
-    const [mostrar, setMostrar] = useState(() => !lerConsentimentoAcessos());
 
     useEffect(() => {
         if (consentimento === "accepted") registrarAcessoAnonimo();
@@ -18,16 +17,9 @@ export default function AccessConsent() {
     function escolher(valor) {
         salvarConsentimentoAcessos(valor);
         setConsentimento(valor);
-        setMostrar(false);
     }
 
-    if (consentimento && !mostrar) {
-        return (
-            <button className="access-consent-manage" type="button" onClick={() => setMostrar(true)}>
-                Privacidade e acessos
-            </button>
-        );
-    }
+    if (consentimento) return null;
 
     return (
         <aside className="access-consent" role="dialog" aria-labelledby="access-consent-title">
@@ -38,8 +30,8 @@ export default function AccessConsent() {
                         navegador. Os relatórios são diários, em horário de Brasília, e mantêm o histórico para acompanhar o
                         crescimento. Não associamos o identificador à conta, nome ou e-mail e o Riff Theory não coleta nem
                         armazena IP. Para reduzir registros automatizados, a verificação é feita pelo Cloudflare Turnstile, que
-                        pode processar dados técnicos da conexão durante o desafio. Você pode revisar esta informação em
-                        “Privacidade e acessos”.
+                        pode processar dados técnicos da conexão durante o desafio. Esta escolha será salva neste navegador e a
+                        barra não será exibida novamente.
                     </p>
                 </div>
                 <div className="access-consent-actions">
