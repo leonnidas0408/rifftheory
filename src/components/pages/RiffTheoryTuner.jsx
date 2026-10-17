@@ -251,6 +251,8 @@ export default function RiffTheoryTuner() {
   const [referenceA4, setReferenceA4] = useState(440);
   const [reading, setReading] = useState(null);
   const [error, setError] = useState(null);
+  const [cordaAPorda, setCordaAPorda] = useState(false);
+  const [targetStringIndex, setTargetStringIndex] = useState(0);
 
   const audioCtxRef = useRef(null);
   const analyserRef = useRef(null);
@@ -261,6 +263,7 @@ export default function RiffTheoryTuner() {
   const historyRef = useRef([]);
   const missedFramesRef = useRef(0);
   const selectedTuning = TUNING_PRESETS[instrument].find((preset) => preset.id === tuningPreset) || TUNING_PRESETS[instrument][0];
+  const targetString = selectedTuning.strings[targetStringIndex] || selectedTuning.strings[0];
 
   function chooseInstrument(nextInstrument) {
     historyRef.current = [];
@@ -268,6 +271,7 @@ export default function RiffTheoryTuner() {
     setReading(null);
     setInstrument(nextInstrument);
     setTuningPreset(TUNING_PRESETS[nextInstrument][0].id);
+    setTargetStringIndex(0);
   }
 
   function chooseTuning(presetId) {
@@ -275,6 +279,21 @@ export default function RiffTheoryTuner() {
     missedFramesRef.current = 0;
     setReading(null);
     setTuningPreset(presetId);
+    setTargetStringIndex(0);
+  }
+
+  function toggleCordaAPorda() {
+    historyRef.current = [];
+    missedFramesRef.current = 0;
+    setReading(null);
+    setCordaAPorda((active) => !active);
+  }
+
+  function chooseTargetString(index) {
+    historyRef.current = [];
+    missedFramesRef.current = 0;
+    setReading(null);
+    setTargetStringIndex(index);
   }
 
   const stop = useCallback(() => {
@@ -325,6 +344,7 @@ export default function RiffTheoryTuner() {
 
     const { note, octave, cents } = freqToNote(smoothed, referenceA4);
     const { string, cents: stringCents } = nearestString(smoothed, selectedTuning.strings);
+    const targetCents = 1200 * Math.log2(smoothed / targetString.freq);
 
     setReading({
       active: true,
@@ -334,8 +354,10 @@ export default function RiffTheoryTuner() {
       cents,
       stringName: string ? string.name : null,
       stringCents,
+      targetCents,
+      targetMatch: string ? string.name === targetString.name : false,
     });
-  }, [instrument, referenceA4, selectedTuning]);
+  }, [cordaAPorda, instrument, referenceA4, selectedTuning, targetString]);
 
   tickRef.current = tick;
 
@@ -381,14 +403,17 @@ export default function RiffTheoryTuner() {
   useEffect(() => stop, [stop]);
 
   // status: 'flat' | 'sharp' | 'tune' | 'close'
-  const cents = reading && reading.active ? reading.cents : 0;
+  const cents = reading && reading.active ? (cordaAPorda ? reading.targetCents : reading.cents) : 0;
   const inTune = reading && reading.active && Math.abs(cents) <= IN_TUNE_CENTS;
   const close = reading && reading.active && Math.abs(cents) <= CLOSE_CENTS;
 
   let statusText = "AGUARDANDO SINAL";
   let statusColor = "var(--muted)";
   if (reading && reading.active) {
-    if (inTune) {
+    if (cordaAPorda && !reading.targetMatch) {
+      statusText = `TOQUE A CORDA ${targetString.name}`;
+      statusColor = "var(--amber)";
+    } else if (inTune) {
       statusText = "AFINADO";
       statusColor = "var(--green)";
     } else if (cents < 0) {
@@ -497,13 +522,40 @@ export default function RiffTheoryTuner() {
           <aside className="rt-controls">
             <div className="rt-control-group">
               <div className="rt-control-heading">
-                <span className="rt-label">Notas da afinação</span>
-                <span>{instrument}</span>
+                <div>
+                  <span className="rt-label">Notas da afinação</span>
+                  {cordaAPorda && <small className="rt-mode-caption">Alvo: {targetString.name}</small>}
+                </div>
+                <div className="rt-control-heading-actions">
+                  <span>{instrument}</span>
+                  <button
+                    type="button"
+                    className={`rt-mode-toggle${cordaAPorda ? " active" : ""}`}
+                    aria-pressed={cordaAPorda}
+                    onClick={toggleCordaAPorda}
+                  >
+                    Corda a corda
+                  </button>
+                </div>
               </div>
               <div className="rt-string-row">
-                {selectedTuning.strings.map((s) => {
+                {selectedTuning.strings.map((s, index) => {
                   const selected = reading && reading.active && reading.stringName === s.name;
-                  const tuned = selected && Math.abs(reading.stringCents) <= IN_TUNE_CENTS;
+                  const target = cordaAPorda && targetString.name === s.name;
+                  const tuned = selected && Math.abs(cordaAPorda ? reading.targetCents : reading.stringCents) <= IN_TUNE_CENTS;
+                  if (cordaAPorda) {
+                    return (
+                      <button
+                        key={s.name}
+                        type="button"
+                        className={`rt-string-chip${target ? " target" : ""}${selected ? " active" : ""}${tuned && target ? " in-tune" : ""}`}
+                        aria-pressed={target}
+                        onClick={() => chooseTargetString(index)}
+                      >
+                        {s.name}
+                      </button>
+                    );
+                  }
                   return (
                     <div
                       key={s.name}
@@ -517,16 +569,18 @@ export default function RiffTheoryTuner() {
             </div>
 
             <div className="rt-target">
-              <span>Corda mais próxima</span>
-              <strong>{reading && reading.active ? reading.stringName : "—"}</strong>
+              <span>{cordaAPorda ? "Corda alvo" : "Corda mais próxima"}</span>
+              <strong>{cordaAPorda ? targetString.name : (reading && reading.active ? reading.stringName : "—")}</strong>
               <span>
                 {reading && reading.active
-                  ? `${reading.stringCents >= 0 ? "+" : ""}${reading.stringCents.toFixed(1)} cents`
+                  ? `${cents >= 0 ? "+" : ""}${cents.toFixed(1)} cents`
                   : "Aguardando sinal"}
               </span>
             </div>
 
-            <p className="rt-hint">Toque uma corda por vez, o mais próximo do microfone possível.</p>
+            <p className="rt-hint">
+              {cordaAPorda ? `Selecione ${targetString.name} e toque somente essa corda.` : "Toque uma corda por vez, o mais próximo do microfone possível."}
+            </p>
           </aside>
         </div>
 
