@@ -248,6 +248,12 @@ a.recent-item:hover {
     gap: 10px 20px;
     margin-top: 6px;
 }
+.hero-cta-note {
+    margin-top: -4px;
+    color: #e4eefc;
+    font-size: 12px;
+    line-height: 1.35;
+}
 
 .link-botao.hero-cta {
     padding: 13px 26px;
@@ -275,6 +281,11 @@ a.recent-item:hover {
     display: flex;
     flex-wrap: wrap;
     gap: 8px 18px;
+    width: min(100%, 600px);
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 10px;
+    background: rgba(7, 20, 38, .2);
     color: #c9dcf6;
     font-size: 12px;
 }

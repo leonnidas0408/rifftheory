@@ -95,7 +95,7 @@ export default function Home({ setPage }) {
                 <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
                 <h1>Escolha um acorde. Veja a posição no braço e comece a tocar.</h1>
                 <p>
-                    No primeiro clique, abra uma trilha de 4 acordes e veja a primeira forma no braço.
+                    Em cerca de 1 minuto, abra uma trilha de 4 acordes e veja onde colocar os dedos no braço interativo.
                     Depois, avance acorde por acorde — sem alternar entre ferramentas.
                 </p>
                 <div className="hero-demo" aria-label="Prévia da trilha guiada e do braço interativo">
@@ -125,7 +125,7 @@ export default function Home({ setPage }) {
                             iniciarTrilha(PROGRESSOES[0]);
                         }}
                     >
-                        Testar no braço
+                        Testar trilha guiada no braço
                     </button>
                     <button
                         className="hero-secundaria"
@@ -134,14 +134,15 @@ export default function Home({ setPage }) {
                             abrirAcordes();
                         }}
                     >
-                        Explorar acordes
+                        Escolher um acorde
                     </button>
                 </div>
-                <div className="hero-benefits" aria-label="Benefícios do teste">
-                    <span><b>Teste em 1 minuto</b></span>
-                    <span><b>4 acordes</b> no braço</span>
-                    <span><b>Sem cartão</b></span>
+                <p className="hero-cta-note">Abre uma sequência de 4 acordes e mostra a 1ª forma — sem conta, sem cartão.</p>
+                <div className="hero-benefits" aria-label="Sinais rápidos de confiança">
                     <span><b>Sem conta</b> para testar</span>
+                    <span><b>Sem cartão</b></span>
+                    <span><b>Dados no navegador</b></span>
+                    <span><b>1ª forma</b> no 1º clique</span>
                 </div>
                 <div className="hero-social-proof" aria-label="Prova social do Riff Theory">
                     <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
