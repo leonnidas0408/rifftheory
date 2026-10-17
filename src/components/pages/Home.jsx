@@ -98,6 +98,25 @@ export default function Home({ setPage }) {
                     No primeiro clique, abra uma trilha de 4 acordes e veja a primeira forma no braço.
                     Depois, avance acorde por acorde — sem alternar entre ferramentas.
                 </p>
+                <div className="hero-demo" aria-label="Prévia da trilha guiada e do braço interativo">
+                    <div className="hero-demo-topline">
+                        <span>Trilha guiada · 01 de 04</span>
+                        <strong>Mi menor</strong>
+                    </div>
+                    <div className="hero-demo-progression" aria-label="Progressão C, G, Am e F">
+                        {PROGRESSOES[0].map((acorde, index) => (
+                            <span className={index === 0 ? "is-active" : ""} key={acorde}>{acorde}</span>
+                        ))}
+                    </div>
+                    <div className="hero-demo-neck" aria-hidden="true">
+                        {[0, 1, 2, 3, 4, 5].map((corda) => (
+                            <span className="hero-demo-string" key={corda}>
+                                <i className={`hero-demo-note note-${corda}`} />
+                            </span>
+                        ))}
+                    </div>
+                    <span className="hero-demo-hint">Veja a forma. Toque. Avance para o próximo acorde.</span>
+                </div>
                 <div className="hero-acoes">
                     <button
                         className="link-botao hero-cta"
@@ -120,13 +139,13 @@ export default function Home({ setPage }) {
                 </div>
                 <div className="hero-seguranca">
                     <span className="seguranca-icone" aria-hidden="true">✓</span>
-                    <span>Gratuito para experimentar · sem cartão · sem cadastro para a prática guiada.</span>
+                    <span>Prática guiada sem cadastro · login só para o Thonic e avaliações.</span>
                 </div>
                 <div className="hero-social-proof" aria-label="Prova social do Riff Theory">
                     <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
                     <div>
-                        <strong>Avaliações da comunidade</strong>
-                        <span>Veja experiências reais de quem já testou o Riff Theory.</span>
+                        <strong>5,0/5 · 6 avaliações públicas</strong>
+                        <span>“bem didático” · “fácil de navegar” · “trilha de quatro acordes”</span>
                     </div>
                     <button type="button" onClick={() => rolarPara("reviews-title")}>Ler avaliações</button>
                 </div>

@@ -155,6 +155,92 @@ a.recent-item:hover {
     color: #d3e2f8;
 }
 
+.hero-demo {
+    width: min(100%, 520px);
+    padding: 13px 15px 12px;
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 14px;
+    background: rgba(5, 17, 33, .62);
+    box-shadow: 0 12px 30px rgba(2, 9, 20, .2);
+}
+.hero-demo-topline,
+.hero-demo-progression {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.hero-demo-topline {
+    color: #bcd4f5;
+    font-size: 11px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+.hero-demo-topline strong { color: #fff; font-size: 13px; text-transform: none; }
+.hero-demo-progression { justify-content: flex-start; margin-top: 11px; }
+.hero-demo-progression span {
+    display: grid;
+    width: 32px;
+    height: 26px;
+    place-items: center;
+    border: 1px solid rgba(188, 212, 245, .35);
+    border-radius: 7px;
+    color: #d7e6fb;
+    font-size: 12px;
+    font-weight: 700;
+}
+.hero-demo-progression span.is-active {
+    border-color: #ffd166;
+    background: #ffd166;
+    color: #182333;
+}
+.hero-demo-neck {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 12px;
+    padding: 7px 10px;
+    border: 1px solid rgba(188, 212, 245, .28);
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(169, 116, 56, .5), rgba(87, 54, 28, .76));
+}
+.hero-demo-string {
+    position: relative;
+    display: block;
+    height: 1px;
+    background: rgba(242, 224, 194, .65);
+}
+.hero-demo-string::after {
+    content: "";
+    position: absolute;
+    inset: -5px 12% -5px;
+    border-right: 1px solid rgba(255, 241, 213, .45);
+    border-left: 1px solid rgba(255, 241, 213, .45);
+}
+.hero-demo-note {
+    position: absolute;
+    top: 50%;
+    left: 34%;
+    width: 12px;
+    height: 12px;
+    transform: translate(-50%, -50%);
+    border: 2px solid #fff3c4;
+    border-radius: 50%;
+    background: #f3b72e;
+    box-shadow: 0 0 0 3px rgba(243, 183, 46, .18);
+}
+.hero-demo-string:nth-child(2) .hero-demo-note { left: 48%; }
+.hero-demo-string:nth-child(3) .hero-demo-note { left: 62%; }
+.hero-demo-string:nth-child(4) .hero-demo-note { left: 48%; }
+.hero-demo-string:nth-child(5) .hero-demo-note { left: 34%; }
+.hero-demo-string:nth-child(6) .hero-demo-note { left: 62%; }
+.hero-demo-hint {
+    display: block;
+    margin-top: 9px;
+    color: #c9dcf6;
+    font-size: 12px;
+}
+
 .hero-acoes {
     display: flex;
     flex-wrap: wrap;
@@ -653,4 +739,3 @@ button.recent-item {
 button.recent-item:hover {
     background: #d6e6fc;
 }
-

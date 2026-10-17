@@ -110,6 +110,14 @@
         align-items: flex-start;
     }
 
+    .hero-demo {
+        padding: 11px 12px 10px;
+    }
+
+    .hero-demo-hint {
+        line-height: 1.35;
+    }
+
     .hero-social-proof {
         align-items: flex-start;
         flex-wrap: wrap;
@@ -119,4 +127,3 @@
         margin-left: 28px;
     }
 }
-
