@@ -38,6 +38,18 @@ export default function Home({ setPage }) {
         ["Em", "C", "G", "D"],
         ["Am", "F", "C", "G"],
     ];
+    const DESTAQUES_AVALIACOES = [
+        {
+            contexto: "Navegação",
+            trecho: "…fácil de navegar, com organização perfeita…",
+            autora: "malu__2811",
+        },
+        {
+            contexto: "Acordes no braço",
+            trecho: "…visualize os acordes diretamente no braço do instrumento e pratique de forma guiada.",
+            autora: "ffernandocavalcante",
+        },
+    ];
     const [trilha, setTrilha] = useState(null);
     const [abrirEscolha, setAbrirEscolha] = useState(0);
     const [resumoAvaliacoes, setResumoAvaliacoes] = useState(null);
@@ -91,6 +103,20 @@ export default function Home({ setPage }) {
         };
     }, []);
 
+    useEffect(() => {
+        const hero = document.querySelector(".tab-hero");
+        if (!hero || !("IntersectionObserver" in window)) return undefined;
+
+        const observer = new IntersectionObserver(([entrada]) => {
+            document.body.classList.toggle("home-hero-visible", entrada.isIntersecting);
+        }, { threshold: 0.05 });
+        observer.observe(hero);
+        return () => {
+            observer.disconnect();
+            document.body.classList.remove("home-hero-visible");
+        };
+    }, []);
+
     function focarBusca() {
         rolarPara("comecar");
         document.getElementById("busca-cifra")?.focus({ preventScroll: true });
@@ -123,8 +149,13 @@ export default function Home({ setPage }) {
                 <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
                 <h1>Toque uma trilha. Veja cada acorde no braço.</h1>
                 <p>
-                    No primeiro clique, abra uma trilha de 4 acordes: veja cada forma no braço e avance no seu ritmo.
+                    No primeiro clique, abra uma trilha, veja cada forma no braço e pratique no seu ritmo.
                 </p>
+                <ul className="hero-benefits" aria-label="Benefícios para começar">
+                    <li>Sem conta</li>
+                    <li>4 acordes</li>
+                    <li>Metrônomo incluído</li>
+                </ul>
                 <div className="hero-acoes">
                     <button
                         className="link-botao hero-cta"
@@ -157,9 +188,20 @@ export default function Home({ setPage }) {
                     <a className="trust-review-summary hero-review-summary" href="#reviews" aria-label={`Ver ${resumoAvaliacoes.count} avaliações públicas; nota ${resumoAvaliacoes.average} de 5`}>
                         <span aria-hidden="true">★</span>
                         <strong>{resumoAvaliacoes.average}</strong> de 5
-                        <span>· {resumoAvaliacoes.count} avaliações públicas · ver relatos</span>
+                        <span>· {resumoAvaliacoes.count} avaliações públicas no site · ver relatos</span>
                     </a>
                 )}
+                <div className="hero-review-highlights" aria-label="Trechos de avaliações públicas exibidas no site">
+                    <span className="hero-review-highlights-label">O que as pessoas destacam</span>
+                    {DESTAQUES_AVALIACOES.map((review) => (
+                        <blockquote className="hero-review-quote" key={review.autora}>
+                            <span className="hero-review-context">{review.contexto}</span>
+                            <q>{review.trecho}</q>
+                            <cite>{review.autora}</cite>
+                        </blockquote>
+                    ))}
+                    <a className="hero-review-all" href="#reviews">Ver avaliações públicas completas</a>
+                </div>
             </section>
 
             <section className="trust-section" aria-labelledby="trust-title">

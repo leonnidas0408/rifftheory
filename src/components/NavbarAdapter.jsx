@@ -6,9 +6,10 @@ import { isDesktop } from "react-device-detect";
 export default function NavbarAdapter({page, setPage, pageData, defaultPage}) {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
         try {
-            return window.localStorage.getItem("riffTheorySidebarOculta") === "true";
+            const preference = window.localStorage.getItem("riffTheorySidebarOculta");
+            return preference === null ? isDesktop : preference === "true";
         } catch {
-            return false;
+            return isDesktop;
         }
     });
     function alternarSidebar() {

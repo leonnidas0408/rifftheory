@@ -15,6 +15,26 @@
     line-height: 1.5;
 }
 
+.hero-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.hero-benefits li {
+    padding: 5px 9px;
+    border: 1px solid rgba(220, 232, 250, .28);
+    border-radius: 999px;
+    background: rgba(8, 15, 26, .38);
+    color: #f1f5fb;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
 .hero-acoes {
     align-items: center;
     gap: 8px 18px;
@@ -64,6 +84,70 @@
 .hero-review-summary {
     align-self: flex-start;
     margin-top: 2px;
+}
+
+.hero-review-highlights {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px 9px;
+    width: min(760px, 100%);
+    margin-top: 1px;
+}
+
+.hero-review-highlights-label {
+    grid-column: 1 / -1;
+    color: #c2cede;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+}
+
+.hero-review-quote {
+    display: grid;
+    align-content: start;
+    gap: 3px;
+    min-width: 0;
+    margin: 0;
+    padding: 8px 10px;
+    border-left: 2px solid #a9f08d;
+    background: rgba(8, 15, 26, .42);
+    color: #f3f6fb;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.hero-review-context {
+    color: #a9f08d;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.hero-review-quote q {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.hero-review-quote cite {
+    overflow: hidden;
+    color: #bac7d9;
+    font-size: 9px;
+    font-style: normal;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hero-review-all {
+    grid-column: 1 / -1;
+    justify-self: start;
+    color: #dce7f8;
+    font-size: 10px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
 .hero-first-step-preview {
@@ -431,4 +515,21 @@ body:has(.trust-section) .access-consent-manage {
 body.home-trust-visible .fab-chat {
     visibility: hidden;
     pointer-events: none;
+}
+
+body.home-hero-visible .fab-chat,
+body.home-hero-visible .access-consent-manage {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+@media (max-width: 560px) {
+    .hero-review-highlights {
+        gap: 6px;
+    }
+
+    .hero-review-quote {
+        padding: 7px 8px;
+        font-size: 10px;
+    }
 }
