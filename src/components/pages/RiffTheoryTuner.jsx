@@ -150,7 +150,7 @@ const INSTRUMENTS = Object.keys(TUNINGS);
 const REFERENCE_OPTIONS = [415, 432, 440, 442];
 const IN_TUNE_CENTS = 5;
 const CLOSE_CENTS = 15;
-const MIN_FREQ = 30;
+const MIN_FREQ = 27;
 const MAX_FREQ = 1200;
 
 function freqToNote(frequency, a4) {
@@ -176,57 +176,66 @@ function nearestString(frequency, tuning) {
   return { string: best, cents: bestDiffCents };
 }
 
-// Autocorrelação (ACF2+) — detecta o período fundamental do sinal no
-// domínio do tempo, robusto a harmônicos fortes (o problema do FFT puro).
+// Autocorrelação normalizada — detecta o período fundamental no domínio do
+// tempo sem favorecer janelas curtas ou amplitudes diferentes do microfone.
 function autoCorrelate(buffer, sampleRate) {
   const SIZE = buffer.length;
 
-  let rms = 0;
-  for (let i = 0; i < SIZE; i++) rms += buffer[i] * buffer[i];
-  rms = Math.sqrt(rms / SIZE);
-  if (rms < 0.008) return -1; // silêncio / ruído de fundo
+  let mean = 0;
+  for (let i = 0; i < SIZE; i++) mean += buffer[i];
+  mean /= SIZE;
 
-  // Corta silêncio nas bordas
-  let r1 = 0;
-  let r2 = SIZE - 1;
-  const thres = 0.2;
-  for (let i = 0; i < SIZE / 2; i++) {
-    if (Math.abs(buffer[i]) < thres) { r1 = i; break; }
+  let energy = 0;
+  for (let i = 0; i < SIZE; i++) {
+    const centered = buffer[i] - mean;
+    energy += centered * centered;
   }
-  for (let i = 1; i < SIZE / 2; i++) {
-    if (Math.abs(buffer[SIZE - i]) < thres) { r2 = SIZE - i; break; }
-  }
-  const trimmed = buffer.slice(r1, r2);
-  const n = trimmed.length;
-  if (n < 8) return -1;
+  const rms = Math.sqrt(energy / SIZE);
+  if (rms < 0.004) return -1; // silêncio / ruído de fundo
 
-  const maxLag = Math.min(n - 1, Math.floor(sampleRate / MIN_FREQ));
-  const minLag = Math.max(1, Math.floor(sampleRate / MAX_FREQ));
-
-  const c = new Float32Array(maxLag + 1);
+  const minLag = Math.max(2, Math.floor(sampleRate / MAX_FREQ));
+  const maxLag = Math.min(SIZE - 2, Math.floor(sampleRate / MIN_FREQ));
+  const correlation = new Float32Array(maxLag + 1);
   for (let lag = minLag; lag <= maxLag; lag++) {
     let sum = 0;
-    for (let i = 0; i < n - lag; i++) sum += trimmed[i] * trimmed[i + lag];
-    c[lag] = sum;
+    let energyA = 0;
+    let energyB = 0;
+    for (let i = 0; i < SIZE - lag; i++) {
+      const a = buffer[i] - mean;
+      const b = buffer[i + lag] - mean;
+      sum += a * b;
+      energyA += a * a;
+      energyB += b * b;
+    }
+    correlation[lag] = energyA && energyB ? sum / Math.sqrt(energyA * energyB) : 0;
   }
 
-  let d = minLag;
-  while (d < maxLag && c[d] > c[d + 1]) d++;
+  let globalPeak = 0;
+  for (let lag = minLag; lag <= maxLag; lag++) {
+    if (correlation[lag] > globalPeak) globalPeak = correlation[lag];
+  }
+  if (globalPeak < 0.32) return -1;
 
-  let maxVal = -Infinity;
+  // Prefere o primeiro pico forte: isso reduz erros de oitava causados por
+  // harmônicos dominantes em captadores e microfones de notebook.
+  const peakThreshold = globalPeak * 0.84;
   let maxPos = -1;
-  for (let i = d; i <= maxLag; i++) {
-    if (c[i] > maxVal) {
-      maxVal = c[i];
-      maxPos = i;
+  for (let lag = minLag + 1; lag < maxLag - 1; lag++) {
+    if (
+      correlation[lag] >= peakThreshold &&
+      correlation[lag] >= correlation[lag - 1] &&
+      correlation[lag] >= correlation[lag + 1]
+    ) {
+      maxPos = lag;
+      break;
     }
   }
-  if (maxPos <= minLag || maxPos >= maxLag) return -1;
+  if (maxPos < 0) return -1;
 
   // Interpolação parabólica para refinar o período estimado
-  const x1 = c[maxPos - 1];
-  const x2 = c[maxPos];
-  const x3 = c[maxPos + 1];
+  const x1 = correlation[maxPos - 1];
+  const x2 = correlation[maxPos];
+  const x3 = correlation[maxPos + 1];
   const a = (x1 + x3 - 2 * x2) / 2;
   const b = (x3 - x1) / 2;
   let T0 = maxPos;
@@ -250,10 +259,12 @@ export default function RiffTheoryTuner() {
   const intervalRef = useRef(null);
   const tickRef = useRef(null);
   const historyRef = useRef([]);
+  const missedFramesRef = useRef(0);
   const selectedTuning = TUNING_PRESETS[instrument].find((preset) => preset.id === tuningPreset) || TUNING_PRESETS[instrument][0];
 
   function chooseInstrument(nextInstrument) {
     historyRef.current = [];
+    missedFramesRef.current = 0;
     setReading(null);
     setInstrument(nextInstrument);
     setTuningPreset(TUNING_PRESETS[nextInstrument][0].id);
@@ -261,6 +272,7 @@ export default function RiffTheoryTuner() {
 
   function chooseTuning(presetId) {
     historyRef.current = [];
+    missedFramesRef.current = 0;
     setReading(null);
     setTuningPreset(presetId);
   }
@@ -280,6 +292,7 @@ export default function RiffTheoryTuner() {
     }
     analyserRef.current = null;
     historyRef.current = [];
+    missedFramesRef.current = 0;
     setRunning(false);
     setReading(null);
   }, []);
@@ -294,16 +307,21 @@ export default function RiffTheoryTuner() {
     const freq = autoCorrelate(buf, audioCtx.sampleRate);
 
     if (freq === -1 || freq < MIN_FREQ || freq > MAX_FREQ) {
-      historyRef.current = [];
-      setReading((prev) => (prev ? { ...prev, active: false } : prev));
+      missedFramesRef.current += 1;
+      if (missedFramesRef.current >= 6) {
+        historyRef.current = [];
+        setReading((prev) => (prev ? { ...prev, active: false } : prev));
+      }
       return;
     }
 
-    // Média móvel curta para suavizar leituras sem misturar oitavas erradas
+    missedFramesRef.current = 0;
+    // Mediana curta para suavizar sem misturar uma leitura espúria de oitava.
     const hist = historyRef.current;
     hist.push(freq);
-    if (hist.length > 4) hist.shift();
-    const smoothed = hist.reduce((a, b) => a + b, 0) / hist.length;
+    if (hist.length > 5) hist.shift();
+    const ordenadas = [...hist].sort((a, b) => a - b);
+    const smoothed = ordenadas[Math.floor(ordenadas.length / 2)];
 
     const { note, octave, cents } = freqToNote(smoothed, referenceA4);
     const { string, cents: stringCents } = nearestString(smoothed, selectedTuning.strings);
@@ -326,6 +344,9 @@ export default function RiffTheoryTuner() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
+          channelCount: { ideal: 1 },
+          sampleRate: { ideal: 48000 },
+          latency: { ideal: 0.01 },
           echoCancellation: false,
           noiseSuppression: false,
           autoGainControl: false,
@@ -336,6 +357,7 @@ export default function RiffTheoryTuner() {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       const audioCtx = new AudioContextClass();
       audioCtxRef.current = audioCtx;
+      if (audioCtx.state === "suspended") await audioCtx.resume();
 
       const source = audioCtx.createMediaStreamSource(stream);
       const analyser = audioCtx.createAnalyser();
@@ -345,6 +367,7 @@ export default function RiffTheoryTuner() {
       bufferRef.current = new Float32Array(analyser.fftSize);
 
       historyRef.current = [];
+      missedFramesRef.current = 0;
       setRunning(true);
       intervalRef.current = setInterval(() => tickRef.current?.(), 80);
     } catch (err) {
