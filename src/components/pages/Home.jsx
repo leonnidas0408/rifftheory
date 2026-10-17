@@ -14,6 +14,34 @@ function rolarPara(id) {
     document.getElementById(id)?.scrollIntoView({ behavior: reduzir ? "auto" : "smooth", block: "start" });
 }
 
+const TRANSPARENCIA_ACESSO = [
+    {
+        titulo: "Sem login",
+        texto: "Prática guiada, braço interativo e progresso ficam neste navegador.",
+    },
+    {
+        titulo: "Google opcional",
+        texto: "Só para Thonic, publicar avaliação (nome, nota e comentário públicos após consentimento) ou acessar premium.",
+    },
+    {
+        titulo: "O que é enviado",
+        texto: "Ao enviar pergunta no Thonic, pergunta e contexto recente vão à IA; contagem de acessos só se consentir.",
+    },
+];
+
+const DESTAQUES_AVALIACOES = [
+    {
+        contexto: "Navegação",
+        trecho: "…fácil de navegar, com organização perfeita…",
+        autora: "malu__2811",
+    },
+    {
+        contexto: "Acordes no braço",
+        trecho: "…visualize os acordes diretamente no braço do instrumento e pratique de forma guiada.",
+        autora: "ffernandocavalcante",
+    },
+];
+
 export default function Home({ setPage }) {
     const EXEMPLOS_USO = [
         {
@@ -37,18 +65,6 @@ export default function Home({ setPage }) {
         ["C", "G", "Am", "F"],
         ["Em", "C", "G", "D"],
         ["Am", "F", "C", "G"],
-    ];
-    const DESTAQUES_AVALIACOES = [
-        {
-            contexto: "Navegação",
-            trecho: "…fácil de navegar, com organização perfeita…",
-            autora: "malu__2811",
-        },
-        {
-            contexto: "Acordes no braço",
-            trecho: "…visualize os acordes diretamente no braço do instrumento e pratique de forma guiada.",
-            autora: "ffernandocavalcante",
-        },
     ];
     const [trilha, setTrilha] = useState(null);
     const [abrirEscolha, setAbrirEscolha] = useState(0);
@@ -149,7 +165,7 @@ export default function Home({ setPage }) {
                 <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
                 <h1>Toque uma trilha. Veja cada acorde no braço.</h1>
                 <p>
-                    No primeiro clique, abra uma trilha, veja cada forma no braço e pratique no seu ritmo.
+                    Comece agora pela trilha guiada e veja cada acorde no braço interativo.
                 </p>
                 <ul className="hero-benefits" aria-label="Benefícios para começar">
                     <li>Sem conta</li>
@@ -166,24 +182,28 @@ export default function Home({ setPage }) {
                             iniciarTrilha(PROGRESSOES[0]);
                         }}
                     >
-                        Testar trilha de 4 acordes
+                        Abrir trilha no braço agora
                     </button>
                     <a
                         className="hero-secundaria"
                         href="#comecar"
                     >
-                        Explorar outras opções
+                        Explorar acordes e músicas
                     </a>
-                </div>
-                <div className="hero-first-step-preview" aria-label="Prévia da trilha inicial: C, G, Am e F">
-                    <span>Primeira trilha</span>
-                    <strong>C <i aria-hidden="true">→</i> G <i aria-hidden="true">→</i> Am <i aria-hidden="true">→</i> F</strong>
-                    <span>cada forma aparece no braço, uma por vez</span>
                 </div>
                 <div className="hero-seguranca">
                     <span className="seguranca-icone" aria-hidden="true">✓</span>
-                    <span>Grátis para experimentar, sem conta nem cartão. A trilha aparece no braço interativo; avance acorde a acorde e use o metrônomo.</span>
+                    <span>Começa no acorde C e abre a sequência no braço. Sem conta ou cartão.</span>
                 </div>
+                <div className="hero-first-step-preview" aria-label="Prévia da trilha inicial: C, G, Am e F">
+                    <span>Sequência guiada</span>
+                    <strong>C <i aria-hidden="true">→</i> G <i aria-hidden="true">→</i> Am <i aria-hidden="true">→</i> F</strong>
+                </div>
+                <ul className="hero-trust-block" aria-label="Transparência sobre login e dados">
+                    {TRANSPARENCIA_ACESSO.map((ponto) => (
+                        <li key={ponto.titulo}><strong>{ponto.titulo}:</strong> {ponto.texto}</li>
+                    ))}
+                </ul>
                 {resumoAvaliacoes?.count > 0 && (
                     <a className="trust-review-summary hero-review-summary" href="#reviews" aria-label={`Ver ${resumoAvaliacoes.count} avaliações públicas; nota ${resumoAvaliacoes.average} de 5`}>
                         <span aria-hidden="true">★</span>
@@ -207,29 +227,23 @@ export default function Home({ setPage }) {
             <section className="trust-section" aria-labelledby="trust-title">
                 <div className="trust-section-heading">
                     <span className="eyebrow">Transparência antes de começar</span>
-                    <h2 id="trust-title">Pratique sem conta. Escolha quando entrar.</h2>
-                    <p>A prática guiada funciona sem login. O Google só é solicitado se você escolher recursos que precisam de conta.</p>
+                    <h2 id="trust-title">Login e dados, sem letra miúda</h2>
+                    <p>A prática continua sem conta; abra os detalhes abaixo para saber exatamente o que é enviado ou publicado.</p>
                 </div>
                 <div className="trust-grid" aria-label="Resumo de acesso e privacidade">
-                    <div className="trust-item">
-                        <span className="trust-check" aria-hidden="true">✓</span>
-                        <div><strong>Prática sem cadastro</strong><span>Teste uma trilha gratuita de 4 acordes, sem conta nem cartão.</span></div>
-                    </div>
-                    <div className="trust-item">
-                        <span className="trust-check" aria-hidden="true">✓</span>
-                        <div><strong>Dados no navegador</strong><span>Histórico e progresso de prática ficam armazenados neste dispositivo.</span></div>
-                    </div>
-                    <div className="trust-item">
-                        <span className="trust-check" aria-hidden="true">i</span>
-                        <div><strong>Google só nos recursos opcionais</strong><span>Login para usar o Thonic, publicar uma avaliação ou acessar recursos premium; não é necessário para praticar.</span></div>
-                    </div>
+                    {TRANSPARENCIA_ACESSO.map((ponto) => (
+                        <div className="trust-item" key={ponto.titulo}>
+                            <span className="trust-check" aria-hidden="true">✓</span>
+                            <div><strong>{ponto.titulo}</strong><span>{ponto.texto}</span></div>
+                        </div>
+                    ))}
                 </div>
-                <p className="trust-review-note"><strong>Avaliação pública:</strong> só após login e consentimento explícito, o nome da conta Google (ou e-mail, se o nome não estiver disponível), a nota e o comentário ficam visíveis para todos.</p>
                 <details className="trust-details">
                     <summary>Saiba mais sobre dados e privacidade</summary>
                     <div className="trust-details-copy">
                         <p><strong>Prática guiada:</strong> métricas e histórico de prática são guardados no armazenamento local deste navegador; não são associados à conta do Thonic.</p>
                         <p><strong>Thonic:</strong> exige login Google. Quando você envia uma pergunta, ela e o contexto recente da conversa são enviados ao provedor de IA; a conversa fica salva na sua conta para você continuar depois.</p>
+                        <p><strong>Avaliações públicas:</strong> só depois de consentir, o nome da conta Google (ou o e-mail, se o nome não estiver disponível), a nota e o comentário ficam visíveis para todos os visitantes.</p>
                         <p><strong>Contagem de acessos:</strong> só é ativada se você permitir no aviso de privacidade. Recusar não bloqueia a prática; você pode mudar a escolha em “Privacidade e acessos”.</p>
                     </div>
                 </details>

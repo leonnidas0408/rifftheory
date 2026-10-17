@@ -190,6 +190,25 @@
     line-height: 1.4;
 }
 
+.hero-trust-block {
+    display: grid;
+    gap: 4px;
+    width: min(760px, 100%);
+    margin: 0;
+    padding: 8px 11px;
+    border: 1px solid rgba(220, 232, 250, .2);
+    border-radius: 10px;
+    background: rgba(8, 15, 26, .34);
+    color: #d0daea;
+    font-size: 10px;
+    line-height: 1.4;
+    list-style: none;
+}
+
+.hero-trust-block strong {
+    color: #fff;
+}
+
 .trust-section {
     display: grid;
     gap: 14px;
