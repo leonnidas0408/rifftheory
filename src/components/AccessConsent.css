@@ -23,6 +23,10 @@
     line-height: 1.45;
 }
 
+.access-consent-details p {
+    max-width: 72ch;
+}
+
 .access-consent-actions {
     display: flex;
     flex: none;

@@ -7,6 +7,7 @@ import ReviewsDisplay from "./ReviewsDisplay";
 import { registrarEvento } from "../../utils/usageStats";
 import FAQQuestion from "../FAQQuestion";
 import Markdown from "react-markdown";
+import { AccessConsentInline } from "../AccessConsent";
 
 function rolarPara(id) {
     const reduzir = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -39,6 +40,8 @@ export default function Home({ setPage }) {
     ];
     const [trilha, setTrilha] = useState(null);
     const [abrirEscolha, setAbrirEscolha] = useState(0);
+    const [resumoAvaliacoes, setResumoAvaliacoes] = useState(null);
+    const [mostrarCtaFixa, setMostrarCtaFixa] = useState(false);
 
     useEffect(() => {
         const blocos = Array.from(document.querySelectorAll(
@@ -61,6 +64,31 @@ export default function Home({ setPage }) {
 
         blocos.forEach((bloco) => observer.observe(bloco));
         return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        const cta = document.getElementById("hero-cta");
+        if (!cta || !("IntersectionObserver" in window)) return undefined;
+
+        const observer = new IntersectionObserver(([entrada]) => {
+            setMostrarCtaFixa(!entrada.isIntersecting && entrada.boundingClientRect.bottom <= 0);
+        }, { threshold: 0 });
+        observer.observe(cta);
+        return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        const secaoConfianca = document.querySelector(".trust-section");
+        if (!secaoConfianca || !("IntersectionObserver" in window)) return undefined;
+
+        const observer = new IntersectionObserver(([entrada]) => {
+            document.body.classList.toggle("home-trust-visible", entrada.isIntersecting);
+        }, { threshold: 0.05 });
+        observer.observe(secaoConfianca);
+        return () => {
+            observer.disconnect();
+            document.body.classList.remove("home-trust-visible");
+        };
     }, []);
 
     function focarBusca() {
@@ -93,14 +121,15 @@ export default function Home({ setPage }) {
                     <img src="/hero-wide.webp" alt="" width="2560" height="1440" fetchPriority="high" decoding="async" />
                 </picture>
                 <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
-                <h1>Escolha um acorde. Veja a posição no braço e comece a tocar.</h1>
+                <h1>Toque uma trilha. Veja cada acorde no braço.</h1>
                 <p>
-                    No primeiro clique, abra uma trilha de 4 acordes e veja a primeira forma no braço.
-                    Depois, avance acorde por acorde — sem alternar entre ferramentas.
+                    Comece com 4 acordes e avance um por vez, sem sair da prática.
                 </p>
                 <div className="hero-acoes">
                     <button
                         className="link-botao hero-cta"
+                        id="hero-cta"
+                        type="button"
                         onClick={() => {
                             registrarEvento("hero_cta_clicked", { cta: "pratica_guiada" });
                             iniciarTrilha(PROGRESSOES[0]);
@@ -110,6 +139,7 @@ export default function Home({ setPage }) {
                     </button>
                     <button
                         className="hero-secundaria"
+                        type="button"
                         onClick={() => {
                             registrarEvento("hero_cta_clicked", { cta: "acordes" });
                             abrirAcordes();
@@ -120,8 +150,50 @@ export default function Home({ setPage }) {
                 </div>
                 <div className="hero-seguranca">
                     <span className="seguranca-icone" aria-hidden="true">✓</span>
-                    <span>Gratuito para experimentar · sem cartão · sem cadastro para a prática guiada.</span>
+                    <span>Abre a sequência no braço interativo. Sem cadastro para praticar.</span>
                 </div>
+            </section>
+
+            <section className="trust-section" aria-labelledby="trust-title">
+                <div className="trust-section-heading">
+                    <span className="eyebrow">Transparência antes de começar</span>
+                    <h2 id="trust-title">Prática guiada e Thonic são caminhos separados</h2>
+                    <p>Você pode testar a trilha sem conta; o assistente de IA é opcional e funciona de outro jeito.</p>
+                </div>
+                <div className="trust-grid" aria-label="Resumo de acesso e privacidade">
+                    <div className="trust-item">
+                        <span className="trust-check" aria-hidden="true">✓</span>
+                        <div><strong>Pratique sem cadastro</strong><span>Trilha guiada gratuita para experimentar, sem conta ou cartão.</span></div>
+                    </div>
+                    <div className="trust-item">
+                        <span className="trust-check" aria-hidden="true">✓</span>
+                        <div><strong>Progresso no navegador</strong><span>O histórico e os dados de prática ficam neste dispositivo.</span></div>
+                    </div>
+                    <div className="trust-item">
+                        <span className="trust-check" aria-hidden="true">i</span>
+                        <div><strong>Thonic pede login Google</strong><span>Perguntas e contexto recente vão ao serviço de IA; a conversa fica salva na sua conta.</span></div>
+                    </div>
+                    <div className="trust-item">
+                        <span className="trust-check" aria-hidden="true">✓</span>
+                        <div><strong>Monitoramento opcional</strong><span>Você pode recusar a contagem anônima e usar o site normalmente.</span></div>
+                    </div>
+                </div>
+                {resumoAvaliacoes?.count > 0 && (
+                    <a className="trust-review-summary" href="#reviews">
+                        <span aria-hidden="true">★</span>
+                        <strong>{resumoAvaliacoes.average}</strong> de 5
+                        <span>· {resumoAvaliacoes.count} avaliações · ver relatos</span>
+                    </a>
+                )}
+                <details className="trust-details">
+                    <summary>Saiba mais sobre dados e privacidade</summary>
+                    <div className="trust-details-copy">
+                        <p><strong>Prática guiada:</strong> métricas e histórico de prática são guardados no armazenamento local deste navegador; não são associados à conta do Thonic.</p>
+                        <p><strong>Thonic:</strong> exige login Google. Quando você envia uma pergunta, ela e o contexto recente da conversa são enviados ao provedor de IA; a conversa fica salva na sua conta para você continuar depois.</p>
+                        <p><strong>Contagem de acessos:</strong> só é ativada se você permitir no aviso de privacidade. Recusar não bloqueia a prática; você pode mudar a escolha em “Privacidade e acessos”.</p>
+                    </div>
+                </details>
+                <AccessConsentInline />
             </section>
 
             <section className="prova-valor" aria-label="Por que usar o Riff Theory">
@@ -142,11 +214,6 @@ export default function Home({ setPage }) {
                 </div>
                 <div className="comparacao"><strong>Alternativa comum:</strong> buscar → abrir abas → copiar o acorde. <strong>No Riff Theory:</strong> escolher → visualizar → tocar.</div>
                 <div className="prova-credibilidade"><span><strong>Confira no próprio app:</strong> o botão “Testar trilha de 4 acordes” abre uma sequência no braço interativo; não é necessário criar conta para testar a prática.</span></div>
-                <div className="trust-grid" aria-label="Sinais de confiança">
-                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Sem cartão para testar</strong><span>A prática guiada e o braço interativo podem ser explorados sem cadastro.</span></div></div>
-                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Progresso no navegador</strong><span>Histórico e dados de prática ficam no dispositivo; não são enviados para uma conta.</span></div></div>
-                    <div className="trust-item"><span className="trust-check">✓</span><div><strong>Transparência no Chatbot</strong><span>O Thonic exige login Google. Ao enviar uma pergunta, ela e o histórico recente são enviados ao serviço de IA para gerar a resposta.</span></div></div>
-                </div>
             </section>
 
             <section className="objecoes" aria-labelledby="titulo-objecoes">
@@ -241,8 +308,8 @@ export default function Home({ setPage }) {
                     onVerEscalas={() => setPage?.("Escalas")}
                 />
             </div>
-            <div className="mobile-cta-wrap">
-                <button className="mobile-cta" onClick={() => {
+            <div className={`mobile-cta-wrap${mostrarCtaFixa ? " is-visible" : ""}`} aria-hidden={!mostrarCtaFixa}>
+                <button className="mobile-cta" tabIndex={mostrarCtaFixa ? 0 : -1} type="button" onClick={() => {
                     registrarEvento("mobile_cta_clicked", { cta: "pratica_guiada" });
                     iniciarTrilha(PROGRESSOES[0]);
                 }}>
@@ -252,7 +319,7 @@ export default function Home({ setPage }) {
             </div>
             <ReviewForm />
             <footer className="reviews-footer">
-                <ReviewsDisplay />
+                <ReviewsDisplay onSummaryChange={setResumoAvaliacoes} />
             </footer>
             <h1>FAQ</h1>
             <div className="faq-list">

@@ -68,7 +68,7 @@ function avaliacaoPublicaValida(review) {
     return !ataquePessoalAoResponsavel.test(normalizado);
 }
 
-export default function ReviewsDisplay() {
+export default function ReviewsDisplay({ onSummaryChange }) {
     const [communityReviews, setCommunityReviews] = useState([]);
     const [loading, setLoading] = useState(Boolean(supabase));
     const [loadError, setLoadError] = useState(false);
@@ -135,8 +135,13 @@ export default function ReviewsDisplay() {
     const averageRating = score === null ? "—" : score.toFixed(1).replace(".", ",");
     const summaryStars = score === null ? 0 : Math.round(score);
 
+    useEffect(() => {
+        if (loading || typeof onSummaryChange !== "function") return;
+        onSummaryChange({ average: averageRating, count: reviews.length });
+    }, [averageRating, loading, onSummaryChange, reviews.length]);
+
     return (
-        <section className="reviews-section google-reviews" aria-labelledby="reviews-title" aria-busy={loading}>
+        <section id="reviews" className="reviews-section google-reviews" aria-labelledby="reviews-title" aria-busy={loading}>
             <header className="google-reviews-heading">
                 <div className="secao-heading">
                     <span className="eyebrow">Opiniões da comunidade</span>

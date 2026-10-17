@@ -1,0 +1,370 @@
+/* Landing page: hierarquia clara do primeiro clique e confiança escaneável. */
+.tab-hero {
+    gap: 10px;
+}
+
+.tab-hero h1 {
+    max-width: 17ch;
+    font-size: clamp(34px, 5vw, 52px);
+    line-height: 1.02;
+}
+
+.tab-hero p {
+    max-width: 56ch;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.hero-acoes {
+    align-items: center;
+    gap: 8px 18px;
+    margin-top: 4px;
+}
+
+.link-botao.hero-cta {
+    min-height: 52px;
+    padding: 14px 24px;
+    border: 2px solid #a9f08d;
+    border-radius: 13px;
+    background: #a9f08d;
+    color: #13231a;
+    font-size: 15px;
+    font-weight: 800;
+    box-shadow: 0 8px 24px rgba(169, 240, 141, .24);
+}
+
+.link-botao.hero-cta:hover {
+    transform: translateY(-2px);
+    background: #bbf6a5;
+}
+
+.link-botao.hero-cta:focus-visible,
+.hero-secundaria:focus-visible,
+.trust-review-summary:focus-visible,
+.trust-details summary:focus-visible,
+.access-consent-details summary:focus-visible {
+    outline: 3px solid #f5c451;
+    outline-offset: 3px;
+}
+
+.hero-secundaria {
+    min-height: 44px;
+    padding: 10px 4px;
+    border: 0;
+    background: transparent;
+    color: #e0e7f2;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.hero-seguranca {
+    max-width: 62ch;
+    line-height: 1.4;
+}
+
+.trust-section {
+    display: grid;
+    gap: 14px;
+    padding: 22px;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 6px 22px rgba(24, 34, 48, .035);
+}
+
+.trust-section-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.trust-section-heading h2 {
+    color: #202b3a;
+    font-size: clamp(20px, 2.4vw, 25px);
+    letter-spacing: -.04em;
+    line-height: 1.15;
+}
+
+.trust-section-heading p {
+    max-width: 68ch;
+    color: #66758b;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.trust-section .trust-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.trust-section .trust-item {
+    min-width: 0;
+    min-height: 100%;
+    padding: 12px;
+    border-color: #e5eaf1;
+    border-radius: 14px;
+    background: #f9fbfe;
+}
+
+.trust-section .trust-item strong {
+    font-size: 13px;
+    line-height: 1.25;
+}
+
+.trust-section .trust-item span:not(.trust-check) {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.trust-section .trust-check {
+    width: 21px;
+    height: 21px;
+}
+
+.trust-review-summary {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 5px;
+    min-height: 36px;
+    padding: 7px 11px;
+    border: 1px solid #f0d993;
+    border-radius: 999px;
+    background: #fffaf0;
+    color: #5c4a1d;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.trust-review-summary > span:first-child {
+    color: #c28a16;
+    font-size: 15px;
+}
+
+.trust-review-summary strong {
+    color: #263246;
+}
+
+.trust-details {
+    border-top: 1px solid #e8edf3;
+    padding-top: 11px;
+}
+
+.trust-details summary,
+.access-consent-details summary {
+    width: fit-content;
+    color: #2449c8;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    text-underline-offset: 3px;
+}
+
+.trust-details summary:hover,
+.access-consent-details summary:hover {
+    text-decoration: underline;
+}
+
+.trust-details-copy {
+    display: grid;
+    gap: 8px;
+    max-width: 88ch;
+    padding-top: 10px;
+}
+
+.trust-details-copy p {
+    color: #596a81;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.trust-details-copy strong {
+    color: #263246;
+}
+
+.access-consent {
+    max-height: min(42vh, 300px);
+    overflow-y: auto;
+}
+
+.access-consent-copy {
+    min-width: 0;
+}
+
+.access-consent-details {
+    margin-top: 8px;
+}
+
+.access-consent-details summary {
+    font-size: 12px;
+}
+
+.access-consent-details p {
+    padding-top: 6px;
+}
+
+.mobile-cta-wrap {
+    display: none;
+}
+
+@media (max-width: 1100px) {
+    .trust-section .trust-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .trust-section .trust-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mobile-cta-wrap.is-visible {
+        display: block;
+    }
+
+    .access-consent {
+        bottom: calc(var(--bottom-bar-h, 76px) + 8px + env(safe-area-inset-bottom));
+        max-height: min(30dvh, 220px);
+        padding: 12px 14px;
+        gap: 9px;
+        border-radius: 14px;
+    }
+
+    .access-consent p {
+        font-size: 12px;
+        line-height: 1.35;
+    }
+
+    .access-consent-actions button {
+        min-height: 38px;
+        padding: 8px 10px;
+    }
+}
+
+@media (max-width: 560px) {
+    .tab-hero {
+        min-height: 0;
+        gap: 9px;
+        padding: 24px 18px;
+        border-radius: 20px;
+    }
+
+    .tab-hero h1 {
+        max-width: 17ch;
+        font-size: clamp(31px, 9vw, 39px);
+        line-height: 1.02;
+    }
+
+    .tab-hero p {
+        max-width: 38ch;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .hero-acoes {
+        align-items: flex-start;
+        gap: 4px 12px;
+        margin-top: 2px;
+    }
+
+    .link-botao.hero-cta {
+        min-height: 48px;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .hero-secundaria {
+        min-height: 42px;
+        padding-inline: 2px;
+        font-size: 12px;
+    }
+
+    .tab-hero .hero-seguranca {
+        padding-right: 0;
+        font-size: 11px;
+    }
+
+    .trust-section {
+        gap: 11px;
+        padding: 16px;
+        border-radius: 17px;
+    }
+
+    .trust-section .trust-grid {
+        gap: 7px;
+    }
+
+    .trust-section .trust-item {
+        padding: 10px;
+    }
+
+    .trust-review-summary {
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .access-consent {
+        right: 8px;
+        bottom: calc(var(--bottom-bar-h, 76px) + 6px + env(safe-area-inset-bottom));
+        width: calc(100vw - 16px);
+        max-height: min(27dvh, 190px);
+        gap: 8px;
+        padding: 10px 12px;
+    }
+
+    .access-consent-actions {
+        justify-content: flex-end;
+        gap: 6px;
+    }
+
+    .access-consent-actions button {
+        min-height: 36px;
+        font-size: 11px;
+    }
+}
+
+/* No primeiro acesso, o consentimento fica no fluxo da seção de confiança,
+   em vez de cobrir o hero ou os benefícios. O controle global abre o painel
+   flutuante somente nas outras telas. */
+body:has(.trust-section) .access-consent-manage {
+    display: none;
+}
+
+.access-consent-inline {
+    position: static;
+    inset: auto;
+    z-index: auto;
+    display: grid;
+    width: auto;
+    max-height: none;
+    margin-top: 3px;
+    padding: 13px 14px;
+    overflow: visible;
+    border-color: #e5eaf1;
+    background: #f9fbfe;
+    box-shadow: none;
+}
+
+.access-consent-manage-inline {
+    justify-self: start;
+    min-height: 36px;
+    padding: 7px 11px;
+    border: 1px solid #e1e7f0;
+    border-radius: 999px;
+    background: #fff;
+    color: #2449c8;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.access-consent-manage-inline:hover {
+    border-color: #b8c7f7;
+    background: #f5f7ff;
+}
+
+body.home-trust-visible .fab-chat {
+    visibility: hidden;
+    pointer-events: none;
+}
