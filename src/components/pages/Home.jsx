@@ -90,7 +90,7 @@ export default function Home({ setPage }) {
                 <picture className="tab-hero-art" aria-hidden="true">
                     <source media="(max-width: 560px)" srcSet="/hero-portrait.webp" />
                     <source media="(max-width: 900px)" srcSet="/hero-square.webp" />
-                    <img src="/hero-wide.webp" alt="" width="2560" height="1440" fetchPriority="high" decoding="async" />
+                    <img src="/hero-wide.webp" alt="Braço de guitarra com uma trilha de acordes para praticar" title="Prática guiada de acordes no Riff Theory" width="2560" height="1440" fetchPriority="high" decoding="async" />
                 </picture>
                 <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
                 <h1>Escolha um acorde. Veja a posição no braço e comece a tocar.</h1>
@@ -101,7 +101,7 @@ export default function Home({ setPage }) {
                 <div className="hero-demo" aria-label="Prévia da trilha guiada e do braço interativo">
                     <div className="hero-demo-topline">
                         <span>Trilha guiada · 01 de 04</span>
-                        <strong>Mi menor</strong>
+                        <strong>Dó maior</strong>
                     </div>
                     <div className="hero-demo-progression" aria-label="Progressão C, G, Am e F">
                         {PROGRESSOES[0].map((acorde, index) => (
@@ -125,7 +125,7 @@ export default function Home({ setPage }) {
                             iniciarTrilha(PROGRESSOES[0]);
                         }}
                     >
-                        Testar trilha — abrir no braço
+                        Testar no braço
                     </button>
                     <button
                         className="hero-secundaria"
@@ -138,6 +138,7 @@ export default function Home({ setPage }) {
                     </button>
                 </div>
                 <div className="hero-benefits" aria-label="Benefícios do teste">
+                    <span><b>Teste em 1 minuto</b></span>
                     <span><b>4 acordes</b> no braço</span>
                     <span><b>Sem cartão</b></span>
                     <span><b>Sem conta</b> para testar</span>
@@ -167,6 +168,7 @@ export default function Home({ setPage }) {
                     <div><strong>1. Escolha</strong><span>Comece com uma trilha ou acorde pronto.</span></div>
                     <div><strong>2. Veja</strong><span>A forma aparece no braço interativo.</span></div>
                     <div><strong>3. Toque</strong><span>Avance para o próximo acorde sem trocar de ferramenta.</span></div>
+                    <div className="prova-tempo"><strong>Teste rápido · cerca de 1 minuto</strong><span>Você já vê a primeira forma no braço no primeiro clique.</span></div>
                 </div>
                 <div className="comparacao"><strong>Alternativa comum:</strong> buscar → abrir abas → copiar o acorde. <strong>No Riff Theory:</strong> escolher → visualizar → tocar.</div>
                 <div className="prova-credibilidade"><span><strong>Confira no próprio app:</strong> o botão “Testar trilha de 4 acordes” abre uma sequência no braço interativo; não é necessário criar conta para testar a prática.</span></div>
@@ -175,6 +177,9 @@ export default function Home({ setPage }) {
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Progresso no navegador</strong><span>Histórico e dados de prática ficam no dispositivo; não são enviados para uma conta.</span></div></div>
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Transparência no Chatbot</strong><span>O Thonic exige login Google. Ao enviar uma pergunta, ela e o histórico recente são enviados ao serviço de IA para gerar a resposta.</span></div></div>
                 </div>
+                <button className="section-cta" type="button" onClick={() => iniciarTrilha(PROGRESSOES[0])}>
+                    Testar no braço <span>sem conta</span>
+                </button>
             </section>
 
             <section className="objecoes" aria-labelledby="titulo-objecoes">
@@ -218,6 +223,36 @@ export default function Home({ setPage }) {
                 </div>
             </section>
 
+            <section className="planos" aria-labelledby="titulo-planos">
+                <div className="secao-heading">
+                    <span className="eyebrow">Acesso e transparência</span>
+                    <h2 id="titulo-planos">Comece grátis. Faça login só quando precisar.</h2>
+                    <p>O primeiro teste acontece no navegador. O cadastro entra apenas nos recursos que precisam de conta.</p>
+                </div>
+                <div className="planos-grade">
+                    <article className="plano-card plano-destaque">
+                        <div className="plano-topo"><span className="plano-tag">Para experimentar</span><strong>Grátis para testar</strong></div>
+                        <ul>
+                            <li>Trilhas guiadas de acordes</li>
+                            <li>Braço interativo e busca de acordes</li>
+                            <li>Escalas, afinador e metrônomo</li>
+                            <li>Sem cartão e sem conta para começar</li>
+                        </ul>
+                        <button className="pilula" type="button" onClick={() => iniciarTrilha(PROGRESSOES[0])}>Testar no braço</button>
+                    </article>
+                    <article className="plano-card">
+                        <div className="plano-topo"><span className="plano-tag plano-tag-premium">Com cadastro</span><strong>Premium</strong></div>
+                        <ul>
+                            <li>Recursos premium do Riff Theory</li>
+                            <li>Cadastro necessário para liberar o plano</li>
+                            <li>Thonic, o assistente de teoria musical</li>
+                            <li>O chatbot envia sua pergunta e o histórico recente ao serviço de IA</li>
+                        </ul>
+                        <p className="plano-nota">Os limites de uso do Thonic são os exibidos no próprio assistente e podem variar conforme a configuração do serviço.</p>
+                    </article>
+                </div>
+            </section>
+
             <section className="exemplos-uso" aria-labelledby="titulo-exemplos">
                 <div className="secao-heading">
                     <span className="eyebrow">Antes e depois</span>
@@ -241,6 +276,9 @@ export default function Home({ setPage }) {
                     <h2>Teste tocando uma música real</h2>
                     <p>O melhor feedback vem de quem usa o instrumento. Se uma etapa ficar confusa ou faltar um acorde, anote o caso concreto para a próxima rodada de melhorias.</p>
                 </div>
+                <button className="section-cta section-cta-light" type="button" onClick={() => iniciarTrilha(PROGRESSOES[0])}>
+                    Testar no braço <span>sem conta</span>
+                </button>
             </section>
 
             <div id="comecar" className="comecar">

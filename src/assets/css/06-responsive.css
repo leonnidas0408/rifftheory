@@ -53,6 +53,10 @@
         grid-template-columns: 1fr;
     }
 
+    .planos-grade {
+        grid-template-columns: 1fr;
+    }
+
     .beta-convite {
         align-items: flex-start;
         flex-direction: column;
@@ -125,5 +129,9 @@
 
     .hero-social-proof button {
         margin-left: 28px;
+    }
+
+    .section-cta {
+        width: 100%;
     }
 }

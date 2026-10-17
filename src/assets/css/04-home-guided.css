@@ -404,6 +404,12 @@ a.recent-item:hover {
     flex-direction: column;
     gap: 3px;
 }
+.prova-tempo {
+    grid-column: 1 / -1;
+    padding-top: 8px;
+    border-top: 1px dashed var(--borda);
+}
+.prova-tempo strong { color: var(--primaria-escura); }
 .prova-recursos strong {
     color: var(--texto);
     font-size: 14px;
@@ -477,6 +483,21 @@ a.recent-item:hover {
     font-size: 12px;
     line-height: 1.3;
 }
+.section-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: start;
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: var(--primaria-escura);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+}
+.section-cta:hover { background: var(--primaria); }
+.section-cta span { color: #cfe0fa; font-size: 12px; font-weight: 500; }
 .cta-seguranca {
     padding: 8px 12px;
     border-radius: var(--radius-sm);
@@ -558,6 +579,35 @@ a.recent-item:hover {
     line-height: 1.4;
 }
 .rota-card .pilula { margin-top: 4px; }
+.planos {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 6px 0;
+}
+.planos-grade {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+.plano-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius-md);
+    background: #fff;
+}
+.plano-destaque { border-color: #b6e2c9; box-shadow: inset 0 3px 0 #55b77c; }
+.plano-topo { display: flex; flex-direction: column; gap: 6px; }
+.plano-topo strong { color: var(--primaria-escura); font-size: 22px; }
+.plano-tag { color: #2e9d63; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.plano-tag-premium { color: var(--primaria); }
+.plano-card ul { display: flex; flex-direction: column; gap: 9px; padding-left: 18px; color: var(--texto-suave); font-size: 14px; line-height: 1.35; }
+.plano-card li::marker { color: var(--primaria); }
+.plano-card .pilula { align-self: flex-start; margin-top: auto; }
+.plano-nota { margin-top: auto; color: var(--texto-suave); font-size: 12px; line-height: 1.4; }
 .beta-convite {
     display: flex;
     align-items: center;
@@ -581,6 +631,8 @@ a.recent-item:hover {
     line-height: 1.4;
 }
 .beta-convite .eyebrow { color: #2e9d63; }
+.section-cta-light { background: #1d6b43; }
+.section-cta-light:hover { background: #155635; }
 .secao-heading {
     display: flex;
     flex-direction: column;

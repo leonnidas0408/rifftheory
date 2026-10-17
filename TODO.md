@@ -151,3 +151,15 @@ sugerida de implementação (1 → 5) indicada no mapa.
 - [x] Remover o uso de IP pelo Riff Theory e documentar o processamento técnico externo necessário ao Turnstile.
 - [ ] Configurar as chaves Turnstile, implantar a Edge Function e reativar a coleta protegida.
 - [ ] Publicar o painel atualizado e validar `/admin/acessos` com uma conta autorizada.
+
+
+## Auditoria da landing page — melhorias aplicadas (17/10/2026)
+
+- [x] Hero com um CTA primário padronizado ("Testar no braço"), benefício de teste em cerca de 1 minuto e CTA secundário rebaixado a link.
+- [x] Repetição de CTA principal após o bloco de confiança e no convite final, com microcopy "sem conta".
+- [x] Prova social real mantida no hero, com nota, quantidade de avaliações e link para ler; sem inventar depoimentos.
+- [x] Garantias de confiança destacadas: sem cartão, progresso no navegador e transparência sobre o envio de perguntas ao Thonic.
+- [x] Quadro "Grátis para testar" versus "Premium", explicitando cadastro e a transparência sobre limites variáveis do Thonic sem inventar números.
+- [x] Mini tutorial com expectativa de tempo e correção da prévia do acorde exibido no hero.
+- [x] Título descritivo adicionado à imagem-chave do hero para SEO.
+- [ ] Publicar as alterações no repositório/deploy após validação e acesso de publicação.
