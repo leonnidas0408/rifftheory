@@ -146,19 +146,9 @@ export default function Home({ setPage }) {
                     <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
                     <div>
                         <strong>5,0/5 · 6 avaliações públicas</strong>
-                        <span>Experiências reais de quem já testou.</span>
+                        <span>“Fácil de navegar e com transição clara entre os conteúdos.”</span>
                     </div>
                     <button type="button" onClick={() => rolarPara("reviews-title")}>Ler avaliações</button>
-                </div>
-                <div className="hero-access-note" aria-label="O que exige login no Riff Theory">
-                    <div>
-                        <strong>Funciona sem login</strong>
-                        <span>Prática guiada, braço, metrônomo, escalas e progresso local.</span>
-                    </div>
-                    <div>
-                        <strong>Login só quando necessário</strong>
-                        <span>Thonic e avaliações. Sem cartão para experimentar.</span>
-                    </div>
                 </div>
             </section>
 

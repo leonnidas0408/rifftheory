@@ -307,7 +307,7 @@ a.recent-item:hover {
     display: flex;
     align-items: center;
     gap: 12px;
-    max-width: 560px;
+    width: min(100%, 560px);
     margin-top: 4px;
     padding: 11px 13px;
     border: 1px solid rgba(255, 255, 255, .2);
@@ -343,21 +343,6 @@ a.recent-item:hover {
     white-space: nowrap;
 }
 .hero-social-proof button:hover { color: #d3e2f8; }
-.hero-access-note {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    width: min(100%, 560px);
-    padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, .16);
-}
-.hero-access-note > div {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-.hero-access-note strong { color: #fff; font-size: 12px; }
-.hero-access-note span { color: #bcd4f5; font-size: 11px; line-height: 1.35; }
 .prova-valor {
     display: grid;
     grid-template-columns: minmax(260px, 1.1fr) 1.4fr;

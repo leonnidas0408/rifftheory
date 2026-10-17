@@ -118,10 +118,6 @@
         line-height: 1.35;
     }
 
-    .hero-access-note {
-        grid-template-columns: 1fr;
-    }
-
     .hero-social-proof {
         align-items: flex-start;
         flex-wrap: wrap;
