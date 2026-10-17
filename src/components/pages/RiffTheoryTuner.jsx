@@ -244,6 +244,22 @@ function autoCorrelate(buffer, sampleRate) {
   return sampleRate / T0;
 }
 
+function playTuneBeep(audioCtx) {
+  if (!audioCtx || audioCtx.state === "closed") return;
+  const now = audioCtx.currentTime;
+  const oscillator = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(880, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.08, now + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+  oscillator.connect(gain);
+  gain.connect(audioCtx.destination);
+  oscillator.start(now);
+  oscillator.stop(now + 0.13);
+}
+
 export default function RiffTheoryTuner() {
   const [running, setRunning] = useState(false);
   const [instrument, setInstrument] = useState("Guitarra");
@@ -253,6 +269,7 @@ export default function RiffTheoryTuner() {
   const [error, setError] = useState(null);
   const [cordaAPorda, setCordaAPorda] = useState(false);
   const [targetStringIndex, setTargetStringIndex] = useState(0);
+  const [tuneLocked, setTuneLocked] = useState(false);
 
   const audioCtxRef = useRef(null);
   const analyserRef = useRef(null);
@@ -262,12 +279,16 @@ export default function RiffTheoryTuner() {
   const tickRef = useRef(null);
   const historyRef = useRef([]);
   const missedFramesRef = useRef(0);
+  const wasInTuneRef = useRef(false);
+  const tuneLockTimeoutRef = useRef(null);
   const selectedTuning = TUNING_PRESETS[instrument].find((preset) => preset.id === tuningPreset) || TUNING_PRESETS[instrument][0];
   const targetString = selectedTuning.strings[targetStringIndex] || selectedTuning.strings[0];
 
   function chooseInstrument(nextInstrument) {
     historyRef.current = [];
     missedFramesRef.current = 0;
+    wasInTuneRef.current = false;
+    setTuneLocked(false);
     setReading(null);
     setInstrument(nextInstrument);
     setTuningPreset(TUNING_PRESETS[nextInstrument][0].id);
@@ -277,6 +298,8 @@ export default function RiffTheoryTuner() {
   function chooseTuning(presetId) {
     historyRef.current = [];
     missedFramesRef.current = 0;
+    wasInTuneRef.current = false;
+    setTuneLocked(false);
     setReading(null);
     setTuningPreset(presetId);
     setTargetStringIndex(0);
@@ -285,6 +308,8 @@ export default function RiffTheoryTuner() {
   function toggleCordaAPorda() {
     historyRef.current = [];
     missedFramesRef.current = 0;
+    wasInTuneRef.current = false;
+    setTuneLocked(false);
     setReading(null);
     setCordaAPorda((active) => !active);
   }
@@ -292,6 +317,8 @@ export default function RiffTheoryTuner() {
   function chooseTargetString(index) {
     historyRef.current = [];
     missedFramesRef.current = 0;
+    wasInTuneRef.current = false;
+    setTuneLocked(false);
     setReading(null);
     setTargetStringIndex(index);
   }
@@ -312,6 +339,12 @@ export default function RiffTheoryTuner() {
     analyserRef.current = null;
     historyRef.current = [];
     missedFramesRef.current = 0;
+    wasInTuneRef.current = false;
+    if (tuneLockTimeoutRef.current) {
+      clearTimeout(tuneLockTimeoutRef.current);
+      tuneLockTimeoutRef.current = null;
+    }
+    setTuneLocked(false);
     setRunning(false);
     setReading(null);
   }, []);
@@ -326,6 +359,7 @@ export default function RiffTheoryTuner() {
     const freq = autoCorrelate(buf, audioCtx.sampleRate);
 
     if (freq === -1 || freq < MIN_FREQ || freq > MAX_FREQ) {
+      wasInTuneRef.current = false;
       missedFramesRef.current += 1;
       if (missedFramesRef.current >= 6) {
         historyRef.current = [];
@@ -345,6 +379,19 @@ export default function RiffTheoryTuner() {
     const { note, octave, cents } = freqToNote(smoothed, referenceA4);
     const { string, cents: stringCents } = nearestString(smoothed, selectedTuning.strings);
     const targetCents = 1200 * Math.log2(smoothed / targetString.freq);
+    const centsForTune = cordaAPorda ? targetCents : cents;
+    const reachedTune = (!cordaAPorda || string?.name === targetString.name) && Math.abs(centsForTune) <= IN_TUNE_CENTS;
+
+    if (reachedTune && !wasInTuneRef.current) {
+      playTuneBeep(audioCtx);
+      setTuneLocked(true);
+      if (tuneLockTimeoutRef.current) clearTimeout(tuneLockTimeoutRef.current);
+      tuneLockTimeoutRef.current = setTimeout(() => {
+        setTuneLocked(false);
+        tuneLockTimeoutRef.current = null;
+      }, 500);
+    }
+    wasInTuneRef.current = reachedTune;
 
     setReading({
       active: true,
@@ -390,6 +437,7 @@ export default function RiffTheoryTuner() {
 
       historyRef.current = [];
       missedFramesRef.current = 0;
+      wasInTuneRef.current = false;
       setRunning(true);
       intervalRef.current = setInterval(() => tickRef.current?.(), 80);
     } catch (err) {
@@ -404,12 +452,16 @@ export default function RiffTheoryTuner() {
 
   // status: 'flat' | 'sharp' | 'tune' | 'close'
   const cents = reading && reading.active ? (cordaAPorda ? reading.targetCents : reading.cents) : 0;
-  const inTune = reading && reading.active && Math.abs(cents) <= IN_TUNE_CENTS;
+  const detectedInTune = reading && reading.active && Math.abs(cents) <= IN_TUNE_CENTS && (!cordaAPorda || reading.targetMatch);
+  const inTune = detectedInTune || tuneLocked;
   const close = reading && reading.active && Math.abs(cents) <= CLOSE_CENTS;
 
   let statusText = "AGUARDANDO SINAL";
   let statusColor = "var(--muted)";
-  if (reading && reading.active) {
+  if (tuneLocked) {
+    statusText = "AFINADO";
+    statusColor = "var(--green)";
+  } else if (reading && reading.active) {
     if (cordaAPorda && !reading.targetMatch) {
       statusText = `TOQUE A CORDA ${targetString.name}`;
       statusColor = "var(--amber)";
@@ -427,6 +479,7 @@ export default function RiffTheoryTuner() {
 
   const clampedCents = Math.max(-50, Math.min(50, cents));
   const needleAngle = (clampedCents / 50) * 45; // -45deg .. +45deg
+  const tone = inTune ? "green" : close ? "amber" : reading && reading.active ? "red" : "idle";
 
   return (
     <div className="pagina">
@@ -501,7 +554,7 @@ export default function RiffTheoryTuner() {
               <VUGauge angle={reading && reading.active ? needleAngle : 0} inTune={!!inTune} color={statusColor} />
             </div>
             <div className="rt-note-display">
-              <span className={`rt-note rt-tone-${reading && reading.active ? (inTune ? "green" : close ? "amber" : "red") : "idle"}`}>
+              <span className={`rt-note rt-tone-${tone}`}>
                 {reading && reading.active ? reading.note : "--"}
               </span>
               {reading && reading.active && (
@@ -514,7 +567,7 @@ export default function RiffTheoryTuner() {
                 )}
               </div>
             </div>
-            <div className={`rt-status rt-tone-${reading && reading.active ? (inTune ? "green" : close ? "amber" : "red") : "idle"}`}>
+            <div className={`rt-status rt-tone-${tone}`}>
               {running ? statusText : "PRONTO PARA AFINAR"}
             </div>
           </section>
