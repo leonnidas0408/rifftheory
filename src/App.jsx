@@ -39,7 +39,7 @@ function RiffTheoryApp() {
         "Afinador": { page: <RiffTheoryTuner setPage={setPage} />, icone: "nota", aba: "nota" },
         "Metrônomo": { page: <Metronomo setPage={setPage} />, icone: "play", aba: "play" },
         "Tablaturas": { page: <Tablaturas />, icone: "tablaturas", aba: "tablaturas" },
-        "Prática": { page: <Pratica />, icone: "riffs", aba: "riffs" },
+        "Prática": { page: <Pratica />, icone: "pratica", aba: "pratica" },
         "Chatbot": { page: <ChatbotTab /> },
     };
 

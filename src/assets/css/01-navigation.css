@@ -51,6 +51,11 @@
     transition: background 0.15s;
 }
 
+.icon-button .icone {
+    flex: 0 0 auto;
+    stroke-width: 1.55;
+}
+
 .icon-button:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.08);
 }
@@ -102,5 +107,4 @@
     font-size: 11px;
     text-align: center;
 }
-
 
