@@ -1,0 +1,14 @@
+.stat-bar[data-height] { height: attr(data-height percentage); }
+
+.teclado[data-width] { width: attr(data-width px); }
+.tecla[data-left][data-width] {
+    left: attr(data-left px);
+    width: attr(data-width px);
+}
+
+.roadmap-progress-fill {
+    display: block;
+    width: 35%;
+    height: 100%;
+    background: #315ce8;
+}

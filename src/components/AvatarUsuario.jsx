@@ -9,11 +9,10 @@ function AvatarInicial({ nome, tamanho }) {
 
     return (
         <span
-            className="avatar-usuario-inicial"
+            className={`avatar-usuario-inicial avatar-usuario-tamanho-${tamanho}`}
             role="img"
             aria-label={`Perfil de ${nome}`}
             title={nome}
-            style={{ width: tamanho, height: tamanho }}
         >
             {inicial}
         </span>

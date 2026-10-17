@@ -107,7 +107,7 @@ function Teclado({ instrumento, onInteragir }) {
                     className="teclado"
                     role="group"
                     aria-label={`${instrumento.label} interativo`}
-                    style={{ width: `${quantidadeBrancas * LARGURA_TECLA_BRANCA}px` }}
+                    data-width={`${quantidadeBrancas * LARGURA_TECLA_BRANCA}px`}
                 >
                     {teclas.map((midi, indice) => {
                         const pitch = ((midi % 12) + 12) % 12;
@@ -123,7 +123,8 @@ function Teclado({ instrumento, onInteragir }) {
                                 key={midi}
                                 type="button"
                                 className={`tecla ${preta ? "tecla-preta" : "tecla-branca"}${ativas.includes(midi) ? " selecionada" : ""}`}
-                                style={{ left: `${left}px`, width: `${preta ? LARGURA_TECLA_PRETA : LARGURA_TECLA_BRANCA}px` }}
+                                data-left={`${left}px`}
+                                data-width={`${preta ? LARGURA_TECLA_PRETA : LARGURA_TECLA_BRANCA}px`}
                                 onPointerDown={() => pressionar(midi)}
                                 onPointerUp={() => pressionar(midi, true)}
                                 onPointerLeave={() => pressionar(midi, true)}

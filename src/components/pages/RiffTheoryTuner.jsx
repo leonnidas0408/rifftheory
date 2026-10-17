@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Barra from "../Barra";
+import "./RiffTheoryTuner.css";
 
 /* ------------------------------------------------------------------ *
  *  RIFF THEORY TUNER — versão web (React + Web Audio API)
@@ -383,259 +384,8 @@ export default function RiffTheoryTuner() {
     <div className="pagina">
       <Barra titulo="Afinador" />
       <div className="rt-root">
-      <style>{`
-        .rt-root {
-          --green: #8ff0b6;
-          --amber: #ffd166;
-          --red: #ff9a8c;
-          --cream: #ffffff;
-          --muted: #cfe0f7;
 
-          width: 100%;
-        }
-
-        .rt-panel {
-          position: relative;
-          width: 100%;
-          max-width: 760px;
-          margin: 8px auto 0;
-          padding: 34px 40px 30px;
-          border-radius: 22px;
-          color: #fff;
-          background:
-            radial-gradient(circle at 18px 18px, rgba(255,255,255,.85) 0 5px, transparent 5.5px),
-            radial-gradient(circle at calc(100% - 18px) 18px, rgba(255,255,255,.85) 0 5px, transparent 5.5px),
-            radial-gradient(circle at 18px calc(100% - 18px), rgba(255,255,255,.85) 0 5px, transparent 5.5px),
-            radial-gradient(circle at calc(100% - 18px) calc(100% - 18px), rgba(255,255,255,.85) 0 5px, transparent 5.5px),
-            #4a6d99;
-          transition: box-shadow .2s ease;
-        }
-
-        .rt-panel.in-tune {
-          box-shadow: 0 0 0 3px #8ff0b6;
-        }
-
-        .rt-header {
-          display: flex;
-          justify-content: flex-end;
-          margin-bottom: 14px;
-        }
-
-        .rt-ref-select {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 14px;
-          color: var(--muted);
-        }
-
-        .rt-ref-select select {
-          background: rgba(255,255,255,.16);
-          color: #fff;
-          border: 0;
-          border-radius: 999px;
-          padding: 6px 12px;
-          font-size: 14px;
-        }
-
-        .rt-ref-select select option {
-          color: #183055;
-        }
-
-        .rt-instruments {
-          display: flex;
-          justify-content: center;
-          gap: 8px;
-          margin-bottom: 8px;
-        }
-
-        .rt-instrument-btn {
-          padding: 8px 18px;
-          border-radius: 999px;
-          background: rgba(255,255,255,.14);
-          color: #fff;
-          font-size: 15px;
-          font-weight: 600;
-        }
-
-        .rt-instrument-btn.active {
-          background: #fff;
-          color: #1f4f8f;
-        }
-
-        .rt-gauge-wrap {
-          width: 100%;
-          max-width: 460px;
-          height: 190px;
-          margin: 8px auto 0;
-        }
-
-        .rt-note-display {
-          text-align: center;
-          margin-top: 4px;
-        }
-
-        .rt-note {
-          font-size: 64px;
-          font-weight: 700;
-          line-height: 1;
-        }
-
-        .rt-octave {
-          font-size: 24px;
-          margin-left: 4px;
-          vertical-align: sub;
-          color: var(--muted);
-        }
-
-        .rt-freq {
-          margin-top: 6px;
-          font-size: 15px;
-          color: var(--muted);
-        }
-
-        .rt-status {
-          text-align: center;
-          margin: 10px 0 16px;
-          font-size: 15px;
-          font-weight: 700;
-          letter-spacing: 1px;
-        }
-
-        .rt-string-row {
-          display: flex;
-          justify-content: center;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-bottom: 22px;
-        }
-
-        .rt-string-chip {
-          min-width: 52px;
-          padding: 8px 12px;
-          border-radius: 999px;
-          text-align: center;
-          background: rgba(255,255,255,.14);
-          font-size: 15px;
-          font-weight: 600;
-        }
-
-        .rt-string-chip.active {
-          background: #8ff0b6;
-          color: #14432a;
-        }
-
-        .rt-footswitch {
-          display: block;
-          width: 100%;
-          max-width: 320px;
-          margin: 0 auto;
-          padding: 15px;
-          border-radius: 999px;
-          background: #fff;
-          color: #1f4f8f;
-          font-size: 16px;
-          font-weight: 700;
-        }
-
-        .rt-footswitch.on {
-          background: #ff9a8c;
-          color: #5a1810;
-        }
-
-        .rt-error {
-          margin-top: 14px;
-          text-align: center;
-          font-size: 14px;
-          color: #ffd0c9;
-        }
-
-        .rt-hint {
-          margin-top: 14px;
-          text-align: center;
-          font-size: 14px;
-          color: var(--muted);
-        }
-
-        @media (max-width: 600px) {
-          .rt-panel { padding: 30px 20px 24px; }
-        }
-      `}</style>
-
-      <style>{`
-        .rt-root { --green: #19845b; --amber: #a86500; --red: #bd4338; --cream: #172432; --muted: #68778b; width: 100%; }
-        .rt-panel { box-sizing: border-box; max-width: 920px; margin: 12px auto 0; padding: 26px 30px; border: 1px solid #dce2e8; border-radius: 3px; color: #172432; background: #fff; box-shadow: none; }
-        .rt-panel.in-tune { border-left: 3px solid var(--green); box-shadow: none; }
-        .rt-panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; padding-bottom: 20px; border-bottom: 1px solid #e2e7ec; }
-        .rt-panel-intro .rt-kicker { color: #315ce8; font-size: 11px; font-weight: 750; letter-spacing: .12em; }
-        .rt-panel-intro h2 { margin: 7px 0 5px; color: #172432; font-size: 22px; letter-spacing: -.025em; }
-        .rt-panel-intro p { margin: 0; color: #68778b; font-size: 13px; }
-        .rt-ref-select { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; color: #59687a; font-size: 12px; font-weight: 650; }
-        .rt-ref-select select { min-width: 132px; padding: 9px 30px 9px 10px; border: 1px solid #d7dee6; border-radius: 3px; background: #fff; color: #172432; font-size: 13px; }
-        .rt-instruments-wrap { display: flex; align-items: center; gap: 18px; margin: 18px 0; }
-        .rt-label { color: #59687a; font-size: 12px; font-weight: 700; }
-        .rt-instruments { justify-content: flex-start; gap: 6px; margin: 0; }
-        .rt-instrument-btn { min-width: 92px; padding: 9px 14px; border: 1px solid #d9e0e7; border-radius: 3px; background: #fff; color: #475569; font-size: 13px; font-weight: 650; }
-        .rt-instrument-btn.active { border-color: #315ce8; background: #315ce8; color: #fff; }
-        .rt-tuning-section { padding: 17px 0 19px; border-top: 1px solid #e2e7ec; border-bottom: 1px solid #e2e7ec; }
-        .rt-tuning-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 11px; }
-        .rt-tuning-heading p { margin: 4px 0 0; color: #68778b; font-size: 12px; }
-        .rt-selected-tuning { color: #315ce8; font-size: 12px; font-weight: 700; }
-        .rt-tuning-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
-        .rt-tuning-option { display: flex; min-width: 0; min-height: 60px; flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; padding: 9px 10px; border: 1px solid #dce2e8; border-radius: 3px; background: #fff; color: #172432; text-align: left; cursor: pointer; transition: border-color .15s ease, background .15s ease; }
-        .rt-tuning-option strong { font-size: 12px; line-height: 1.2; }
-        .rt-tuning-option span { color: #68778b; font-size: 10px; line-height: 1.35; }
-        .rt-tuning-option:hover { border-color: #9aadd0; background: #f8faff; }
-        .rt-tuning-option.active { border-color: #315ce8; background: #f2f5ff; box-shadow: inset 0 -2px #315ce8; }
-        .rt-tuning-option:focus-visible { outline: 2px solid #315ce8; outline-offset: 2px; }
-        .rt-main-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(245px, .8fr); border-top: 1px solid #e2e7ec; border-bottom: 1px solid #e2e7ec; }
-        .rt-readout { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; padding: 8px 22px 22px 10px; border-right: 1px solid #e2e7ec; }
-        .rt-gauge-wrap { max-width: 420px; height: 172px; margin: 0 auto; }
-        .rt-note-display { margin-top: -1px; text-align: center; }
-        .rt-note { color: #172432; font-size: 72px; font-weight: 700; letter-spacing: -.05em; line-height: .95; }
-        .rt-octave { color: #68778b; font-size: 23px; }
-        .rt-freq { margin-top: 8px; color: #68778b; font-size: 14px; font-variant-numeric: tabular-nums; }
-        .rt-status { margin: 12px 0 0; color: #68778b; font-size: 12px; font-weight: 750; letter-spacing: .08em; }
-        .rt-controls { display: flex; flex-direction: column; gap: 16px; min-width: 0; padding: 21px 2px 20px 22px; }
-        .rt-control-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .rt-control-heading > span:last-child { color: #68778b; font-size: 12px; }
-        .rt-string-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin: 10px 0 0; }
-        .rt-string-chip { min-width: 0; padding: 9px 4px; border: 1px solid #dce2e8; border-radius: 3px; background: #fff; color: #475569; font-size: 14px; font-variant-numeric: tabular-nums; }
-        .rt-string-chip.active { border-color: #315ce8; background: #eef3ff; color: #2449c8; }
-        .rt-string-chip.active.in-tune { border-color: #19845b; background: #edf8f2; color: #176b4b; }
-        .rt-target { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; padding: 13px 14px; border-left: 2px solid #315ce8; background: #f5f7fa; }
-        .rt-target > span:first-child { color: #68778b; font-size: 12px; }
-        .rt-target strong { grid-row: span 2; color: #172432; font-size: 23px; font-variant-numeric: tabular-nums; }
-        .rt-target > span:last-child { color: #475569; font-size: 12px; }
-        .rt-hint { margin: 0; color: #68778b; font-size: 12px; line-height: 1.5; text-align: left; }
-        .rt-footer { display: flex; flex-direction: column; align-items: center; gap: 9px; padding-top: 20px; }
-        .rt-footswitch { max-width: 320px; padding: 13px 18px; border: 0; border-radius: 3px; background: #315ce8; color: #fff; font-size: 14px; font-weight: 700; }
-        .rt-footswitch:hover { background: #2449c8; }
-        .rt-footswitch.on { background: #bd4338; color: #fff; }
-        .rt-footer-note { color: #68778b; font-size: 12px; text-align: center; }
-        .rt-error { margin-top: 4px; color: #bd4338; }
-        @media (max-width: 760px) {
-          .rt-panel { padding: 21px 20px; }
-          .rt-main-grid { grid-template-columns: 1fr; }
-          .rt-readout { padding: 6px 6px 19px; border-right: 0; border-bottom: 1px solid #e2e7ec; }
-          .rt-controls { padding: 19px 2px 20px; }
-        }
-        @media (max-width: 520px) {
-          .rt-panel { margin-top: 8px; padding: 17px 14px; }
-          .rt-panel-head { flex-direction: column; gap: 15px; }
-          .rt-ref-select { width: 100%; }
-          .rt-ref-select select { width: 100%; }
-          .rt-instruments-wrap { align-items: flex-start; flex-direction: column; gap: 8px; }
-          .rt-instruments { width: 100%; }
-          .rt-instrument-btn { min-width: 0; flex: 1; padding-inline: 8px; }
-          .rt-tuning-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-          .rt-tuning-option { min-height: 58px; padding: 8px; }
-          .rt-gauge-wrap { height: 145px; }
-          .rt-note { font-size: 62px; }
-        }
-      `}</style>
-
-      <div className={`rt-panel${inTune ? " in-tune" : ""}`}>
+<div className={`rt-panel${inTune ? " in-tune" : ""}`}>
         <header className="rt-panel-head">
           <div className="rt-panel-intro">
             <span className="rt-kicker">AFINAÇÃO CROMÁTICA</span>
@@ -703,7 +453,7 @@ export default function RiffTheoryTuner() {
               <VUGauge angle={reading && reading.active ? needleAngle : 0} inTune={!!inTune} color={statusColor} />
             </div>
             <div className="rt-note-display">
-              <span className="rt-note" style={{ color: reading && reading.active ? statusColor : "var(--cream)" }}>
+              <span className={`rt-note rt-tone-${reading && reading.active ? (inTune ? "green" : close ? "amber" : "red") : "idle"}`}>
                 {reading && reading.active ? reading.note : "--"}
               </span>
               {reading && reading.active && (
@@ -716,7 +466,7 @@ export default function RiffTheoryTuner() {
                 )}
               </div>
             </div>
-            <div className="rt-status" style={{ color: statusColor }}>
+            <div className={`rt-status rt-tone-${reading && reading.active ? (inTune ? "green" : close ? "amber" : "red") : "idle"}`}>
               {running ? statusText : "PRONTO PARA AFINAR"}
             </div>
           </section>
@@ -834,7 +584,7 @@ function VUGauge({ angle, inTune, color }) {
       })}
 
       {/* Ponteiro */}
-      <g style={{ transition: "transform 0.15s ease-out" }} transform={`rotate(${angle} ${cx} ${cy})`}>
+      <g className="rt-gauge-needle" transform={`rotate(${angle} ${cx} ${cy})`}>
         <line
           x1={cx} y1={cy} x2={cx} y2={cy - r + 14}
           stroke={color}

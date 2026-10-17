@@ -19,3 +19,7 @@
     font-weight: 700;
     line-height: 1;
 }
+
+.avatar-usuario-tamanho-28 { width: 28px; height: 28px; }
+.avatar-usuario-tamanho-34 { width: 34px; height: 34px; }
+.avatar-usuario-tamanho-42 { width: 42px; height: 42px; }

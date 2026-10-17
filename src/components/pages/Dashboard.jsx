@@ -128,7 +128,7 @@ export default function Dashboard({ setPage }) {
                             <div
                                 key={index}
                                 className="stat-bar"
-                                style={{ height: `${(dia.minutos / maxMinutos) * 100}%` }}
+                                data-height={`${(dia.minutos / maxMinutos) * 100}%`}
                             />
                         ))}
                     </div>

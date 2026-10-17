@@ -1,0 +1,14 @@
+.dramatic-title {
+    display: flex;
+    justify-content: center;
+    gap: 5%;
+}
+
+.dramatic-cta {
+    display: flex;
+    justify-content: center;
+}
+
+.dramatic-cta-item {
+    display: flex;
+}

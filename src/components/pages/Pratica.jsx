@@ -194,7 +194,7 @@ export default function Pratica() {
             </SectionTitle>
             <div className="roadmap-progress">
               <div className="roadmap-progress-line">
-                <span style={{ width: "35%" }} />
+                <span className="roadmap-progress-fill" />
               </div>
               <div className="roadmap-steps">
                 <span className="feito">1 · Formas e som</span>
