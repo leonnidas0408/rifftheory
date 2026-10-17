@@ -123,7 +123,7 @@ export default function Home({ setPage }) {
                 <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
                 <h1>Toque uma trilha. Veja cada acorde no braço.</h1>
                 <p>
-                    Comece com 4 acordes e avance um por vez, sem sair da prática.
+                    No primeiro clique, abra uma trilha de 4 acordes: veja cada forma no braço e avance no seu ritmo.
                 </p>
                 <div className="hero-acoes">
                     <button
@@ -137,54 +137,52 @@ export default function Home({ setPage }) {
                     >
                         Testar trilha de 4 acordes
                     </button>
-                    <button
+                    <a
                         className="hero-secundaria"
-                        type="button"
-                        onClick={() => {
-                            registrarEvento("hero_cta_clicked", { cta: "acordes" });
-                            abrirAcordes();
-                        }}
+                        href="#comecar"
                     >
-                        Ver acordes no braço
-                    </button>
+                        Explorar outras opções
+                    </a>
+                </div>
+                <div className="hero-first-step-preview" aria-label="Prévia da trilha inicial: C, G, Am e F">
+                    <span>Primeira trilha</span>
+                    <strong>C <i aria-hidden="true">→</i> G <i aria-hidden="true">→</i> Am <i aria-hidden="true">→</i> F</strong>
+                    <span>cada forma aparece no braço, uma por vez</span>
                 </div>
                 <div className="hero-seguranca">
                     <span className="seguranca-icone" aria-hidden="true">✓</span>
-                    <span>Abre a sequência no braço interativo. Sem cadastro para praticar.</span>
+                    <span>Grátis para experimentar, sem conta nem cartão. A trilha aparece no braço interativo; avance acorde a acorde e use o metrônomo.</span>
                 </div>
+                {resumoAvaliacoes?.count > 0 && (
+                    <a className="trust-review-summary hero-review-summary" href="#reviews" aria-label={`Ver ${resumoAvaliacoes.count} avaliações públicas; nota ${resumoAvaliacoes.average} de 5`}>
+                        <span aria-hidden="true">★</span>
+                        <strong>{resumoAvaliacoes.average}</strong> de 5
+                        <span>· {resumoAvaliacoes.count} avaliações públicas · ver relatos</span>
+                    </a>
+                )}
             </section>
 
             <section className="trust-section" aria-labelledby="trust-title">
                 <div className="trust-section-heading">
                     <span className="eyebrow">Transparência antes de começar</span>
-                    <h2 id="trust-title">Prática guiada e Thonic são caminhos separados</h2>
-                    <p>Você pode testar a trilha sem conta; o assistente de IA é opcional e funciona de outro jeito.</p>
+                    <h2 id="trust-title">Pratique sem conta. Escolha quando entrar.</h2>
+                    <p>A prática guiada funciona sem login. O Google só é solicitado se você escolher recursos que precisam de conta.</p>
                 </div>
                 <div className="trust-grid" aria-label="Resumo de acesso e privacidade">
                     <div className="trust-item">
                         <span className="trust-check" aria-hidden="true">✓</span>
-                        <div><strong>Pratique sem cadastro</strong><span>Trilha guiada gratuita para experimentar, sem conta ou cartão.</span></div>
+                        <div><strong>Prática sem cadastro</strong><span>Teste uma trilha gratuita de 4 acordes, sem conta nem cartão.</span></div>
                     </div>
                     <div className="trust-item">
                         <span className="trust-check" aria-hidden="true">✓</span>
-                        <div><strong>Progresso no navegador</strong><span>O histórico e os dados de prática ficam neste dispositivo.</span></div>
+                        <div><strong>Dados no navegador</strong><span>Histórico e progresso de prática ficam armazenados neste dispositivo.</span></div>
                     </div>
                     <div className="trust-item">
                         <span className="trust-check" aria-hidden="true">i</span>
-                        <div><strong>Thonic pede login Google</strong><span>Perguntas e contexto recente vão ao serviço de IA; a conversa fica salva na sua conta.</span></div>
-                    </div>
-                    <div className="trust-item">
-                        <span className="trust-check" aria-hidden="true">✓</span>
-                        <div><strong>Monitoramento opcional</strong><span>Você pode recusar a contagem anônima e usar o site normalmente.</span></div>
+                        <div><strong>Google só nos recursos opcionais</strong><span>Login para usar o Thonic, publicar uma avaliação ou acessar recursos premium; não é necessário para praticar.</span></div>
                     </div>
                 </div>
-                {resumoAvaliacoes?.count > 0 && (
-                    <a className="trust-review-summary" href="#reviews">
-                        <span aria-hidden="true">★</span>
-                        <strong>{resumoAvaliacoes.average}</strong> de 5
-                        <span>· {resumoAvaliacoes.count} avaliações · ver relatos</span>
-                    </a>
-                )}
+                <p className="trust-review-note"><strong>Avaliação pública:</strong> só após login e consentimento explícito, o nome da conta Google (ou e-mail, se o nome não estiver disponível), a nota e o comentário ficam visíveis para todos.</p>
                 <details className="trust-details">
                     <summary>Saiba mais sobre dados e privacidade</summary>
                     <div className="trust-details-copy">
@@ -222,7 +220,7 @@ export default function Home({ setPage }) {
                     <h2 id="titulo-objecoes">Feito para testar sem compromisso</h2>
                 </div>
                 <div className="objecoes-grid">
-                    <div><strong>Preço</strong><span><b>Gratuito para experimentar.</b> A prática guiada não exige cadastro; o Chatbot exige login Google. Limites de uso se aplicam ao assistente.</span></div>
+                    <div><strong>Preço e acesso</strong><span><b>A trilha guiada é gratuita para experimentar, sem cartão ou conta.</b> Recursos premium são opcionais; login Google só aparece quando você escolhe um recurso que exige conta. Limites de uso se aplicam ao Thonic.</span></div>
                     <div><strong>Setup</strong><span><b>Abra e toque.</b> Funciona no navegador, sem instalar programa ou configurar conta.</span></div>
                     <div><strong>Dados</strong><span><b>Prática e progresso ficam no navegador.</b> Perguntas e histórico recente só são enviados quando você usa o Chatbot.</span></div>
                     <div><strong>Troca de ferramenta</strong><span><b>Prática guiada dentro do app.</b> Use a busca apenas quando quiser partir de uma música.</span></div>
@@ -326,11 +324,11 @@ export default function Home({ setPage }) {
                 <span className="light-description">Nesse FAQ, RT serve como uma abreviação de Riff Theory.</span>
                 <FAQQuestion
                     question="Para usar o RT, precisa de cadastro?"
-                    answer="O cadastro é necessário somente para o plano premium e para usar o Thonic, nosso assistente de IA."
+                    answer="Não para praticar ou testar a trilha guiada. O login Google só é solicitado se você escolher o Thonic, publicar uma avaliação pública ou acessar recursos premium."
                 />
                 <FAQQuestion
                     question="O que fica salvo no RT?"
-                    answer="Na nuvem, apenas sua conta fica salva. Localmente, ficam seus dados de uso e eles nunca são enviados."
+                    answer="O histórico e o progresso da prática ficam no armazenamento local deste navegador. A contagem anônima de acessos só é ativada se você consentir. Ao usar o Thonic, a pergunta e o contexto recente são enviados ao serviço de IA e a conversa fica salva na sua conta."
                 />
                 <FAQQuestion
                     question="Para que serve o chatbot?"

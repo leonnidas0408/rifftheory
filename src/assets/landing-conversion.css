@@ -48,6 +48,8 @@
 }
 
 .hero-secundaria {
+    display: inline-flex;
+    align-items: center;
     min-height: 44px;
     padding: 10px 4px;
     border: 0;
@@ -57,6 +59,46 @@
     font-weight: 650;
     text-decoration: underline;
     text-underline-offset: 3px;
+}
+
+.hero-review-summary {
+    align-self: flex-start;
+    margin-top: 2px;
+}
+
+.hero-first-step-preview {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    width: fit-content;
+    max-width: 100%;
+    padding: 8px 11px;
+    border: 1px solid rgba(220, 232, 250, .28);
+    border-radius: 10px;
+    background: rgba(8, 15, 26, .4);
+    color: #d9e5fb;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.hero-first-step-preview > span:first-child {
+    color: #a9f08d;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.hero-first-step-preview strong {
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: .03em;
+}
+
+.hero-first-step-preview i {
+    color: #a9f08d;
+    font-style: normal;
 }
 
 .hero-seguranca {
@@ -184,6 +226,21 @@
     color: #263246;
 }
 
+.trust-review-note {
+    max-width: 88ch;
+    margin: 0;
+    padding: 10px 12px;
+    border-left: 3px solid #c28a16;
+    background: #fffaf0;
+    color: #596a81;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.trust-review-note strong {
+    color: #263246;
+}
+
 .access-consent {
     max-height: min(42vh, 300px);
     overflow-y: auto;
@@ -276,6 +333,8 @@
     }
 
     .hero-secundaria {
+        display: inline-flex;
+        align-items: center;
         min-height: 42px;
         padding-inline: 2px;
         font-size: 12px;
@@ -303,6 +362,11 @@
     .trust-review-summary {
         max-width: 100%;
         flex-wrap: wrap;
+    }
+
+    .trust-review-note {
+        padding: 9px 10px;
+        font-size: 11px;
     }
 
     .access-consent {
