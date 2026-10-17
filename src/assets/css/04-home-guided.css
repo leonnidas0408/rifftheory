@@ -246,7 +246,7 @@ a.recent-item:hover {
     flex-wrap: wrap;
     align-items: center;
     gap: 10px 20px;
-    margin-top: 6px;
+    margin-top: 2px;
 }
 .hero-cta-note {
     margin-top: -4px;

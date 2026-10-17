@@ -98,25 +98,6 @@ export default function Home({ setPage }) {
                     Em cerca de 1 minuto, abra uma trilha de 4 acordes e veja onde colocar os dedos no braço interativo.
                     Depois, avance acorde por acorde — sem alternar entre ferramentas.
                 </p>
-                <div className="hero-demo" aria-label="Prévia da trilha guiada e do braço interativo">
-                    <div className="hero-demo-topline">
-                        <span>Trilha guiada · 01 de 04</span>
-                        <strong>Dó maior</strong>
-                    </div>
-                    <div className="hero-demo-progression" aria-label="Progressão C, G, Am e F">
-                        {PROGRESSOES[0].map((acorde, index) => (
-                            <span className={index === 0 ? "is-active" : ""} key={acorde}>{acorde}</span>
-                        ))}
-                    </div>
-                    <div className="hero-demo-neck" aria-hidden="true">
-                        {[0, 1, 2, 3, 4, 5].map((corda) => (
-                            <span className="hero-demo-string" key={corda}>
-                                <i className={`hero-demo-note note-${corda}`} />
-                            </span>
-                        ))}
-                    </div>
-                    <span className="hero-demo-hint">Veja a forma. Toque. Avance para o próximo acorde.</span>
-                </div>
                 <div className="hero-acoes">
                     <button
                         className="link-botao hero-cta"
@@ -125,7 +106,7 @@ export default function Home({ setPage }) {
                             iniciarTrilha(PROGRESSOES[0]);
                         }}
                     >
-                        Testar trilha guiada no braço
+                        Testar trilha no braço
                     </button>
                     <button
                         className="hero-secundaria"
@@ -142,7 +123,7 @@ export default function Home({ setPage }) {
                     <span><b>Sem conta</b> para testar</span>
                     <span><b>Sem cartão</b></span>
                     <span><b>Dados no navegador</b></span>
-                    <span><b>1ª forma</b> no 1º clique</span>
+                    <span><b>4 acordes</b> para praticar</span>
                 </div>
                 <div className="hero-social-proof" aria-label="Prova social do Riff Theory">
                     <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
@@ -242,14 +223,14 @@ export default function Home({ setPage }) {
                         <button className="pilula" type="button" onClick={() => iniciarTrilha(PROGRESSOES[0])}>Testar no braço</button>
                     </article>
                     <article className="plano-card">
-                        <div className="plano-topo"><span className="plano-tag plano-tag-premium">Com cadastro</span><strong>Premium</strong></div>
+                        <div className="plano-topo"><span className="plano-tag plano-tag-premium">Com cadastro</span><strong>Premium · Thonic</strong></div>
                         <ul>
-                            <li>Recursos premium do Riff Theory</li>
-                            <li>Cadastro necessário para liberar o plano</li>
-                            <li>Thonic, o assistente de teoria musical</li>
-                            <li>O chatbot envia sua pergunta e o histórico recente ao serviço de IA</li>
+                            <li>Assistente para dúvidas de teoria musical</li>
+                            <li>Login Google e histórico salvo na sua conta</li>
+                            <li>Até 5 perguntas por minuto</li>
+                            <li>Até 30 perguntas por hora, por usuário</li>
                         </ul>
-                        <p className="plano-nota">Os limites de uso do Thonic são os exibidos no próprio assistente e podem variar conforme a configuração do serviço.</p>
+                        <p className="plano-nota">Ao enviar uma pergunta, o texto e o histórico recente são enviados ao serviço de IA para gerar a resposta.</p>
                     </article>
                 </div>
             </section>
