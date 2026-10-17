@@ -240,10 +240,7 @@ module.exports = async function handler(req, res) {
 
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
-        res.status(500).json({
-            erro:
-                "A chave da API da Groq (GROQ_API_KEY) não está configurada no servidor.",
-        });
+        res.status(503).json({ erro: "O assistente não está configurado no momento." });
         return;
     }
 
