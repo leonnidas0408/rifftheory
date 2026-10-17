@@ -203,6 +203,46 @@ a.recent-item:hover {
     color: #bde5c9;
     font-weight: 700;
 }
+.hero-social-proof {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 560px;
+    margin-top: 4px;
+    padding: 11px 13px;
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 12px;
+    background: rgba(7, 20, 38, .28);
+}
+.hero-social-stars {
+    color: #ffd166;
+    font-size: 16px;
+    letter-spacing: .08em;
+    line-height: 1;
+    white-space: nowrap;
+}
+.hero-social-proof > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+.hero-social-proof strong { color: #fff; font-size: 13px; }
+.hero-social-proof div span {
+    color: #c9dcf6;
+    font-size: 12px;
+    line-height: 1.35;
+}
+.hero-social-proof button {
+    margin-left: auto;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+}
+.hero-social-proof button:hover { color: #d3e2f8; }
 .prova-valor {
     display: grid;
     grid-template-columns: minmax(260px, 1.1fr) 1.4fr;
@@ -613,5 +653,4 @@ button.recent-item {
 button.recent-item:hover {
     background: #d6e6fc;
 }
-
 

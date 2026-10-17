@@ -122,6 +122,14 @@ export default function Home({ setPage }) {
                     <span className="seguranca-icone" aria-hidden="true">✓</span>
                     <span>Gratuito para experimentar · sem cartão · sem cadastro para a prática guiada.</span>
                 </div>
+                <div className="hero-social-proof" aria-label="Prova social do Riff Theory">
+                    <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
+                    <div>
+                        <strong>Avaliações da comunidade</strong>
+                        <span>Veja experiências reais de quem já testou o Riff Theory.</span>
+                    </div>
+                    <button type="button" onClick={() => rolarPara("reviews-title")}>Ler avaliações</button>
+                </div>
             </section>
 
             <section className="prova-valor" aria-label="Por que usar o Riff Theory">

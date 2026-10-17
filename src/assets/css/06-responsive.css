@@ -109,6 +109,14 @@
     .cta-seguranca {
         align-items: flex-start;
     }
-}
 
+    .hero-social-proof {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .hero-social-proof button {
+        margin-left: 28px;
+    }
+}
 
