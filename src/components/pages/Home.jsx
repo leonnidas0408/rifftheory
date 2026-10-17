@@ -98,6 +98,25 @@ export default function Home({ setPage }) {
                     Em cerca de 1 minuto, abra uma trilha de 4 acordes e veja onde colocar os dedos no braço interativo.
                     Depois, avance acorde por acorde — sem alternar entre ferramentas.
                 </p>
+                <div className="hero-demo hero-demo-compact" aria-label="Prévia do que aparece ao testar a trilha">
+                    <div className="hero-demo-topline">
+                        <span>Você verá no primeiro clique</span>
+                        <strong>01 de 04 · Dó maior</strong>
+                    </div>
+                    <div className="hero-demo-progression" aria-label="Trilha C, G, Am e F">
+                        {PROGRESSOES[0].map((acorde, index) => (
+                            <span className={index === 0 ? "is-active" : ""} key={acorde}>{acorde}</span>
+                        ))}
+                    </div>
+                    <div className="hero-demo-neck" aria-hidden="true">
+                        {[0, 1, 2, 3, 4, 5].map((corda) => (
+                            <span className="hero-demo-string" key={corda}>
+                                <i className={`hero-demo-note note-${corda}`} />
+                            </span>
+                        ))}
+                    </div>
+                    <span className="hero-demo-hint">O braço mostra onde colocar os dedos.</span>
+                </div>
                 <div className="hero-acoes">
                     <button
                         className="link-botao hero-cta"
@@ -119,19 +138,19 @@ export default function Home({ setPage }) {
                     </button>
                 </div>
                 <p className="hero-cta-note">Abre uma sequência de 4 acordes e mostra a 1ª forma — sem conta, sem cartão.</p>
-                <div className="hero-benefits" aria-label="Sinais rápidos de confiança">
-                    <span><b>Sem conta</b> para testar</span>
-                    <span><b>Sem cartão</b></span>
-                    <span><b>Dados no navegador</b></span>
-                    <span><b>4 acordes</b> para praticar</span>
-                </div>
                 <div className="hero-social-proof" aria-label="Prova social do Riff Theory">
                     <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
                     <div>
                         <strong>5,0/5 · 6 avaliações públicas</strong>
-                        <span>“Fácil de navegar e com transição clara entre os conteúdos.”</span>
+                        <span>“Fácil de navegar e com transição clara.” · “Muito bem organizado e fácil de usar.”</span>
+                        <small>Fonte: avaliações públicas do próprio site · iniciantes, navegação e prática guiada.</small>
                     </div>
                     <button type="button" onClick={() => rolarPara("reviews-title")}>Ler avaliações</button>
+                </div>
+                <div className="hero-benefits" aria-label="Sinais rápidos de confiança">
+                    <span><b>Sem conta</b> para testar</span>
+                    <span><b>Sem cartão</b></span>
+                    <span><b>Dados no navegador</b></span>
                 </div>
             </section>
 
@@ -230,7 +249,7 @@ export default function Home({ setPage }) {
                             <li>Até 5 perguntas por minuto</li>
                             <li>Até 30 perguntas por hora, por usuário</li>
                         </ul>
-                        <p className="plano-nota">Ao enviar uma pergunta, o texto e o histórico recente são enviados ao serviço de IA para gerar a resposta.</p>
+                        <p className="plano-nota"><strong>Preço:</strong> ainda não publicado neste site. Ao enviar uma pergunta, o texto e o histórico recente são enviados ao serviço de IA para gerar a resposta.</p>
                     </article>
                 </div>
             </section>

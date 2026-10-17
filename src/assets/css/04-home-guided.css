@@ -163,6 +163,13 @@ a.recent-item:hover {
     background: rgba(5, 17, 33, .62);
     box-shadow: 0 12px 30px rgba(2, 9, 20, .2);
 }
+.hero-demo-compact {
+    width: min(100%, 460px);
+    padding: 10px 12px 9px;
+}
+.hero-demo-compact .hero-demo-progression { margin-top: 8px; }
+.hero-demo-compact .hero-demo-neck { margin-top: 9px; }
+.hero-demo-compact .hero-demo-hint { margin-top: 7px; }
 .hero-demo-topline,
 .hero-demo-progression {
     display: flex;
@@ -343,6 +350,11 @@ a.recent-item:hover {
     color: #c9dcf6;
     font-size: 12px;
     line-height: 1.35;
+}
+.hero-social-proof div small {
+    color: #aebfd5;
+    font-size: 10px;
+    line-height: 1.3;
 }
 .hero-social-proof button {
     margin-left: auto;
