@@ -271,6 +271,20 @@ a.recent-item:hover {
 .hero-secundaria:hover {
     color: #fff;
 }
+.hero-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    color: #c9dcf6;
+    font-size: 12px;
+}
+.hero-benefits span::before {
+    content: "✓";
+    margin-right: 5px;
+    color: #bde5c9;
+    font-weight: 700;
+}
+.hero-benefits b { color: #fff; }
 .hero-seguranca,
 .cta-seguranca {
     display: flex;
@@ -329,6 +343,21 @@ a.recent-item:hover {
     white-space: nowrap;
 }
 .hero-social-proof button:hover { color: #d3e2f8; }
+.hero-access-note {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: min(100%, 560px);
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, .16);
+}
+.hero-access-note > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.hero-access-note strong { color: #fff; font-size: 12px; }
+.hero-access-note span { color: #bcd4f5; font-size: 11px; line-height: 1.35; }
 .prova-valor {
     display: grid;
     grid-template-columns: minmax(260px, 1.1fr) 1.4fr;

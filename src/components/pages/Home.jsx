@@ -125,7 +125,7 @@ export default function Home({ setPage }) {
                             iniciarTrilha(PROGRESSOES[0]);
                         }}
                     >
-                        Testar trilha de 4 acordes
+                        Testar trilha — abrir no braço
                     </button>
                     <button
                         className="hero-secundaria"
@@ -134,20 +134,31 @@ export default function Home({ setPage }) {
                             abrirAcordes();
                         }}
                     >
-                        Ver acordes no braço
+                        Explorar acordes
                     </button>
                 </div>
-                <div className="hero-seguranca">
-                    <span className="seguranca-icone" aria-hidden="true">✓</span>
-                    <span>Prática guiada sem cadastro · login só para o Thonic e avaliações.</span>
+                <div className="hero-benefits" aria-label="Benefícios do teste">
+                    <span><b>4 acordes</b> no braço</span>
+                    <span><b>Sem cartão</b></span>
+                    <span><b>Sem conta</b> para testar</span>
                 </div>
                 <div className="hero-social-proof" aria-label="Prova social do Riff Theory">
                     <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
                     <div>
                         <strong>5,0/5 · 6 avaliações públicas</strong>
-                        <span>“bem didático” · “fácil de navegar” · “trilha de quatro acordes”</span>
+                        <span>Experiências reais de quem já testou.</span>
                     </div>
                     <button type="button" onClick={() => rolarPara("reviews-title")}>Ler avaliações</button>
+                </div>
+                <div className="hero-access-note" aria-label="O que exige login no Riff Theory">
+                    <div>
+                        <strong>Funciona sem login</strong>
+                        <span>Prática guiada, braço, metrônomo, escalas e progresso local.</span>
+                    </div>
+                    <div>
+                        <strong>Login só quando necessário</strong>
+                        <span>Thonic e avaliações. Sem cartão para experimentar.</span>
+                    </div>
                 </div>
             </section>
 
