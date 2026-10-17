@@ -11,7 +11,7 @@ import NavbarAdapter from "./components/NavbarAdapter";
 import { iniciarRastreioDeUso } from "./utils/usageStats";
 import Home from "./components/pages/Home";
 import { AuthProvider } from "./auth/AuthContext";
-import AccessConsent from "./components/AccessConsent";
+import { AccessConsentManager } from "./components/AccessConsent";
 import AccessMonitor from "./components/pages/AccessMonitor";
 
 export default function App() {
@@ -51,7 +51,7 @@ function RiffTheoryApp() {
                 pageData={pageData}
                 defaultPage="Início"
             />
-            <AccessConsent />
+            <AccessConsentManager />
         </>
     );
 }
