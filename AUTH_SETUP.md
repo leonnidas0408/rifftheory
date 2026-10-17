@@ -45,7 +45,8 @@ sem essa variável o endpoint fica desabilitado (503), e outros usuários recebe
 - O Chatbot exige uma sessão Google válida; sem sessão, a interface apresenta o bloqueio de login.
 - A API do Chatbot valida o Bearer token no Supabase antes de chamar a Groq. Sem token ou com token inválido, responde HTTP 401; se as variáveis de autenticação do servidor estiverem ausentes ou a validação estiver indisponível, responde HTTP 503.
 - O formulário de avaliação exige login Google e publica a nota, o comentário e o nome da conta Google; se o nome não estiver disponível, publica o e-mail da conta. Esse identificador é somente leitura no formulário e também é derivado novamente por um trigger do Supabase.
-- O limitador em memória é de melhor esforço por instância serverless e não equivale a uma cota global persistente.
+- O chatbot consome a cota persistente por usuário na função Supabase `consume_thonic_chat_quota`, com máximo de 5 chamadas por janela móvel de 1 minuto e 30 por janela móvel de 1 hora. A migration `20261017014723_thonic_chat_persistent_rate_limit.sql` já foi aplicada ao Supabase de produção. Se a função estiver indisponível, a API falha fechada com HTTP 503 em vez de enviar a chamada à Groq sem aplicar a cota.
+- O deployment inclui `Content-Security-Policy-Report-Only`, que não bloqueia recursos. Revise as violações no console do navegador nos fluxos reais (login, Turnstile, tuner e chatbot) e só então considere uma política de aplicação. Não há endpoint central de coleta de relatórios CSP configurado.
 - Sem variáveis Supabase, a aplicação informa que o login ainda não foi configurado em vez de simular autenticação.
 
 ## 5. Teste de aceite

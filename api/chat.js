@@ -25,15 +25,7 @@ const MAX_MENSAGENS_HISTORICO = 12; // limita o tamanho do payload enviado
 const MAX_TEXTO_MENSAGEM = 2000;
 const MAX_TEXTO_TOTAL = 8000;
 const MAX_TOKENS_RESPOSTA = 700;
-const LIMITE_JANELA_MS = 60 * 1000;
-const LIMITE_REQUISICOES = 5;
-const LIMITE_HORA_MS = 60 * 60 * 1000;
-const LIMITE_REQUISICOES_HORA = 30;
-
-// Limitador em memória de melhor esforço. Em funções serverless, cada instância
-// pode manter sua própria janela; para cotas globais, configure um rate limiter
-// persistente no gateway/edge da Vercel.
-const chamadasPorIp = new Map();
+const MAX_REQUEST_BODY_BYTES = 64 * 1024;
 
 const SYSTEM_PROMPT_BASE = `Você é o assistente de IA do Riff Theory, um app de violão/guitarra e teoria musical. Seu nome é Thonic.
 
@@ -166,40 +158,31 @@ async function validarSessao(req) {
     }
 }
 
-function obterIp(req) {
-    const encaminhado = req.headers["x-forwarded-for"];
-    if (typeof encaminhado === "string" && encaminhado.trim()) {
-        return encaminhado.split(",")[0].trim().slice(0, 64);
-    }
-    const real = req.headers["x-real-ip"];
-    if (typeof real === "string" && real.trim()) return real.trim().slice(0, 64);
-    return req.socket?.remoteAddress || "desconhecido";
-}
+async function consumirCotaChat(req) {
+    const authorization = typeof req.headers?.authorization === "string"
+        ? req.headers.authorization
+        : "";
+    const tokenMatch = authorization.match(/^Bearer\s+(\S+)$/i);
+    if (!tokenMatch) throw new Error("missing_authenticated_session");
 
-function excedeuLimite(req, agora = Date.now()) {
-    const ip = obterIp(req);
-    const recentes = (chamadasPorIp.get(ip) || []).filter(
-        (timestamp) => agora - timestamp < LIMITE_HORA_MS
-    );
+    const supabaseUrl = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseAnonKey) throw new Error("quota_service_not_configured");
 
-    if (recentes.filter((timestamp) => agora - timestamp < LIMITE_JANELA_MS).length >= LIMITE_REQUISICOES ||
-        recentes.length >= LIMITE_REQUISICOES_HORA) {
-        chamadasPorIp.set(ip, recentes);
-        return true;
-    }
+    const resposta = await fetch(`${supabaseUrl}/rest/v1/rpc/consume_thonic_chat_quota`, {
+        method: "POST",
+        headers: {
+            apikey: supabaseAnonKey,
+            Authorization: `Bearer ${tokenMatch[1]}`,
+            "Content-Type": "application/json",
+        },
+        body: "{}",
+    });
+    if (!resposta.ok) throw new Error("quota_service_unavailable");
 
-    recentes.push(agora);
-    chamadasPorIp.set(ip, recentes);
-
-    // Remove registros expirados para evitar crescimento ilimitado do Map.
-    if (chamadasPorIp.size > 5000) {
-        for (const [chave, timestamps] of chamadasPorIp) {
-            const ativos = timestamps.filter((timestamp) => agora - timestamp < LIMITE_HORA_MS);
-            if (ativos.length) chamadasPorIp.set(chave, ativos);
-            else chamadasPorIp.delete(chave);
-        }
-    }
-    return false;
+    const permitido = await resposta.json();
+    if (typeof permitido !== "boolean") throw new Error("invalid_quota_response");
+    return permitido;
 }
 
 function validarMensagens(mensagens) {
@@ -239,14 +222,19 @@ module.exports = async function handler(req, res) {
         return;
     }
 
-    const sessao = await validarSessao(req);
-    if (sessao.erro) {
-        res.status(sessao.status).json({ erro: sessao.erro });
+    const contentLength = Number(req.headers?.["content-length"] || 0);
+    if (Number.isFinite(contentLength) && contentLength > MAX_REQUEST_BODY_BYTES) {
+        res.status(413).json({ erro: "A solicitação excede o tamanho máximo permitido." });
+        return;
+    }
+    if (Buffer.byteLength(JSON.stringify(req.body ?? null), "utf8") > MAX_REQUEST_BODY_BYTES) {
+        res.status(413).json({ erro: "A solicitação excede o tamanho máximo permitido." });
         return;
     }
 
-    if (excedeuLimite(req)) {
-        res.status(429).json({ erro: "Limite de perguntas atingido. Aguarde um pouco e tente novamente." });
+    const sessao = await validarSessao(req);
+    if (sessao.erro) {
+        res.status(sessao.status).json({ erro: sessao.erro });
         return;
     }
 
@@ -265,6 +253,18 @@ module.exports = async function handler(req, res) {
         return;
     }
     const { mensagens } = validacao;
+
+    let cotaPermitida;
+    try {
+        cotaPermitida = await consumirCotaChat(req);
+    } catch {
+        res.status(503).json({ erro: "O controle de uso está indisponível. Tente novamente em instantes." });
+        return;
+    }
+    if (!cotaPermitida) {
+        res.status(429).json({ erro: "Limite de perguntas atingido. Aguarde um pouco e tente novamente." });
+        return;
+    }
 
     const ultimaMensagemUsuario = [...mensagens]
         .reverse()
@@ -309,8 +309,8 @@ module.exports = async function handler(req, res) {
         });
 
         if (!respostaGroq.ok) {
-            const detalhe = await respostaGroq.text();
-            console.error("Erro da API da Groq:", respostaGroq.status, detalhe);
+            // Não registrar o corpo externo: ele pode conter texto de usuário ou detalhes internos.
+            console.error("Erro da API da Groq:", respostaGroq.status);
 
             res.status(502).json({
                 erro: "O serviço de IA não respondeu corretamente. Tente novamente.",
@@ -325,9 +325,17 @@ module.exports = async function handler(req, res) {
 
         res.status(200).json({ resposta: textoResposta });
     } catch (err) {
-        console.error("Erro ao chamar a API da Groq:", err);
+        console.error("Erro ao chamar a API da Groq:", err?.name || "erro_desconhecido");
         res.status(500).json({
             erro: "Erro interno ao tentar falar com a IA. Tente novamente em instantes.",
         });
     }
+};
+
+module.exports.config = {
+    api: {
+        bodyParser: {
+            sizeLimit: "64kb",
+        },
+    },
 };
