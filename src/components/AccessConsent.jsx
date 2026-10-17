@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import {
-    apagarIdentificadorDeAcesso,
     lerConsentimentoAcessos,
     registrarAcessoAnonimo,
     salvarConsentimentoAcessos,
@@ -17,8 +16,7 @@ export default function AccessConsent() {
     }, [consentimento]);
 
     function escolher(valor) {
-        if (valor === "declined") apagarIdentificadorDeAcesso();
-        else salvarConsentimentoAcessos(valor);
+        salvarConsentimentoAcessos(valor);
         setConsentimento(valor);
         setMostrar(false);
     }
@@ -35,24 +33,20 @@ export default function AccessConsent() {
         <aside className="access-consent" role="dialog" aria-labelledby="access-consent-title">
             <div>
                 <strong id="access-consent-title">Controle de acessos</strong>
-                <p>
-                    Se permitir, usamos um identificador aleatório assinado no servidor para contar entradas e sessões deste
-                    navegador. Os relatórios são diários, em horário de Brasília, e mantêm o histórico para acompanhar o
-                    crescimento. Não associamos o identificador à conta, nome ou e-mail e o Riff Theory não coleta nem
-                    armazena IP. Para reduzir registros automatizados, a verificação é feita pelo Cloudflare Turnstile, que
-                    pode processar dados técnicos da conexão durante o desafio. Você pode recusar e usar o site normalmente;
-                    pode mudar a escolha em “Privacidade e acessos”. Revogar interrompe registros futuros, mas não apaga
-                    automaticamente registros anteriores.
-                </p>
-            </div>
-            <div className="access-consent-actions">
-                <button type="button" className="access-consent-secondary" onClick={() => escolher("declined")}>
-                    Não permitir
-                </button>
-                <button type="button" className="access-consent-primary" onClick={() => escolher("accepted")}>
-                    Permitir monitoramento anônimo
-                </button>
-            </div>
+                    <p>
+                        Se permitir, usamos um identificador aleatório assinado no servidor para contar entradas e sessões deste
+                        navegador. Os relatórios são diários, em horário de Brasília, e mantêm o histórico para acompanhar o
+                        crescimento. Não associamos o identificador à conta, nome ou e-mail e o Riff Theory não coleta nem
+                        armazena IP. Para reduzir registros automatizados, a verificação é feita pelo Cloudflare Turnstile, que
+                        pode processar dados técnicos da conexão durante o desafio. Você pode revisar esta informação em
+                        “Privacidade e acessos”.
+                    </p>
+                </div>
+                <div className="access-consent-actions">
+                    <button type="button" className="access-consent-primary" onClick={() => escolher("accepted")}>
+                        Permitir monitoramento anônimo
+                    </button>
+                </div>
         </aside>
     );
 }

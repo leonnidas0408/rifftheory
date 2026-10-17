@@ -27,6 +27,7 @@
     display: flex;
     flex: none;
     gap: 8px;
+    justify-content: flex-end;
 }
 
 .access-consent-actions button {
@@ -35,12 +36,6 @@
     border-radius: 9px;
     font-size: 12px;
     font-weight: 700;
-}
-
-.access-consent-secondary {
-    border: 1px solid var(--borda, #d8e0eb);
-    background: #fff;
-    color: var(--texto, #202b3a);
 }
 
 .access-consent-primary {
