@@ -230,7 +230,7 @@
 }
 
 .light-description {
-    color: rgb(166, 166, 166);
+    color: #53647a;
     font-size: 12px;
 }
 
@@ -360,7 +360,7 @@
     cursor: pointer;
 }
 .google-review-date {
-    color: #80868b;
+    color: #5f6368;
     font-size: 11px;
 }
 .google-review-status {
@@ -382,4 +382,3 @@
 .simple-margin-top {
     margin-top: 10px;
 }
-

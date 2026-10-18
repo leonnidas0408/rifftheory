@@ -63,7 +63,8 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 .brand-mark img { width: 100%; height: 100%; object-fit: cover; }
 .brand-copy { display: flex; flex-direction: column; gap: 2px; }
 .brand-copy strong, .mobile-brand strong { font-size: 17px; letter-spacing: -.055em; line-height: 1; }
-.brand-copy strong span, .mobile-brand strong span { color: #8faaff; }
+.brand-copy strong span { color: #a9bcff; }
+.mobile-brand strong span { color: #2449c8; }
 .brand-copy small { color: #95a4bb; font-size: 9px; font-weight: 700; letter-spacing: .17em; }
 .sidebar-avatar { margin: 0 0 23px; padding: 0 2px; }
 .sidebar .auth-card { padding: 9px; border: 1px solid rgba(255,255,255,.09); background: rgba(255,255,255,.055); }
@@ -182,7 +183,7 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 .beta-convite p { color: #586b8b; }
 .beta-convite .eyebrow { color: #315ce8; }
 .secao-heading h2 { color: #202b3a; font-size: 26px; letter-spacing: -.045em; }
-.secao-heading p { max-width: 65ch; color: #78869a; line-height: 1.55; }
+.secao-heading p { max-width: 65ch; color: #53647a; line-height: 1.55; }
 .exemplo-card { padding: 20px; }
 .exemplo-card > strong { letter-spacing: -.02em; }
 .exemplo-label { color: #bc5353; }
@@ -192,4 +193,3 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 .cta-seguranca { border: 1px solid #e8edf7; background: #f7f9fd; }
 .cta-seguranca strong { color: #2449c8; }
 .sugestoes { padding: 0; }
-
