@@ -90,7 +90,7 @@ export default function Home({ setPage }) {
                 <picture className="tab-hero-art" aria-hidden="true">
                     <source media="(max-width: 560px)" srcSet="/hero-portrait.webp" />
                     <source media="(max-width: 900px)" srcSet="/hero-square.webp" />
-                    <img src="/hero-wide.webp" alt="Braço de guitarra com uma trilha de acordes para praticar" title="Prática guiada de acordes no Riff Theory" width="2560" height="1440" fetchPriority="high" decoding="async" />
+                    <img src="/hero-wide.webp" alt="Braço de guitarra com uma trilha de acordes para praticar" title="Prática guiada de acordes no Riff Theory" width="1920" height="1080" fetchPriority="high" decoding="async" />
                 </picture>
                 <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
                 <h1>Escolha um acorde. Veja a posição no braço e comece a tocar.</h1>

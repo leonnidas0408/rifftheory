@@ -266,7 +266,7 @@ export default function ChatbotTab() {
                     >
                         <span className="chatbot-avatar">
                             {mensagem.autor === "bot" ? (
-                                <img src="/thonic.webp" alt="Thonic" />
+                                <img src="/thonic.webp" alt="Thonic" width="42" height="42" loading="lazy" decoding="async" />
                             ) : (
                                 <AvatarUsuario tamanho={42} />
                             )}
@@ -301,7 +301,7 @@ export default function ChatbotTab() {
                 {carregando && (
                     <div className="chatbot-linha chatbot-linha-bot">
                         <span className="chatbot-avatar">
-                            <img src="/thonic.webp" alt="Thonic está digitando" />
+                            <img src="/thonic.webp" alt="Thonic está digitando" width="42" height="42" loading="lazy" decoding="async" />
                         </span>
                         <div className="chatbot-bolha chatbot-bolha-bot chatbot-digitando">
                             <span></span>
