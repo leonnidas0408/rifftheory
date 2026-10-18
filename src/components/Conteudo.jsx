@@ -24,7 +24,7 @@ export default function Conteudo({ page, setPage, pageData, sidebarCollapsed, on
                 </button>
             )}
             <div className="auth-mobile">
-                <span className="mobile-brand"><img src="/icon.jpg" alt="" title="Riff Theory" width="32" height="32" decoding="async" /><strong>riff<span>theory</span></strong></span>
+                <span className="mobile-brand"><img src="/icon.webp" alt="" title="Riff Theory" width="32" height="32" decoding="async" /><strong>riff<span>theory</span></strong></span>
                 {GOOGLE_LOGIN_UI_ENABLED && <AuthButton compact />}
             </div>
             <nav className="abas" aria-label="Ferramentas">
