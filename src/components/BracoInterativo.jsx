@@ -123,6 +123,9 @@ export default function BracoInterativo({
     const ultimoInicio = useRef(0);
     const ultimaEscolha = useRef(abrirEscolha);
     const instrumento = getInstrument(instrumentId);
+    const notasDesenhadas = instrumento.type === "strings"
+        ? instrumento.strings.filter(({ number }) => !window.estado[number]?.muted)
+        : [];
 
     useEffect(() => {
         trocarInstrumento(instrumentId);
@@ -238,6 +241,19 @@ export default function BracoInterativo({
         }
     }
 
+    function tocarAcordeDesenhado() {
+        if (!notasDesenhadas.length) return;
+        notasDesenhadas.forEach((corda, indice) => {
+            const estado = window.estado[corda.number];
+            const midi = corda.midi + estado.fret;
+            window.setTimeout(() => tocarNota(midi, 1.8), indice * 42);
+        });
+        registrarEvento("drawn_chord_played", {
+            notas: notasDesenhadas.length,
+            reconhecido: false,
+        });
+    }
+
     function ocultarDicaParaSempre() {
         try {
             localStorage.setItem(CHAVE_TUTORIAL_OCULTO, "1");
@@ -282,6 +298,19 @@ export default function BracoInterativo({
                     <button className="pilula" onClick={compartilharBraco} type="button">
                         {compartilhado ? "Link copiado" : "Compartilhar"}
                     </button>
+                    {instrumento.type === "strings" && (
+                        <button
+                            className="pilula ligada"
+                            onClick={tocarAcordeDesenhado}
+                            type="button"
+                            disabled={!notasDesenhadas.length}
+                            aria-label={notasDesenhadas.length
+                                ? `Tocar as ${notasDesenhadas.length} cordas desenhadas`
+                                : "Desenhe pelo menos uma nota para tocar"}
+                        >
+                            Tocar desenho
+                        </button>
+                    )}
                 </div>
             </div>
 
