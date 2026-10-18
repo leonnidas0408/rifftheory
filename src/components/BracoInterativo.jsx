@@ -7,6 +7,7 @@ import Icone from "./Icone";
 import { atualizarBraco, carregarPreset, limparBraco, moverJanela, trocarInstrumento } from "../draw";
 import { formaDoAcorde, formaPorNome } from "../utils/acordes";
 import { registrarEvento } from "../utils/usageStats";
+import { tocarNota } from "../utils/audio";
 import NOTAS from "../assets/constants/NOTAS.json";
 import { DEFAULT_INSTRUMENT_ID, INSTRUMENTS, getInstrument } from "../instruments";
 
@@ -114,6 +115,8 @@ export default function BracoInterativo({
     const [trilha, setTrilha] = useState(null);
     const [passos, setPassos] = useState(0);
     const [concluida, setConcluida] = useState(false);
+    const [ultimaNota, setUltimaNota] = useState(null);
+    const [compartilhado, setCompartilhado] = useState(false);
     const [instrumentId, setInstrumentId] = useState(instrumentoPreferido);
     const [dicaOculta, setDicaOculta] = useState(tutorialOcultoParaSempre);
     const passosRef = useRef(0);
@@ -210,9 +213,29 @@ export default function BracoInterativo({
         mostrarAcorde(trilha.acordes[i], i, "trilha");
     }
 
-    function aoInteragir() {
+    function aoInteragir(detalhe) {
         setDemo(false);
+        if (detalhe?.midi !== null && detalhe?.midi !== undefined) {
+            tocarNota(detalhe.midi);
+            setUltimaNota(detalhe);
+        }
         registrarEvento("fretboard_note_clicked");
+    }
+
+    async function compartilharBraco() {
+        const url = `${window.location.origin}${window.location.pathname}#secao-braco`;
+        const texto = atual ? `Estou praticando o acorde ${atual} no Riff Theory.` : "Estou praticando no Riff Theory.";
+        try {
+            if (navigator.share) {
+                await navigator.share({ title: "Riff Theory", text: texto, url });
+            } else {
+                await navigator.clipboard.writeText(url);
+            }
+            setCompartilhado(true);
+            window.setTimeout(() => setCompartilhado(false), 1800);
+        } catch {
+            // Cancelamento do compartilhamento não altera o estado da prática.
+        }
     }
 
     function ocultarDicaParaSempre() {
@@ -256,6 +279,9 @@ export default function BracoInterativo({
                         <Icone nome="grade" tamanho={18} />
                         Escolher um acorde
                     </button>
+                    <button className="pilula" onClick={compartilharBraco} type="button">
+                        {compartilhado ? "Link copiado" : "Compartilhar"}
+                    </button>
                 </div>
             </div>
 
@@ -290,6 +316,12 @@ export default function BracoInterativo({
                 <div className="braco-info">
                     <span id="braco-nome">—</span>
                     <span id="braco-notas" />
+                </div>
+            )}
+
+            {ultimaNota && (
+                <div className="braco-feedback" role="status" aria-live="polite">
+                    Nota {ultimaNota.nota} · corda {ultimaNota.corda} · casa {ultimaNota.fret}
                 </div>
             )}
 

@@ -532,4 +532,13 @@ export function trata(clientX, clientY) {
 
 
     atualizarBraco();
+    const cordaInfo = instrumentoAtual().strings.find(({ number }) => number === numeroCorda);
+    const midi = !st.muted && cordaInfo ? cordaInfo.midi + st.fret : null;
+    return {
+        corda: numeroCorda,
+        fret: st.fret,
+        muted: st.muted,
+        midi,
+        nota: midi === null ? null : NOTAS[((midi % 12) + 12) % 12],
+    };
 }

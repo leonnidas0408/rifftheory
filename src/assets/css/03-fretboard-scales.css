@@ -146,6 +146,17 @@
     font-size: 14px;
 }
 
+.braco-feedback {
+    width: fit-content;
+    margin: -2px 0 4px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eef3ff;
+    color: #2449c8;
+    font-size: 12px;
+    font-weight: 650;
+}
+
 #braco-nome {
     color: var(--primaria-escura);
     font-size: 26px;

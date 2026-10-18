@@ -11,9 +11,12 @@ export default function Braco({ onInteragir }) {
             id="braco"
             width="1000"
             height="260"
+            tabIndex={0}
+            role="img"
+            aria-label="Braço interativo. Clique em uma corda ou casa para selecionar e ouvir uma nota."
             onClick={(e) => {
-                trata(e.clientX, e.clientY);
-                onInteragir?.();
+                const nota = trata(e.clientX, e.clientY);
+                onInteragir?.(nota);
             }}
         />
     );

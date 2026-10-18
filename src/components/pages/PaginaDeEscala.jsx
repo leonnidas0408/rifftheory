@@ -54,10 +54,22 @@ function nomeDaEscala({ nota, tipo }) {
     return `${nota} ${NOME_ESCALA[tipo] ?? tipo}`;
 }
 
+const CHAVE_ESCALA_PREFERIDA = "riffTheoryEscalaPreferida";
+
+function escalaPreferida() {
+    try {
+        const salva = JSON.parse(localStorage.getItem(CHAVE_ESCALA_PREFERIDA) || "null");
+        if (salva?.nota && salva?.tipo) return salva;
+    } catch {
+        // Usa a escala inicial quando o armazenamento não estiver disponível.
+    }
+    return { nota: "E", tipo: "menor" };
+}
+
 export default function PaginaDeEscala() {
     const [texto, setTexto] = useState("");
     const [erro, setErro] = useState("");
-    const [escala, setEscala] = useState({ nota: "E", tipo: "menor" });
+    const [escala, setEscala] = useState(escalaPreferida);
     const [rotacao, setRotacao] = useState(0);
     const [acorde, setAcorde] = useState(0);
     const [avulso, setAvulso] = useState(null);
@@ -72,6 +84,14 @@ export default function PaginaDeEscala() {
 
     const notas = calcEscala(atual.nota, atual.tipo);
     const campo = calcCampoHarmonico(atual.nota, atual.tipo);
+
+    useEffect(() => {
+        try {
+            localStorage.setItem(CHAVE_ESCALA_PREFERIDA, JSON.stringify(escala));
+        } catch {
+            // A preferência continua válida apenas nesta sessão.
+        }
+    }, [escala]);
 
     function formaDoGrau(grau) {
         return formaDoAcorde(grau.raiz, grau.qualidade);
