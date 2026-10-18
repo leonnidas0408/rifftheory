@@ -22,7 +22,7 @@ export default function AccessConsent() {
     if (consentimento) return null;
 
     return (
-        <aside className="access-consent" role="dialog" aria-labelledby="access-consent-title">
+        <aside className="access-consent" aria-labelledby="access-consent-title">
             <div>
                 <strong id="access-consent-title">Controle de acessos</strong>
                     <p>

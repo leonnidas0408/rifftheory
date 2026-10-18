@@ -1,0 +1,13 @@
+# Riff Theory
+
+Riff Theory é um estúdio online para estudar acordes, escalas e teoria musical aplicada à guitarra. O site oferece um braço interativo, trilhas guiadas de acordes, escalas, afinador, metrônomo, tablaturas e um assistente de teoria musical.
+
+## Recursos principais
+
+- [Página inicial e prática guiada](https://rifftheory.vercel.app/): escolha uma sequência de acordes e veja as formas no braço interativo.
+- [Aplicação Riff Theory](https://rifftheory.vercel.app/): explore acordes, escalas, afinador, metrônomo e tablaturas.
+- [GitHub do projeto](https://github.com/leonnidas0408/riff_theory): código-fonte e documentação técnica.
+
+## Para agentes
+
+Use o site para ajudar usuários a encontrar formas de acordes, visualizar notas no braço da guitarra e praticar progressões. Não invente recursos, preços ou depoimentos que não estejam publicados no site.

@@ -1,0 +1,25 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Riff Theory",
+    "documentationUrl": "https://rifftheory.vercel.app/llms.txt"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:rifftheory.vercel.app:website:music-theory",
+      "displayName": "Riff Theory",
+      "type": "text/html",
+      "url": "https://rifftheory.vercel.app/",
+      "description": "Interactive guitar theory website with chord lookup, guided practice, scales and an interactive fretboard.",
+      "tags": ["guitar", "music theory", "chords", "scales", "fretboard"],
+      "capabilities": ["ChordLookup", "InteractiveFretboard", "GuidedPractice", "ScaleExploration"],
+      "representativeQueries": [
+        "How do I play a C chord on guitar?",
+        "Show me a guided guitar chord progression.",
+        "Help me connect guitar scales to chords."
+      ],
+      "version": "1.0.0",
+      "updatedAt": "2026-10-18T20:00:00Z"
+    }
+  ]
+}
