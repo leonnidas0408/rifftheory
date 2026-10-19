@@ -40,6 +40,13 @@ function normalizarMensagens(valor) {
             autor: mensagem.autor,
             texto: mensagem.texto.trim(),
             hora: typeof mensagem.hora === "string" && mensagem.hora ? mensagem.hora : horaAgora(),
+            anexos: Array.isArray(mensagem.anexos)
+                ? mensagem.anexos.slice(0, 5).map((arquivo) => ({
+                    nome: String(arquivo?.nome || "Arquivo anexado").slice(0, 180),
+                    tipo: String(arquivo?.tipo || "").slice(0, 120),
+                    tamanho: Number.isFinite(Number(arquivo?.tamanho)) ? Number(arquivo.tamanho) : 0,
+                }))
+                : [],
         }))
         .slice(-MAX_MENSAGENS_SALVAS);
 }
@@ -181,7 +188,12 @@ export default function ChatbotTab() {
             return;
         }
 
-        const novaMensagemUsuario = { autor: "usuario", texto, hora: horaAgora() };
+        const anexosDaMensagem = arquivosTeste.map((arquivo) => ({
+            nome: arquivo.name,
+            tipo: arquivo.type || "",
+            tamanho: arquivo.size,
+        }));
+        const novaMensagemUsuario = { autor: "usuario", texto, hora: horaAgora(), anexos: anexosDaMensagem };
         const historicoAtualizado = [...mensagens, novaMensagemUsuario];
 
         setMensagens(historicoAtualizado);
@@ -218,6 +230,7 @@ export default function ChatbotTab() {
             }
 
             const dados = await resposta.json();
+            setArquivosTeste([]);
 
             setMensagens((atual) => [
                 ...atual,
@@ -237,6 +250,7 @@ export default function ChatbotTab() {
         if (carregando || carregandoConversa) return;
         setMensagens([mensagemBoasVindas()]);
         setEntrada("");
+        setArquivosTeste([]);
         setErro("");
     }
 
@@ -315,6 +329,16 @@ export default function ChatbotTab() {
 
                         <div className={`chatbot-bolha chatbot-bolha-${mensagem.autor}`}>
                             <Markdown>{mensagem.texto}</Markdown>
+                            {mensagem.anexos?.length > 0 && (
+                                <ul className="chatbot-anexos-mensagem" aria-label="Arquivos anexados nesta mensagem">
+                                    {mensagem.anexos.map((arquivo, arquivoIndice) => (
+                                        <li key={`${arquivo.nome}-${arquivoIndice}`}>
+                                            <Icone nome="clipe" tamanho={14} />
+                                            <span title={arquivo.tipo || "Arquivo anexado"}>{arquivo.nome}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                             <time>{mensagem.hora}</time>
                         </div>
                     </div>
@@ -357,42 +381,33 @@ export default function ChatbotTab() {
 
             {erro && <div className="chatbot-erro">{erro}</div>}
 
-            {anexosTesteAtivo && (
-                <section className="chatbot-anexos-teste" aria-label="Teste local de anexos">
-                    <div className="chatbot-anexos-cabecalho">
-                        <strong>Anexos — modo de teste local</strong>
-                        <span>Modo de teste — arquivos são enviados para análise do Thonic.</span>
-                    </div>
-                    <input
-                        ref={inputArquivosRef}
-                        className="chatbot-input-arquivos"
-                        type="file"
-                        multiple
-                        onChange={(event) => {
-                            const novos = Array.from(event.target.files || []);
-                            setArquivosTeste((atuais) => [...atuais, ...novos]);
-                            event.target.value = "";
-                        }}
-                        aria-label="Selecionar arquivos de qualquer tipo"
-                    />
-                    <button type="button" className="chatbot-escolher-arquivos" onClick={() => inputArquivosRef.current?.click()} disabled={carregando}>
-                        Selecionar arquivos
-                    </button>
-                    {arquivosTeste.length > 0 && (
-                        <ul className="chatbot-arquivos-lista">
-                            {arquivosTeste.map((arquivo, indice) => (
-                                <li key={`${arquivo.name}-${indice}`}>
-                                    <span title={`${arquivo.name} · ${arquivo.type || "tipo desconhecido"}`}>
-                                        {arquivo.name} <small>({(arquivo.size / 1024).toFixed(1)} KB)</small>
-                                    </span>
-                                    <button type="button" aria-label={`Remover ${arquivo.name}`} onClick={() => setArquivosTeste((atuais) => atuais.filter((_, i) => i !== indice))}>Remover</button>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </section>
-            )}
             <form className="chatbot-form" onSubmit={enviarMensagem}>
+                {(user?.app_metadata?.plan === "premium" || anexosTesteAtivo) && (
+                    <>
+                        <input
+                            ref={inputArquivosRef}
+                            className="chatbot-input-arquivos"
+                            type="file"
+                            multiple
+                            onChange={(event) => {
+                                const novos = Array.from(event.target.files || []);
+                                setArquivosTeste((atuais) => [...atuais, ...novos]);
+                                event.target.value = "";
+                            }}
+                            aria-label="Selecionar arquivos de qualquer tipo"
+                        />
+                        <button
+                            type="button"
+                            className="chatbot-anexar"
+                            onClick={() => inputArquivosRef.current?.click()}
+                            disabled={carregando}
+                            title={`Anexar arquivo${arquivosTeste.length ? ` (${arquivosTeste.length} selecionados)` : ""}`}
+                            aria-label={`Anexar arquivo${arquivosTeste.length ? `, ${arquivosTeste.length} selecionados` : ""}`}
+                        >
+                            <Icone nome="clipe" tamanho={19} />
+                        </button>
+                    </>
+                )}
                 <input
                     type="text"
                     value={entrada}

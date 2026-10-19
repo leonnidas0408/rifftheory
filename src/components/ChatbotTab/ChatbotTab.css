@@ -252,22 +252,37 @@
 .chatbot-tab .chatbot-fala:hover { border-color: var(--primaria); color: var(--primaria-escura); }
 @media (max-width: 560px) { .chatbot-tab .chatbot-falas { margin-left: 0; } }
 
-.chatbot-anexos-teste {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    border: 1px dashed var(--primaria);
-    border-radius: 14px;
-    background: var(--painel-2);
-}
-.chatbot-anexos-cabecalho { display: flex; flex: 1 1 100%; justify-content: space-between; gap: 8px; color: var(--texto); font-size: 13px; }
-.chatbot-anexos-cabecalho span { color: var(--texto-suave); }
 .chatbot-input-arquivos { display: none; }
-.chatbot-escolher-arquivos, .chatbot-arquivos-lista button { padding: 8px 12px; border: 1px solid var(--borda); border-radius: 9px; background: #fff; color: var(--primaria-escura); font-weight: 700; cursor: pointer; }
-.chatbot-arquivos-lista { display: flex; flex: 1 1 100%; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.chatbot-arquivos-lista li { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: var(--texto); font-size: 13px; }
-.chatbot-arquivos-lista li span { overflow-wrap: anywhere; }
-.chatbot-arquivos-lista small { color: var(--texto-suave); }
-@media (max-width: 560px) { .chatbot-anexos-cabecalho { flex-direction: column; } }
+.chatbot-form .chatbot-anexar {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.82);
+}
+.chatbot-form .chatbot-anexar:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+.chatbot-form .chatbot-anexar:disabled { opacity: 0.45; }
+.chatbot-anexos-mensagem {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
+.chatbot-anexos-mensagem li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    font-size: 12px;
+    line-height: 1.25;
+    opacity: 0.9;
+}
+.chatbot-anexos-mensagem li .icone { flex: none; }
+.chatbot-anexos-mensagem li span { overflow-wrap: anywhere; }

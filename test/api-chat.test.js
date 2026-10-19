@@ -202,3 +202,34 @@ test("extracts a Premium text attachment and passes its contents to the AI", asy
     assert.equal(response.statusCode, 200);
     assert.match(aiPayload.messages.at(-1).content[0].text, /dó maior com sétima maior/);
 });
+test("extracts a Premium XLSX attachment after checking archive metadata", async () => {
+    process.env.SUPABASE_URL = "https://riff-test.supabase.co";
+    process.env.SUPABASE_ANON_KEY = "test-anon-key";
+    process.env.GROQ_API_KEY = "test-groq-key";
+    const ExcelJS = require("exceljs");
+    const workbook = new ExcelJS.Workbook();
+    workbook.addWorksheet("Acordes").addRow(["Cmaj7", "dó maior com sétima maior"]);
+    const xlsx = Buffer.from(await workbook.xlsx.writeBuffer());
+    let aiPayload;
+    global.fetch = async (url, options = {}) => {
+        if (String(url).endsWith("/auth/v1/user")) {
+            return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "premium" } }) };
+        }
+        if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) return { ok: true, json: async () => true };
+        if (String(url).includes("api.groq.com")) {
+            aiPayload = JSON.parse(options.body);
+            return { ok: true, json: async () => ({ choices: [{ message: { content: "A planilha contém um acorde Cmaj7." } }] }) };
+        }
+        throw new Error("unexpected external request");
+    };
+    const response = makeResponse();
+    await handler(makeRequest({
+        headers: { authorization: "Bearer valid-test-token" },
+        body: {
+            mensagens: [{ autor: "usuario", texto: "Interprete a planilha" }],
+            anexos: [{ nome: "acordes.xlsx", tipo: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", dados: xlsx.toString("base64") }],
+        },
+    }), response);
+    assert.equal(response.statusCode, 200);
+    assert.match(aiPayload.messages.at(-1).content[0].text, /dó maior com sétima maior/);
+});

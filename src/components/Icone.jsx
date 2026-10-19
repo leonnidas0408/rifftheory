@@ -21,6 +21,7 @@ const CAMINHOS = {
     grade: <><rect x="4" y="4" width="6" height="6" rx="1" /><rect x="14" y="4" width="6" height="6" rx="1" /><rect x="4" y="14" width="6" height="6" rx="1" /><rect x="14" y="14" width="6" height="6" rx="1" /></>,
     info: <><circle cx="12" cy="12" r="9" /><path d="M12 11v5m0-8h.01" /></>,
     enviar: <><path d="m3 11 18-8-8 18-2-8-8-2Z" /><path d="m11 13 5-5" /></>,
+    clipe: <><path d="m8 12.5 6.2-6.2a3.2 3.2 0 1 1 4.5 4.5l-8 8A5 5 0 0 1 1.6 11.7l8-8" /><path d="m7.5 14.5 7-7" /></>,
 };
 
 export default function Icone({ nome, tamanho = 22 }) {
