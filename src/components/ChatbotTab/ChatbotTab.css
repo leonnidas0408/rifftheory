@@ -251,3 +251,23 @@
 .chatbot-tab .chatbot-fala::before { content: ""; position: absolute; bottom: -5px; left: 12px; width: 8px; height: 8px; border-bottom: 1px solid var(--borda); border-left: 1px solid var(--borda); background: #fff; transform: skewY(-35deg) rotate(-8deg); }
 .chatbot-tab .chatbot-fala:hover { border-color: var(--primaria); color: var(--primaria-escura); }
 @media (max-width: 560px) { .chatbot-tab .chatbot-falas { margin-left: 0; } }
+
+.chatbot-anexos-teste {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border: 1px dashed var(--primaria);
+    border-radius: 14px;
+    background: var(--painel-2);
+}
+.chatbot-anexos-cabecalho { display: flex; flex: 1 1 100%; justify-content: space-between; gap: 8px; color: var(--texto); font-size: 13px; }
+.chatbot-anexos-cabecalho span { color: var(--texto-suave); }
+.chatbot-input-arquivos { display: none; }
+.chatbot-escolher-arquivos, .chatbot-arquivos-lista button { padding: 8px 12px; border: 1px solid var(--borda); border-radius: 9px; background: #fff; color: var(--primaria-escura); font-weight: 700; cursor: pointer; }
+.chatbot-arquivos-lista { display: flex; flex: 1 1 100%; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.chatbot-arquivos-lista li { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: var(--texto); font-size: 13px; }
+.chatbot-arquivos-lista li span { overflow-wrap: anywhere; }
+.chatbot-arquivos-lista small { color: var(--texto-suave); }
+@media (max-width: 560px) { .chatbot-anexos-cabecalho { flex-direction: column; } }

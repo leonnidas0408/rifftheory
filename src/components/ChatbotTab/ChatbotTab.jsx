@@ -50,10 +50,22 @@ const FALAS_THONIC = [
     { fala: "Uma dica para escalas?", pergunta: "Como escolho uma escala para improvisar?" },
 ];
 
+function lerArquivoComoDataUrl(arquivo) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(new Error(`Não foi possível ler ${arquivo.name}.`));
+        reader.readAsDataURL(arquivo);
+    });
+}
+
 export default function ChatbotTab() {
     const { session, user, loading: authLoading, authConfigured, signInWithGoogle, error: authError } = useAuth();
     const [mensagens, setMensagens] = useState([]);
     const [entrada, setEntrada] = useState("");
+    const [anexosTesteAtivo, setAnexosTesteAtivo] = useState(false);
+    const [arquivosTeste, setArquivosTeste] = useState([]);
+    const inputArquivosRef = useRef(null);
     const [carregando, setCarregando] = useState(false);
     const [carregandoConversa, setCarregandoConversa] = useState(false);
     const [erro, setErro] = useState("");
@@ -64,6 +76,21 @@ export default function ChatbotTab() {
 
     const storageKey = user?.id ? `${CONVERSA_STORAGE_PREFIXO}${user.id}` : null;
 
+    useEffect(() => {
+        const chave = "riffThonicAttachmentsTest";
+        const atualizar = () => {
+            const ativo = window.localStorage.getItem(chave) === "1";
+            setAnexosTesteAtivo(ativo);
+            if (!ativo) setArquivosTeste([]);
+        };
+        atualizar();
+        window.addEventListener("storage", atualizar);
+        window.addEventListener("riff-thonic-attachments-test", atualizar);
+        return () => {
+            window.removeEventListener("storage", atualizar);
+            window.removeEventListener("riff-thonic-attachments-test", atualizar);
+        };
+    }, []);
     useEffect(() => {
         fimDaListaRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [mensagens, carregando]);
@@ -142,8 +169,17 @@ export default function ChatbotTab() {
     async function enviarMensagem(evento) {
         evento.preventDefault();
 
-        const texto = entrada.trim();
+        const texto = entrada.trim() || (arquivosTeste.length ? "Interprete os arquivos anexados." : "");
         if (!texto || carregando || carregandoConversa) return;
+        const tamanhoTotalArquivos = arquivosTeste.reduce((total, arquivo) => total + arquivo.size, 0);
+        if (arquivosTeste.length > 5 || tamanhoTotalArquivos > 2_800_000) {
+            setErro("Selecione no máximo 5 arquivos e até 2,8 MB no total.");
+            return;
+        }
+        if (arquivosTeste.filter((arquivo) => arquivo.type.startsWith("image/")).length > 3) {
+            setErro("O Thonic aceita até 3 imagens por envio.");
+            return;
+        }
 
         const novaMensagemUsuario = { autor: "usuario", texto, hora: horaAgora() };
         const historicoAtualizado = [...mensagens, novaMensagemUsuario];
@@ -165,6 +201,11 @@ export default function ChatbotTab() {
                         autor: m.autor,
                         texto: m.texto,
                     })),
+                    anexos: await Promise.all(arquivosTeste.map(async (arquivo) => ({
+                        nome: arquivo.name,
+                        tipo: arquivo.type || "application/octet-stream",
+                        dados: (await lerArquivoComoDataUrl(arquivo)).split(",")[1],
+                    }))),
                 }),
             });
 
@@ -316,6 +357,41 @@ export default function ChatbotTab() {
 
             {erro && <div className="chatbot-erro">{erro}</div>}
 
+            {anexosTesteAtivo && (
+                <section className="chatbot-anexos-teste" aria-label="Teste local de anexos">
+                    <div className="chatbot-anexos-cabecalho">
+                        <strong>Anexos — modo de teste local</strong>
+                        <span>Modo de teste — arquivos são enviados para análise do Thonic.</span>
+                    </div>
+                    <input
+                        ref={inputArquivosRef}
+                        className="chatbot-input-arquivos"
+                        type="file"
+                        multiple
+                        onChange={(event) => {
+                            const novos = Array.from(event.target.files || []);
+                            setArquivosTeste((atuais) => [...atuais, ...novos]);
+                            event.target.value = "";
+                        }}
+                        aria-label="Selecionar arquivos de qualquer tipo"
+                    />
+                    <button type="button" className="chatbot-escolher-arquivos" onClick={() => inputArquivosRef.current?.click()} disabled={carregando}>
+                        Selecionar arquivos
+                    </button>
+                    {arquivosTeste.length > 0 && (
+                        <ul className="chatbot-arquivos-lista">
+                            {arquivosTeste.map((arquivo, indice) => (
+                                <li key={`${arquivo.name}-${indice}`}>
+                                    <span title={`${arquivo.name} · ${arquivo.type || "tipo desconhecido"}`}>
+                                        {arquivo.name} <small>({(arquivo.size / 1024).toFixed(1)} KB)</small>
+                                    </span>
+                                    <button type="button" aria-label={`Remover ${arquivo.name}`} onClick={() => setArquivosTeste((atuais) => atuais.filter((_, i) => i !== indice))}>Remover</button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </section>
+            )}
             <form className="chatbot-form" onSubmit={enviarMensagem}>
                 <input
                     type="text"
@@ -328,13 +404,13 @@ export default function ChatbotTab() {
                 <button
                     type="submit"
                     aria-label="Enviar"
-                    disabled={carregando || !entrada.trim()}
+                    disabled={carregando || (!entrada.trim() && arquivosTeste.length === 0)}
                 >
                     <Icone nome="enviar" tamanho={22} />
                 </button>
             </form>
             <p className="chatbot-privacidade">
-                Sua conversa é salva na sua conta para continuar de onde parou quando você voltar. O login Google é obrigatório para usar o Thonic; limites de uso se aplicam.
+                Sua conversa é salva na sua conta. Com anexos, o conteúdo é processado pelo serviço de IA para gerar a resposta; limites de uso se aplicam.
             </p>
         </div>
     );

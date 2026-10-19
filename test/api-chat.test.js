@@ -55,7 +55,7 @@ test("blocks request bodies above the configured size before authentication", as
     const response = makeResponse();
 
     await handler(makeRequest({
-        headers: { "content-length": "70000" },
+        headers: { "content-length": "5000000" },
         body: { mensagens: [{ autor: "usuario", texto: "escala" }] },
     }), response);
 
@@ -70,7 +70,7 @@ test("blocks over-quota users without calling the AI provider", async () => {
     global.fetch = async (url) => {
         calls.push(String(url));
         if (String(url).endsWith("/auth/v1/user")) {
-            return { ok: true, json: async () => ({ id: "user-123" }) };
+            return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "premium" } }) };
         }
         if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) {
             return { ok: true, json: async () => false };
@@ -97,7 +97,7 @@ test("fails closed when the persistent quota service is unavailable", async () =
     global.fetch = async (url) => {
         calls.push(String(url));
         if (String(url).endsWith("/auth/v1/user")) {
-            return { ok: true, json: async () => ({ id: "user-123" }) };
+            return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "premium" } }) };
         }
         if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) {
             return { ok: false, status: 503 };
@@ -124,7 +124,7 @@ test("calls the AI only after session validation and persistent quota approval",
     global.fetch = async (url) => {
         calls.push(String(url));
         if (String(url).endsWith("/auth/v1/user")) {
-            return { ok: true, json: async () => ({ id: "user-123" }) };
+            return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "premium" } }) };
         }
         if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) {
             return { ok: true, json: async () => true };
@@ -150,4 +150,55 @@ test("calls the AI only after session validation and persistent quota approval",
     assert.equal(calls[0].endsWith("/auth/v1/user"), true);
     assert.equal(calls[1].endsWith("/rest/v1/rpc/consume_thonic_chat_quota"), true);
     assert.equal(calls[2].includes("api.groq.com"), true);
+});
+
+test("denies attachments unless the verified Supabase app metadata grants Premium", async () => {
+    process.env.SUPABASE_URL = "https://riff-test.supabase.co";
+    process.env.SUPABASE_ANON_KEY = "test-anon-key";
+    process.env.GROQ_API_KEY = "test-groq-key";
+    let calls = 0;
+    global.fetch = async (url) => {
+        calls++;
+        if (String(url).endsWith("/auth/v1/user")) {
+            return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "free" } }) };
+        }
+        throw new Error("quota or AI must not be called for non-Premium attachment request");
+    };
+    const response = makeResponse();
+    await handler(makeRequest({
+        headers: { authorization: "Bearer valid-test-token" },
+        body: {
+            mensagens: [{ autor: "usuario", texto: "Analise o arquivo" }],
+            anexos: [{ nome: "acordes.txt", tipo: "text/plain", dados: Buffer.from("Cmaj7").toString("base64") }],
+        },
+    }), response);
+    assert.equal(response.statusCode, 403);
+    assert.equal(calls, 1);
+});
+test("extracts a Premium text attachment and passes its contents to the AI", async () => {
+    process.env.SUPABASE_URL = "https://riff-test.supabase.co";
+    process.env.SUPABASE_ANON_KEY = "test-anon-key";
+    process.env.GROQ_API_KEY = "test-groq-key";
+    let aiPayload;
+    global.fetch = async (url, options = {}) => {
+        if (String(url).endsWith("/auth/v1/user")) {
+            return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "premium" } }) };
+        }
+        if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) return { ok: true, json: async () => true };
+        if (String(url).includes("api.groq.com")) {
+            aiPayload = JSON.parse(options.body);
+            return { ok: true, json: async () => ({ choices: [{ message: { content: "O arquivo contém um acorde Cmaj7." } }] }) };
+        }
+        throw new Error("unexpected external request");
+    };
+    const response = makeResponse();
+    await handler(makeRequest({
+        headers: { authorization: "Bearer valid-test-token" },
+        body: {
+            mensagens: [{ autor: "usuario", texto: "O que há neste arquivo?" }],
+            anexos: [{ nome: "acordes.txt", tipo: "text/plain", dados: Buffer.from("Cmaj7 = dó maior com sétima maior").toString("base64") }],
+        },
+    }), response);
+    assert.equal(response.statusCode, 200);
+    assert.match(aiPayload.messages.at(-1).content[0].text, /dó maior com sétima maior/);
 });

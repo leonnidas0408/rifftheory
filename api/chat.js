@@ -25,7 +25,11 @@ const MAX_MENSAGENS_HISTORICO = 12; // limita o tamanho do payload enviado
 const MAX_TEXTO_MENSAGEM = 2000;
 const MAX_TEXTO_TOTAL = 8000;
 const MAX_TOKENS_RESPOSTA = 700;
-const MAX_REQUEST_BODY_BYTES = 64 * 1024;
+const MAX_REQUEST_BODY_BYTES = 4 * 1024 * 1024;
+const MAX_ATTACHMENT_BYTES = 2_800_000;
+const MAX_ATTACHMENT_COUNT = 5;
+const MAX_ATTACHMENT_TEXT = 24_000;
+const VISION_MODEL = process.env.GROQ_VISION_MODEL || "qwen/qwen3.8-27b";
 
 const SYSTEM_PROMPT_BASE = `Você é o assistente de IA do Riff Theory, um app de violão/guitarra e teoria musical. Seu nome é Thonic.
 
@@ -216,6 +220,89 @@ function validarMensagens(mensagens) {
     return { mensagens: validas };
 }
 
+const MIME_IMAGENS_PERMITIDOS = new Set(["image/jpeg", "image/png", "image/webp"]);
+const EXTENSOES_TEXTO = new Set([".txt", ".md", ".csv", ".tsv", ".json", ".xml", ".html", ".htm", ".rtf", ".log"]);
+const EXTENSOES_AUDIO = new Set([".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".ogg", ".wav", ".webm", ".flac"]);
+function erroAnexo(erro, status = 400) { return { erro, status }; }
+async function transcreverAudio(buffer, nome, apiKey) {
+    const form = new FormData();
+    form.append("file", new Blob([buffer]), nome);
+    form.append("model", process.env.GROQ_AUDIO_MODEL || "whisper-large-v3-turbo");
+    form.append("language", "pt");
+    form.append("response_format", "json");
+    const resposta = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
+        method: "POST", headers: { Authorization: `Bearer ${apiKey}` }, body: form,
+    });
+    if (!resposta.ok) throw new Error("audio_transcription_failed");
+    const dados = await resposta.json();
+    return String(dados.text || "").slice(0, MAX_ATTACHMENT_TEXT);
+}
+async function lerAnexos(anexos, apiKey) {
+    if (anexos == null) return { anexos: [], contexto: "", imagens: [] };
+    if (!Array.isArray(anexos) || anexos.length > MAX_ATTACHMENT_COUNT) {
+        return erroAnexo(`Envie no máximo ${MAX_ATTACHMENT_COUNT} arquivos.`, 413);
+    }
+    let totalBytes = 0;
+    let contexto = "";
+    const imagens = [];
+    const nomes = new Set();
+    for (const anexo of anexos) {
+        if (!anexo || typeof anexo.nome !== "string" || typeof anexo.dados !== "string") return erroAnexo("Formato de anexo inválido.");
+        const nome = path.basename(anexo.nome).slice(0, 180);
+        const extensao = path.extname(nome).toLowerCase();
+        if (!nome || anexo.dados.length > MAX_ATTACHMENT_BYTES * 1.4) return erroAnexo("O anexo excede o tamanho máximo permitido.", 413);
+        let buffer;
+        try { buffer = Buffer.from(anexo.dados, "base64"); } catch { return erroAnexo(`Não foi possível ler ${nome}.`); }
+        if (!buffer.length || buffer.toString("base64").replace(/=+$/, "") !== anexo.dados.replace(/=+$/, "")) return erroAnexo(`Arquivo inválido: ${nome}.`);
+        totalBytes += buffer.length;
+        if (totalBytes > MAX_ATTACHMENT_BYTES) return erroAnexo("O tamanho total dos anexos deve ser até 2,8 MB.", 413);
+        const tipo = typeof anexo.tipo === "string" ? anexo.tipo.toLowerCase().split(";")[0] : "";
+        if (MIME_IMAGENS_PERMITIDOS.has(tipo) && [".jpg", ".jpeg", ".png", ".webp"].includes(extensao)) {
+            if (imagens.length >= 3) return erroAnexo("O Thonic aceita até 3 imagens por envio.", 413);
+            imagens.push({ type: "image_url", image_url: { url: `data:${tipo};base64,${buffer.toString("base64")}` } });
+            nomes.add(nome);
+            continue;
+        }
+        try {
+            let texto = "";
+            if (extensao === ".pdf") {
+                const pdfParse = require("pdf-parse");
+                texto = (await pdfParse(buffer)).text;
+            } else if (extensao === ".docx") {
+                const mammoth = require("mammoth");
+                texto = (await mammoth.extractRawText({ buffer })).value;
+            } else if ([".xlsx", ".xls", ".ods"].includes(extensao)) {
+                const XLSX = require("xlsx");
+                const workbook = XLSX.read(buffer, { type: "buffer" });
+                texto = workbook.SheetNames.slice(0, 8).map((sheet) => `Planilha ${sheet}:\n${XLSX.utils.sheet_to_csv(workbook.Sheets[sheet])}`).join("\n\n");
+            } else if (extensao === ".pptx" || extensao === ".odt") {
+                const JSZip = require("jszip");
+                const zip = await JSZip.loadAsync(buffer);
+                const arquivosXml = Object.keys(zip.files).filter((arquivo) =>
+                    extensao === ".pptx" ? /^ppt\/slides\/slide\d+\.xml$/i.test(arquivo) : arquivo === "content.xml"
+                ).slice(0, 60);
+                const textos = await Promise.all(arquivosXml.map(async (arquivo) => (await zip.files[arquivo].async("string"))
+                    .replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<")
+                    .replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s+/g, " ")));
+                texto = textos.join("\n");
+            } else if (EXTENSOES_TEXTO.has(extensao)) {
+                texto = buffer.toString("utf8");
+            } else if (EXTENSOES_AUDIO.has(extensao)) {
+                texto = await transcreverAudio(buffer, nome, apiKey);
+            } else {
+                return erroAnexo(`Formato não interpretável por enquanto: ${nome}. Use imagem PNG/JPEG/WebP, PDF, DOCX, PPTX, ODT, planilhas XLSX/XLS/ODS, texto ou áudio compatível.`, 415);
+            }
+            texto = String(texto).replace(/\u0000/g, "").trim().slice(0, MAX_ATTACHMENT_TEXT);
+            if (texto) contexto += `\n\n[Arquivo anexado: ${nome}]\n${texto}`;
+            else contexto += `\n\n[Arquivo anexado: ${nome}; sem texto extraível.]`;
+            nomes.add(nome);
+        } catch (err) {
+            console.error("Falha ao processar anexo:", err?.name || "erro_desconhecido");
+            return erroAnexo(`Não consegui interpretar ${nome}. Verifique se o arquivo não está protegido ou corrompido.`, 422);
+        }
+    }
+    return { anexos: [...nomes], contexto: contexto.slice(0, MAX_ATTACHMENT_TEXT), imagens };
+}
 module.exports = async function handler(req, res) {
     if (req.method !== "POST") {
         res.status(405).json({ erro: "Método não permitido." });
@@ -250,6 +337,26 @@ module.exports = async function handler(req, res) {
         return;
     }
     const { mensagens } = validacao;
+    const anexosRecebidos = req.body?.anexos ?? [];
+    if (!Array.isArray(anexosRecebidos)) {
+        res.status(400).json({ erro: "Formato de anexo inválido." });
+        return;
+    }
+    if (anexosRecebidos.length > 0 && sessao.usuario?.app_metadata?.plan !== "premium") {
+        res.status(403).json({ erro: "Anexos no Thonic são exclusivos do plano Premium." });
+        return;
+    }
+    let anexosProcessados;
+    try {
+        anexosProcessados = await lerAnexos(anexosRecebidos, apiKey);
+    } catch {
+        res.status(503).json({ erro: "Não foi possível processar os anexos agora. Tente novamente." });
+        return;
+    }
+    if (anexosProcessados.erro) {
+        res.status(anexosProcessados.status).json({ erro: anexosProcessados.erro });
+        return;
+    }
 
     let cotaPermitida;
     try {
@@ -284,11 +391,17 @@ module.exports = async function handler(req, res) {
 
     const mensagensParaGroq = [
         { role: "system", content: systemPrompt },
-        ...historicoRecente.map((m) => ({
-            role: m.autor === "usuario" ? "user" : "assistant",
-            content: m.texto,
-        })),
+        ...historicoRecente.map((m) => {
+            const ehUltimaPergunta = m === ultimaMensagemUsuario;
+            if (ehUltimaPergunta && (anexosProcessados.contexto || anexosProcessados.imagens.length)) {
+                const partes = [{ type: "text", text: `${m.texto || "Interprete os arquivos anexados."}${anexosProcessados.contexto}` }];
+                partes.push(...anexosProcessados.imagens);
+                return { role: "user", content: partes };
+            }
+            return { role: m.autor === "usuario" ? "user" : "assistant", content: m.texto };
+        }),
     ];
+    const modelo = anexosProcessados.imagens.length ? VISION_MODEL : GROQ_MODEL;
 
     try {
         const respostaGroq = await fetch(GROQ_API_URL, {
@@ -298,7 +411,7 @@ module.exports = async function handler(req, res) {
                 Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-                model: GROQ_MODEL,
+                model: modelo,
                 messages: mensagensParaGroq,
                 temperature: 0.4,
                 max_tokens: MAX_TOKENS_RESPOSTA,
@@ -332,7 +445,7 @@ module.exports = async function handler(req, res) {
 module.exports.config = {
     api: {
         bodyParser: {
-            sizeLimit: "64kb",
+            sizeLimit: "4mb",
         },
     },
 };
