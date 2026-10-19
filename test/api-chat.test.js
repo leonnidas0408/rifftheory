@@ -3,11 +3,9 @@ const assert = require("node:assert/strict");
 const handler = require("../api/chat.js");
 
 const originalFetch = global.fetch;
-const originalEnv = {
-    SUPABASE_URL: process.env.SUPABASE_URL,
-    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
-    GROQ_API_KEY: process.env.GROQ_API_KEY,
-};
+const GROQ_API_KEY_NAMES = ["GROQ_API_KEY", ...Array.from({ length: 19 }, (_, indice) => `GROQ_API_KEY_${indice + 2}`)];
+const ENV_NAMES = ["SUPABASE_URL", "SUPABASE_ANON_KEY", ...GROQ_API_KEY_NAMES];
+const originalEnv = Object.fromEntries(ENV_NAMES.map((name) => [name, process.env[name]]));
 
 function makeResponse() {
     return {
@@ -150,6 +148,92 @@ test("calls the AI only after session validation and persistent quota approval",
     assert.equal(calls[0].endsWith("/auth/v1/user"), true);
     assert.equal(calls[1].endsWith("/rest/v1/rpc/consume_thonic_chat_quota"), true);
     assert.equal(calls[2].includes("api.groq.com"), true);
+});
+
+test("rotates through keys and falls back after a Groq 429", async () => {
+    process.env.SUPABASE_URL = "https://riff-test.supabase.co";
+    process.env.SUPABASE_ANON_KEY = "test-anon-key";
+    for (const name of GROQ_API_KEY_NAMES) delete process.env[name];
+    process.env.GROQ_API_KEY = "test-groq-primary";
+    process.env.GROQ_API_KEY_2 = "test-groq-backup";
+    const triedKeys = [];
+    global.fetch = async (url, options = {}) => {
+        if (String(url).endsWith("/auth/v1/user")) return { ok: true, json: async () => ({ id: "user-123" }) };
+        if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) return { ok: true, json: async () => true };
+        if (String(url).includes("api.groq.com")) {
+            triedKeys.push(options.headers.Authorization);
+            if (triedKeys.length === 1) return { ok: false, status: 429 };
+            return { ok: true, json: async () => ({ choices: [{ message: { content: "Resposta pelo fallback." } }] }) };
+        }
+        throw new Error("unexpected external request");
+    };
+    const response = makeResponse();
+
+    await handler(makeRequest({
+        headers: { authorization: "Bearer valid-test-token" },
+        body: { mensagens: [{ autor: "usuario", texto: "Como praticar acordes?" }] },
+    }), response);
+
+    assert.equal(response.statusCode, 200);
+    assert.match(response.body.resposta, /fallback/);
+    assert.equal(triedKeys.length, 2);
+    assert.equal(new Set(triedKeys).size, 2);
+});
+
+test("round-robins the starting key across successive requests", async () => {
+    process.env.SUPABASE_URL = "https://riff-test.supabase.co";
+    process.env.SUPABASE_ANON_KEY = "test-anon-key";
+    for (const name of GROQ_API_KEY_NAMES) delete process.env[name];
+    process.env.GROQ_API_KEY = "test-groq-one";
+    process.env.GROQ_API_KEY_2 = "test-groq-two";
+    process.env.GROQ_API_KEY_3 = "test-groq-three";
+    const startingKeys = [];
+    global.fetch = async (url, options = {}) => {
+        if (String(url).endsWith("/auth/v1/user")) return { ok: true, json: async () => ({ id: "user-123" }) };
+        if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) return { ok: true, json: async () => true };
+        if (String(url).includes("api.groq.com")) {
+            startingKeys.push(options.headers.Authorization);
+            return { ok: true, json: async () => ({ choices: [{ message: { content: "Tudo certo." } }] }) };
+        }
+        throw new Error("unexpected external request");
+    };
+
+    for (let indice = 0; indice < 3; indice++) {
+        const response = makeResponse();
+        await handler(makeRequest({
+            headers: { authorization: "Bearer valid-test-token" },
+            body: { mensagens: [{ autor: "usuario", texto: "Como praticar acordes?" }] },
+        }), response);
+        assert.equal(response.statusCode, 200);
+    }
+
+    assert.equal(new Set(startingKeys).size, 3);
+});
+
+test("attempts all 20 configured Groq keys before failing over", async () => {
+    process.env.SUPABASE_URL = "https://riff-test.supabase.co";
+    process.env.SUPABASE_ANON_KEY = "test-anon-key";
+    for (const [indice, name] of GROQ_API_KEY_NAMES.entries()) process.env[name] = `test-groq-key-${indice + 1}`;
+    const triedKeys = [];
+    global.fetch = async (url, options = {}) => {
+        if (String(url).endsWith("/auth/v1/user")) return { ok: true, json: async () => ({ id: "user-123" }) };
+        if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) return { ok: true, json: async () => true };
+        if (String(url).includes("api.groq.com")) {
+            triedKeys.push(options.headers.Authorization);
+            return { ok: false, status: 429 };
+        }
+        throw new Error("unexpected external request");
+    };
+    const response = makeResponse();
+
+    await handler(makeRequest({
+        headers: { authorization: "Bearer valid-test-token" },
+        body: { mensagens: [{ autor: "usuario", texto: "Como praticar acordes?" }] },
+    }), response);
+
+    assert.equal(response.statusCode, 502);
+    assert.equal(triedKeys.length, 20);
+    assert.equal(new Set(triedKeys).size, 20);
 });
 
 test("denies attachments unless the verified Supabase app metadata grants Premium", async () => {
