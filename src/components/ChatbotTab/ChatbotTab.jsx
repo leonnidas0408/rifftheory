@@ -7,6 +7,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { supabase } from "../../auth/supabase";
 import "./ChatbotTab.css";
 import Markdown from "react-markdown";
+import ThonicStudio from "./ThonicStudio";
 
 const CONVERSA_STORAGE_PREFIXO = "riffTheoryThonicConversation:v1:";
 const MAX_MENSAGENS_SALVAS = 100;
@@ -66,13 +67,14 @@ function lerArquivoComoDataUrl(arquivo) {
     });
 }
 
-export default function ChatbotTab() {
+export default function ChatbotTab({ setPage }) {
     const { session, user, loading: authLoading, authConfigured, signInWithGoogle, error: authError } = useAuth();
     const [mensagens, setMensagens] = useState([]);
     const [entrada, setEntrada] = useState("");
     const [anexosTesteAtivo, setAnexosTesteAtivo] = useState(false);
     const [arquivosTeste, setArquivosTeste] = useState([]);
     const inputArquivosRef = useRef(null);
+    const formRef = useRef(null);
     const [carregando, setCarregando] = useState(false);
     const [carregandoConversa, setCarregandoConversa] = useState(false);
     const [erro, setErro] = useState("");
@@ -246,6 +248,12 @@ export default function ChatbotTab() {
         }
     }
 
+    function pedirGuiaAoThonic(texto) {
+        if (carregando || carregandoConversa) return;
+        setEntrada(texto);
+        window.requestAnimationFrame(() => formRef.current?.requestSubmit());
+    }
+
     function novaConversa() {
         if (carregando || carregandoConversa) return;
         setMensagens([mensagemBoasVindas()]);
@@ -312,6 +320,13 @@ export default function ChatbotTab() {
                     <Icone nome="novaConversa" tamanho={24} />
                 </button>
             </div>
+
+            <ThonicStudio
+                onAskThonic={pedirGuiaAoThonic}
+                onOpenTabMaker={() => setPage?.("Tablaturas")}
+                onOpenFretboard={() => setPage?.("Início")}
+                onOpenPractice={() => setPage?.("Prática")}
+            />
 
             <div className="chatbot-mensagens">
                 {mensagens.map((mensagem, indice) => (
@@ -381,7 +396,7 @@ export default function ChatbotTab() {
 
             {erro && <div className="chatbot-erro">{erro}</div>}
 
-            <form className="chatbot-form" onSubmit={enviarMensagem}>
+            <form ref={formRef} className="chatbot-form" onSubmit={enviarMensagem}>
                 {(user?.app_metadata?.plan === "premium" || anexosTesteAtivo) && (
                     <>
                         <input
@@ -425,7 +440,7 @@ export default function ChatbotTab() {
                 </button>
             </form>
             <p className="chatbot-privacidade">
-                Sua conversa é salva na sua conta. Com anexos, o conteúdo é processado pelo serviço de IA para gerar a resposta; limites de uso se aplicam.
+                Sua conversa é salva na sua conta. Preferências e progresso do Thonic Studio ficam neste navegador; ao pedir um guia personalizado, nível, foco e tempo de prática são enviados com a pergunta ao serviço de IA. Limites de uso se aplicam.
             </p>
         </div>
     );

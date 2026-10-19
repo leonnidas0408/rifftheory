@@ -40,7 +40,7 @@ function RiffTheoryApp() {
         "Metrônomo": { page: <Metronomo setPage={setPage} />, icone: "play", aba: "play" },
         "Tablaturas": { page: <Tablaturas />, icone: "tablaturas", aba: "tablaturas" },
         "Prática": { page: <Pratica />, icone: "pratica", aba: "pratica" },
-        "Chatbot": { page: <ChatbotTab /> },
+        "Chatbot": { page: <ChatbotTab setPage={setPage} /> },
     };
 
     return (
