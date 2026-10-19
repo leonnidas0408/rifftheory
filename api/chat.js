@@ -19,6 +19,11 @@ const path = require("path");
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+const GROQ_API_KEY_ENV_NAMES = [
+    "GROQ_API_KEY",
+    ...Array.from({ length: 19 }, (_, indice) => `GROQ_API_KEY_${indice + 2}`),
+];
+let indiceInicialChavesGroq = 0;
 
 const MAX_TRECHOS_CONTEXTO = 4;
 const MAX_MENSAGENS_HISTORICO = 12; // limita o tamanho do payload enviado
@@ -126,6 +131,61 @@ function montarSystemPrompt(trechos) {
     return `${SYSTEM_PROMPT_BASE}\n\nTRECHOS DE REFERÊNCIA:\n${blocoTrechos}`;
 }
 
+function obterChavesGroq() {
+    return [...new Set(
+        GROQ_API_KEY_ENV_NAMES
+            .map((nome) => process.env[nome]?.trim())
+            .filter(Boolean)
+    )];
+}
+
+function ordenarChavesGroq(chaves) {
+    if (!chaves.length) return [];
+    const inicio = indiceInicialChavesGroq % chaves.length;
+    indiceInicialChavesGroq = (inicio + 1) % chaves.length;
+    return Array.from({ length: chaves.length }, (_, indice) => chaves[(inicio + indice) % chaves.length]);
+}
+
+async function requisitarGroqComFallback(chaves, fazerRequisicao) {
+    let ultimoStatus = null;
+    let falhaDeRede = false;
+    for (const apiKey of ordenarChavesGroq(chaves)) {
+        let resposta;
+        try {
+            resposta = await fazerRequisicao(apiKey);
+        } catch (erro) {
+            falhaDeRede = true;
+            continue;
+        }
+        if (resposta.ok) return resposta;
+        ultimoStatus = resposta.status;
+        if ([401, 403, 429].includes(resposta.status)) continue;
+        console.error("Falha da API da Groq:", resposta.status);
+        return null;
+    }
+    if (ultimoStatus != null) console.error("Todas as chaves Groq configuradas falharam:", ultimoStatus);
+    else if (falhaDeRede) console.error("Falha de rede ao tentar as chaves Groq configuradas.");
+    return null;
+}
+
+async function chamarChatGroq(mensagens, modelo, chaves) {
+    const resposta = await requisitarGroqComFallback(chaves, (apiKey) => fetch(GROQ_API_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+            model: modelo,
+            messages: mensagens,
+            temperature: 0.4,
+            max_tokens: MAX_TOKENS_RESPOSTA,
+        }),
+    }));
+    if (!resposta) return null;
+    return resposta.json();
+}
+
 async function validarSessao(req) {
     const authorization = typeof req.headers?.authorization === "string" ? req.headers.authorization : "";
     const tokenMatch = authorization.match(/^Bearer\s+(\S+)$/i);
@@ -227,16 +287,16 @@ const MIME_IMAGENS_PERMITIDOS = new Set(["image/jpeg", "image/png", "image/webp"
 const EXTENSOES_TEXTO = new Set([".txt", ".md", ".csv", ".tsv", ".json", ".xml", ".html", ".htm", ".rtf", ".log"]);
 const EXTENSOES_AUDIO = new Set([".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".ogg", ".wav", ".webm", ".flac"]);
 function erroAnexo(erro, status = 400) { return { erro, status }; }
-async function transcreverAudio(buffer, nome, apiKey) {
+async function transcreverAudio(buffer, nome, chaves) {
     const form = new FormData();
     form.append("file", new Blob([buffer]), nome);
     form.append("model", process.env.GROQ_AUDIO_MODEL || "whisper-large-v3-turbo");
     form.append("language", "pt");
     form.append("response_format", "json");
-    const resposta = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
+    const resposta = await requisitarGroqComFallback(chaves, (apiKey) => fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
         method: "POST", headers: { Authorization: `Bearer ${apiKey}` }, body: form,
-    });
-    if (!resposta.ok) throw new Error("audio_transcription_failed");
+    }));
+    if (!resposta) throw new Error("audio_transcription_failed");
     const dados = await resposta.json();
     return String(dados.text || "").slice(0, MAX_ATTACHMENT_TEXT);
 }
@@ -270,7 +330,7 @@ function assinaturaCompativel(buffer, extensao, tipo) {
     if ([".mp4", ".m4a"].includes(extensao)) return buffer.toString("ascii", 4, 8) === "ftyp";
     return true;
 }
-async function lerAnexos(anexos, apiKey) {
+async function lerAnexos(anexos, chavesGroq) {
     if (anexos == null) return { anexos: [], contexto: "", imagens: [] };
     if (!Array.isArray(anexos) || anexos.length > MAX_ATTACHMENT_COUNT) {
         return erroAnexo(`Envie no máximo ${MAX_ATTACHMENT_COUNT} arquivos.`, 413);
@@ -333,7 +393,7 @@ async function lerAnexos(anexos, apiKey) {
             } else if (EXTENSOES_TEXTO.has(extensao)) {
                 texto = buffer.toString("utf8");
             } else if (EXTENSOES_AUDIO.has(extensao)) {
-                texto = await transcreverAudio(buffer, nome, apiKey);
+                texto = await transcreverAudio(buffer, nome, chavesGroq);
             } else {
                 return erroAnexo(`Formato não interpretável por enquanto: ${nome}. Use imagem PNG/JPEG/WebP, PDF, DOCX, PPTX, ODT, planilhas XLSX/ODS, texto ou áudio compatível.`, 415);
             }
@@ -370,8 +430,8 @@ module.exports = async function handler(req, res) {
         return;
     }
 
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) {
+    const chavesGroq = obterChavesGroq();
+    if (!chavesGroq.length) {
         res.status(503).json({ erro: "O assistente não está configurado no momento." });
         return;
     }
@@ -393,7 +453,7 @@ module.exports = async function handler(req, res) {
     }
     let anexosProcessados;
     try {
-        anexosProcessados = await lerAnexos(anexosRecebidos, apiKey);
+        anexosProcessados = await lerAnexos(anexosRecebidos, chavesGroq);
     } catch {
         res.status(503).json({ erro: "Não foi possível processar os anexos agora. Tente novamente." });
         return;
@@ -449,31 +509,13 @@ module.exports = async function handler(req, res) {
     const modelo = anexosProcessados.imagens.length ? VISION_MODEL : GROQ_MODEL;
 
     try {
-        const respostaGroq = await fetch(GROQ_API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-                model: modelo,
-                messages: mensagensParaGroq,
-                temperature: 0.4,
-                max_tokens: MAX_TOKENS_RESPOSTA,
-            }),
-        });
-
-        if (!respostaGroq.ok) {
-            // Não registrar o corpo externo: ele pode conter texto de usuário ou detalhes internos.
-            console.error("Erro da API da Groq:", respostaGroq.status);
-
+        const dados = await chamarChatGroq(mensagensParaGroq, modelo, chavesGroq);
+        if (!dados) {
             res.status(502).json({
-                erro: "O serviço de IA não respondeu corretamente. Tente novamente.",
+                erro: "As chaves configuradas da Groq estão indisponíveis no momento. Tente novamente.",
             });
             return;
         }
-
-        const dados = await respostaGroq.json();
         const textoResposta =
             dados?.choices?.[0]?.message?.content?.trim() ||
             "Não consegui gerar uma resposta agora. Tente reformular a pergunta.";
