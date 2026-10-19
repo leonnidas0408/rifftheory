@@ -22,7 +22,7 @@
     "image-size": "^2.0.4",
     "jszip": "^3.10.2",
     "music-metadata": "^12.1.0",
-    "pdf-parse": "^1.1.1",
+    "pdf-parse": "^2.4.5",
     "react": "^19.2.8",
     "react-device-detect": "^2.2.3",
     "react-dom": "^19.2.8",
