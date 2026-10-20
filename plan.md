@@ -24,10 +24,17 @@ Transformar os itens do TODO em uma primeira versão funcional, prática e test�
 - `TODO.md`: status atualizado somente após validação do build.
 
 ## Restrições
-- Não alterar o fluxo de login, avaliações ou chatbot; as mudanças no Supabase ficam limitadas ao monitor de acessos já aprovado.
+- Manter o login Google do Thonic, mas não exigir Premium nem impor cota de mensagens pelo Riff Theory para o Thonic Básico gratuito.
+- Selecionar o modelo Premium no servidor a partir do `app_metadata.plan` verificado pelo Supabase; nunca confiar no plano indicado pelo cliente.
+- Preservar validação de sessão, limites por requisição e controles Premium de anexos; informar que a disponibilidade técnica do provedor pode variar.
 - Não introduzir dependências novas.
 - Manter a cascata CSS modular e a interface em português.
 - Áudio deve ser local via Web Audio API, sem enviar dados para servidor.
+
+## Atualização de escopo — níveis do Thonic (19/10/2026)
+- Thonic Básico: uso gratuito sem cota de mensagens do Riff Theory; login Google continua necessário para abrir/salvar conversa.
+- Thonic Premium: selecionar um modelo de IA mais avançado no backend e manter o envio de anexos como recurso Premium.
+- A interface e a landing page devem explicar essa diferença sem prometer disponibilidade além dos limites técnicos do provedor.
 
 ## Atualização de escopo — monitor de acessos (15/10/2026)
 - Manter a contagem consentida por identificador aleatório de navegador, sem usar contas Google para identificar visitantes.

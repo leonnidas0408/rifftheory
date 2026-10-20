@@ -18,7 +18,6 @@ const { readFileSync } = require("fs");
 const path = require("path");
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 const GROQ_API_KEY_ENV_NAMES = [
     "GROQ_API_KEY",
     ...Array.from({ length: 19 }, (_, indice) => `GROQ_API_KEY_${indice + 2}`),
@@ -139,6 +138,18 @@ function obterChavesGroq() {
     )];
 }
 
+function obterModeloGroqBasico() {
+    return process.env.GROQ_FREE_MODEL || "llama-3.3-70b-versatile";
+}
+
+function obterModeloGroqPremium() {
+    if (process.env.GROQ_PREMIUM_MODEL) return process.env.GROQ_PREMIUM_MODEL;
+    const modeloLegado = process.env.GROQ_MODEL;
+    return modeloLegado && modeloLegado !== obterModeloGroqBasico()
+        ? modeloLegado
+        : "openai/gpt-oss-120b";
+}
+
 function ordenarChavesGroq(chaves) {
     if (!chaves.length) return [];
     const inicio = indiceInicialChavesGroq % chaves.length;
@@ -223,33 +234,6 @@ async function validarSessao(req) {
     } catch {
         return { status: 503, erro: "Não foi possível validar sua sessão agora. Tente novamente." };
     }
-}
-
-async function consumirCotaChat(req) {
-    const authorization = typeof req.headers?.authorization === "string"
-        ? req.headers.authorization
-        : "";
-    const tokenMatch = authorization.match(/^Bearer\s+(\S+)$/i);
-    if (!tokenMatch) throw new Error("missing_authenticated_session");
-
-    const supabaseUrl = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
-    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-    if (!supabaseUrl || !supabaseAnonKey) throw new Error("quota_service_not_configured");
-
-    const resposta = await fetch(`${supabaseUrl}/rest/v1/rpc/consume_thonic_chat_quota`, {
-        method: "POST",
-        headers: {
-            apikey: supabaseAnonKey,
-            Authorization: `Bearer ${tokenMatch[1]}`,
-            "Content-Type": "application/json",
-        },
-        body: "{}",
-    });
-    if (!resposta.ok) throw new Error("quota_service_unavailable");
-
-    const permitido = await resposta.json();
-    if (typeof permitido !== "boolean") throw new Error("invalid_quota_response");
-    return permitido;
 }
 
 function validarMensagens(mensagens) {
@@ -463,18 +447,6 @@ module.exports = async function handler(req, res) {
         return;
     }
 
-    let cotaPermitida;
-    try {
-        cotaPermitida = await consumirCotaChat(req);
-    } catch {
-        res.status(503).json({ erro: "O controle de uso está indisponível. Tente novamente em instantes." });
-        return;
-    }
-    if (!cotaPermitida) {
-        res.status(429).json({ erro: "Limite de perguntas atingido. Aguarde um pouco e tente novamente." });
-        return;
-    }
-
     const ultimaMensagemUsuario = [...mensagens]
         .reverse()
         .find((m) => m.autor === "usuario");
@@ -506,7 +478,10 @@ module.exports = async function handler(req, res) {
             return { role: m.autor === "usuario" ? "user" : "assistant", content: m.texto };
         }),
     ];
-    const modelo = anexosProcessados.imagens.length ? VISION_MODEL : GROQ_MODEL;
+    const planoPremium = sessao.usuario?.app_metadata?.plan === "premium";
+    const modelo = anexosProcessados.imagens.length
+        ? VISION_MODEL
+        : planoPremium ? obterModeloGroqPremium() : obterModeloGroqBasico();
 
     try {
         const dados = await chamarChatGroq(mensagensParaGroq, modelo, chavesGroq);

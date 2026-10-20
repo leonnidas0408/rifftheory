@@ -159,7 +159,13 @@ sugerida de implementação (1 → 5) indicada no mapa.
 - [x] Repetição de CTA principal após o bloco de confiança e no convite final, com microcopy "sem conta".
 - [x] Prova social real mantida no hero, com nota, quantidade de avaliações e link para ler; sem inventar depoimentos.
 - [x] Garantias de confiança destacadas: sem cartão, progresso no navegador e transparência sobre o envio de perguntas ao Thonic.
-- [x] Quadro "Grátis para testar" versus "Premium", explicitando cadastro e a transparência sobre limites variáveis do Thonic sem inventar números.
+- [x] Quadro de planos explicando Thonic Básico gratuito e sem cota de mensagens no Riff Theory (com login Google), e Premium com modelo de IA mais avançado e anexos.
 - [x] Mini tutorial com expectativa de tempo e correção da prévia do acorde exibido no hero.
 - [x] Título descritivo adicionado à imagem-chave do hero para SEO.
 - [ ] Publicar as alterações no repositório/deploy após validação e acesso de publicação.
+
+## Thonic — gratuito e ilimitado; IA avançada no Premium
+
+- [x] **Acesso Básico gratuito:** “O Thonic não é para ser 100% pago; é para ser uma versão básica com usos ilimitados de forma gratuita”; permitir conversas para contas autenticadas sem cota de mensagens do Riff Theory, preservando autenticação e limites de tamanho/segurança.
+- [x] **IA melhor no Premium:** “uma IA melhor no Premium”; escolher no servidor um modelo Premium diferente apenas quando o `app_metadata.plan` validado pelo Supabase indicar Premium; manter anexos como recurso Premium.
+- [x] **Comunicação clara de planos:** explicar no chat e na landing page que o Básico é gratuito, não tem limite de mensagens definido pelo Riff Theory e requer login Google; explicar que Premium usa modelo mais avançado e que o provedor pode aplicar limites técnicos de disponibilidade.
