@@ -82,6 +82,7 @@ export default function ChatbotTab() {
     const timerPersistenciaRef = useRef(null);
 
     const storageKey = user?.id ? `${CONVERSA_STORAGE_PREFIXO}${user.id}` : null;
+    const isPremium = user?.app_metadata?.plan === "premium";
 
     useEffect(() => {
         const chave = "riffThonicAttachmentsTest";
@@ -313,6 +314,11 @@ export default function ChatbotTab() {
                 </button>
             </div>
 
+            <div className={`chatbot-plano${isPremium ? " chatbot-plano-premium" : ""}`} role="status">
+                <strong>{isPremium ? "Thonic Premium" : "Thonic Básico · grátis"}</strong>
+                <span>{isPremium ? "Modelo de IA mais avançado" : "Mensagens ilimitadas"}</span>
+            </div>
+
             <div className="chatbot-mensagens">
                 {mensagens.map((mensagem, indice) => (
                     <div
@@ -382,7 +388,7 @@ export default function ChatbotTab() {
             {erro && <div className="chatbot-erro">{erro}</div>}
 
             <form className="chatbot-form" onSubmit={enviarMensagem}>
-                {(user?.app_metadata?.plan === "premium" || anexosTesteAtivo) && (
+                {(isPremium || anexosTesteAtivo) && (
                     <>
                         <input
                             ref={inputArquivosRef}
@@ -425,7 +431,7 @@ export default function ChatbotTab() {
                 </button>
             </form>
             <p className="chatbot-privacidade">
-                Sua conversa é salva na sua conta. Com anexos, o conteúdo é processado pelo serviço de IA para gerar a resposta; limites de uso se aplicam.
+                Sua conversa é salva na sua conta. O Básico não tem cota de mensagens do Riff Theory; o Premium usa um modelo mais avançado. O provedor ainda pode aplicar limites técnicos de disponibilidade.
             </p>
         </div>
     );

@@ -189,7 +189,7 @@ export default function Home({ setPage }) {
                     <h2 id="titulo-objecoes">Feito para testar sem compromisso</h2>
                 </div>
                 <div className="objecoes-grid">
-                    <div><strong>Preço</strong><span><b>Gratuito para experimentar.</b> A prática guiada não exige cadastro; o Chatbot exige login Google. Limites de uso se aplicam ao assistente.</span></div>
+                    <div><strong>Preço</strong><span><b>Thonic Básico gratuito e sem cota de mensagens do RT.</b> Login Google necessário para conversar; Premium usa um modelo de IA mais avançado.</span></div>
                     <div><strong>Setup</strong><span><b>Abra e toque.</b> Funciona no navegador, sem instalar programa ou configurar conta.</span></div>
                     <div><strong>Dados</strong><span><b>Prática e progresso ficam no navegador.</b> Perguntas e histórico recente só são enviados quando você usa o Chatbot.</span></div>
                     <div><strong>Troca de ferramenta</strong><span><b>Prática guiada dentro do app.</b> Use a busca apenas quando quiser partir de uma música.</span></div>
@@ -232,24 +232,25 @@ export default function Home({ setPage }) {
                 </div>
                 <div className="planos-grade">
                     <article className="plano-card plano-destaque">
-                        <div className="plano-topo"><span className="plano-tag">Para experimentar</span><strong>Grátis para testar</strong></div>
+                        <div className="plano-topo"><span className="plano-tag">Para começar</span><strong>Grátis · Thonic Básico</strong></div>
                         <ul>
                             <li>Trilhas guiadas de acordes</li>
                             <li>Braço interativo e busca de acordes</li>
                             <li>Escalas, afinador e metrônomo</li>
-                            <li>Sem cartão e sem conta para começar</li>
+                            <li>Thonic Básico para teoria musical, com mensagens ilimitadas</li>
+                            <li>Login Google para conversar e salvar o histórico do Thonic</li>
+                            <li>Sem cartão; ferramentas básicas do RT sem cadastro</li>
                         </ul>
                         <button className="pilula" type="button" onClick={() => iniciarTrilha(PROGRESSOES[0])}>Testar no braço</button>
                     </article>
                     <article className="plano-card">
-                        <div className="plano-topo"><span className="plano-tag plano-tag-premium">Com cadastro</span><strong>Premium · Thonic</strong></div>
+                        <div className="plano-topo"><span className="plano-tag plano-tag-premium">Opcional</span><strong>Premium · Thonic avançado</strong></div>
                         <ul>
-                            <li>Assistente para dúvidas de teoria musical</li>
-                            <li>Login Google e histórico salvo na sua conta</li>
-                            <li>Até 5 perguntas por minuto</li>
-                            <li>Até 30 perguntas por hora, por usuário</li>
+                            <li>Modelo de IA mais avançado para respostas de teoria musical</li>
+                            <li>Envio de imagens e arquivos para análise pelo Thonic</li>
+                            <li>Recursos Premium do Riff Theory</li>
                         </ul>
-                        <p className="plano-nota"><strong>Preço:</strong> ainda não publicado neste site. Ao enviar uma pergunta, o texto e o histórico recente são enviados ao serviço de IA para gerar a resposta.</p>
+                        <p className="plano-nota"><strong>Preço:</strong> ainda não publicado neste site. O Thonic Básico é gratuito; ao enviar uma pergunta, o texto e o histórico recente são enviados ao serviço de IA para gerar a resposta.</p>
                     </article>
                 </div>
             </section>
@@ -326,7 +327,7 @@ export default function Home({ setPage }) {
                 <span className="light-description">Nesse FAQ, RT serve como uma abreviação de Riff Theory.</span>
                 <FAQQuestion
                     question="Para usar o RT, precisa de cadastro?"
-                    answer="O cadastro é necessário somente para o plano premium e para usar o Thonic, nosso assistente de IA."
+                    answer="A maior parte do Riff Theory funciona sem cadastro. Para conversar com o Thonic Básico grátis e ilimitado, salvar o histórico ou usar o Premium, entre com Google. Não é necessário pagar para usar o Thonic Básico."
                 />
                 <FAQQuestion
                     question="O que fica salvo no RT?"
@@ -334,7 +335,7 @@ export default function Home({ setPage }) {
                 />
                 <FAQQuestion
                     question="Para que serve o chatbot?"
-                    answer="O nosso chatbot, o Thonic, serve para responder perguntas relacionadas a teoria musical. Na verdade, como ele foi feito pensando exatamente nisso, ele acabou sendo melhor do que outras IAs para responder perguntas desse tipo."
+                    answer="O Thonic Básico responde perguntas de teoria musical sem limite de mensagens e é gratuito. No Premium, ele usa um modelo de IA mais avançado e permite analisar anexos. A disponibilidade também depende dos limites técnicos do provedor de IA."
                 />
                 <FAQQuestion
                     question="O RT funciona no celular?"

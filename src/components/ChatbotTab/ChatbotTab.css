@@ -25,6 +25,24 @@
     color: #fff;
 }
 
+.chatbot-plano {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    width: fit-content;
+    margin: 0 0 8px;
+    padding: 6px 11px;
+    border: 1px solid var(--borda);
+    border-radius: 999px;
+    background: var(--painel-2);
+    color: var(--texto-suave);
+    font-size: 12px;
+}
+
+.chatbot-plano strong { color: var(--primaria-escura); }
+.chatbot-plano-premium { border-color: var(--primaria); background: var(--aba); }
+
 .chatbot-tab .barra-conta {
     flex: none;
     width: 38px;

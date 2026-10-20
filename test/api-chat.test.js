@@ -4,7 +4,7 @@ const handler = require("../api/chat.js");
 
 const originalFetch = global.fetch;
 const GROQ_API_KEY_NAMES = ["GROQ_API_KEY", ...Array.from({ length: 19 }, (_, indice) => `GROQ_API_KEY_${indice + 2}`)];
-const ENV_NAMES = ["SUPABASE_URL", "SUPABASE_ANON_KEY", ...GROQ_API_KEY_NAMES];
+const ENV_NAMES = ["SUPABASE_URL", "SUPABASE_ANON_KEY", ...GROQ_API_KEY_NAMES, "GROQ_MODEL", "GROQ_FREE_MODEL", "GROQ_PREMIUM_MODEL"];
 const originalEnv = Object.fromEntries(ENV_NAMES.map((name) => [name, process.env[name]]));
 
 function makeResponse() {
@@ -60,20 +60,58 @@ test("blocks request bodies above the configured size before authentication", as
     assert.equal(response.statusCode, 413);
 });
 
-test("blocks over-quota users without calling the AI provider", async () => {
+test("allows repeated free Thonic requests without an application quota", async () => {
     process.env.SUPABASE_URL = "https://riff-test.supabase.co";
     process.env.SUPABASE_ANON_KEY = "test-anon-key";
     process.env.GROQ_API_KEY = "test-groq-key";
+    process.env.GROQ_FREE_MODEL = "test-groq-free-model";
+    process.env.GROQ_PREMIUM_MODEL = "test-groq-premium-model";
     const calls = [];
-    global.fetch = async (url) => {
-        calls.push(String(url));
-        if (String(url).endsWith("/auth/v1/user")) {
+    const modelosEnviados = [];
+    global.fetch = async (url, options = {}) => {
+        const destino = String(url);
+        calls.push(destino);
+        if (destino.endsWith("/auth/v1/user")) {
+            return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "free" } }) };
+        }
+        if (destino.includes("api.groq.com")) {
+            modelosEnviados.push(JSON.parse(options.body).model);
+            return { ok: true, json: async () => ({ choices: [{ message: { content: "Resposta grátis." } }] }) };
+        }
+        throw new Error("Thonic Basic must not call a quota service");
+    };
+
+    for (let indice = 0; indice < 3; indice++) {
+        const response = makeResponse();
+        await handler(makeRequest({
+            headers: { authorization: "Bearer valid-test-token" },
+            body: { mensagens: [{ autor: "usuario", texto: `Pergunta ${indice + 1} sobre acordes?` }] },
+        }), response);
+        assert.equal(response.statusCode, 200);
+    }
+
+    assert.equal(modelosEnviados.length, 3);
+    assert.ok(modelosEnviados.every((modelo) => modelo === "test-groq-free-model"));
+    assert.equal(calls.some((url) => url.includes("consume_thonic_chat_quota")), false);
+});
+
+test("selects the advanced model for a verified Premium account", async () => {
+    process.env.SUPABASE_URL = "https://riff-test.supabase.co";
+    process.env.SUPABASE_ANON_KEY = "test-anon-key";
+    process.env.GROQ_API_KEY = "test-groq-key";
+    process.env.GROQ_FREE_MODEL = "test-groq-free-model";
+    process.env.GROQ_PREMIUM_MODEL = "test-groq-premium-model";
+    let modeloEnviado = "";
+    global.fetch = async (url, options = {}) => {
+        const destino = String(url);
+        if (destino.endsWith("/auth/v1/user")) {
             return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "premium" } }) };
         }
-        if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) {
-            return { ok: true, json: async () => false };
+        if (destino.includes("api.groq.com")) {
+            modeloEnviado = JSON.parse(options.body).model;
+            return { ok: true, json: async () => ({ choices: [{ message: { content: "Resposta Premium." } }] }) };
         }
-        throw new Error("AI provider must not be called for a denied quota");
+        throw new Error("unexpected external request");
     };
     const response = makeResponse();
 
@@ -82,25 +120,28 @@ test("blocks over-quota users without calling the AI provider", async () => {
         body: { mensagens: [{ autor: "usuario", texto: "Como formar um acorde?" }] },
     }), response);
 
-    assert.equal(response.statusCode, 429);
-    assert.equal(calls.length, 2);
-    assert.equal(calls.some((url) => url.includes("api.groq.com")), false);
+    assert.equal(response.statusCode, 200);
+    assert.equal(modeloEnviado, "test-groq-premium-model");
 });
 
-test("fails closed when the persistent quota service is unavailable", async () => {
+test("keeps the advanced Premium model when a legacy model matches Basic", async () => {
     process.env.SUPABASE_URL = "https://riff-test.supabase.co";
     process.env.SUPABASE_ANON_KEY = "test-anon-key";
     process.env.GROQ_API_KEY = "test-groq-key";
-    const calls = [];
-    global.fetch = async (url) => {
-        calls.push(String(url));
-        if (String(url).endsWith("/auth/v1/user")) {
+    process.env.GROQ_FREE_MODEL = "llama-3.3-70b-versatile";
+    process.env.GROQ_MODEL = "llama-3.3-70b-versatile";
+    delete process.env.GROQ_PREMIUM_MODEL;
+    let modeloEnviado = "";
+    global.fetch = async (url, options = {}) => {
+        const destino = String(url);
+        if (destino.endsWith("/auth/v1/user")) {
             return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "premium" } }) };
         }
-        if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) {
-            return { ok: false, status: 503 };
+        if (destino.includes("api.groq.com")) {
+            modeloEnviado = JSON.parse(options.body).model;
+            return { ok: true, json: async () => ({ choices: [{ message: { content: "Resposta Premium." } }] }) };
         }
-        throw new Error("AI provider must not be called if quota checking fails");
+        throw new Error("unexpected external request");
     };
     const response = makeResponse();
 
@@ -109,25 +150,23 @@ test("fails closed when the persistent quota service is unavailable", async () =
         body: { mensagens: [{ autor: "usuario", texto: "Como formar um acorde?" }] },
     }), response);
 
-    assert.equal(response.statusCode, 503);
-    assert.equal(calls.length, 2);
-    assert.equal(calls.some((url) => url.includes("api.groq.com")), false);
+    assert.equal(response.statusCode, 200);
+    assert.equal(modeloEnviado, "openai/gpt-oss-120b");
 });
 
-test("calls the AI only after session validation and persistent quota approval", async () => {
+test("validates the session before calling the free Thonic model", async () => {
     process.env.SUPABASE_URL = "https://riff-test.supabase.co";
     process.env.SUPABASE_ANON_KEY = "test-anon-key";
     process.env.GROQ_API_KEY = "test-groq-key";
+    process.env.GROQ_FREE_MODEL = "llama-3.3-70b-versatile";
     const calls = [];
-    global.fetch = async (url) => {
+    global.fetch = async (url, options = {}) => {
         calls.push(String(url));
         if (String(url).endsWith("/auth/v1/user")) {
-            return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "premium" } }) };
-        }
-        if (String(url).endsWith("/rest/v1/rpc/consume_thonic_chat_quota")) {
-            return { ok: true, json: async () => true };
+            return { ok: true, json: async () => ({ id: "user-123", app_metadata: { plan: "free" } }) };
         }
         if (String(url).includes("api.groq.com")) {
+            assert.equal(JSON.parse(options.body).model, "llama-3.3-70b-versatile");
             return {
                 ok: true,
                 json: async () => ({ choices: [{ message: { content: "Um acorde maior tem terça maior e quinta justa." } }] }),
@@ -144,10 +183,9 @@ test("calls the AI only after session validation and persistent quota approval",
 
     assert.equal(response.statusCode, 200);
     assert.match(response.body.resposta, /terça maior/);
-    assert.equal(calls.length, 3);
+    assert.equal(calls.length, 2);
     assert.equal(calls[0].endsWith("/auth/v1/user"), true);
-    assert.equal(calls[1].endsWith("/rest/v1/rpc/consume_thonic_chat_quota"), true);
-    assert.equal(calls[2].includes("api.groq.com"), true);
+    assert.equal(calls[1].includes("api.groq.com"), true);
 });
 
 test("rotates through keys and falls back after a Groq 429", async () => {
