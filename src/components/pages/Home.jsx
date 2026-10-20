@@ -86,13 +86,11 @@ export default function Home({ setPage }) {
     return (
         <div className="pagina">
             <Barra titulo="Início"/>
-            <section className="tab-hero">
-                <picture className="tab-hero-art" aria-hidden="true">
-                    <source media="(max-width: 560px)" srcSet="/hero-portrait.webp" />
-                    <source media="(max-width: 900px)" srcSet="/hero-square.webp" />
-                    <img src="/hero-wide.webp" alt="Braço de guitarra com uma trilha de acordes para praticar" title="Prática guiada de acordes no Riff Theory" width="1920" height="1080" fetchPriority="high" decoding="async" />
+            <section className="tab-hero tab-hero-banner">
+                <picture className="tab-hero-art">
+                    <img src="/riff-banner.jpg" alt="Banner do Riff Theory com guitarra, logo, recursos da plataforma e acesso por QR Code" title="Recursos do Riff Theory" width="1376" height="768" fetchPriority="high" decoding="async" />
                 </picture>
-                <div className="hero-kicker">Acordes, braço interativo e prática guiada</div>
+                <div className="hero-kicker">Riff Theory · estúdio de guitarra</div>
                 <h1>Escolha um acorde. Veja a posição no braço e comece a tocar.</h1>
                 <p>
                     Em cerca de 1 minuto, abra uma trilha de 4 acordes e veja onde colocar os dedos no braço interativo.
