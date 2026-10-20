@@ -192,4 +192,11 @@ button, a { transition: color .18s ease, background-color .18s ease, border-colo
 .comecar-topo h2 { font-size: 25px; letter-spacing: -.04em; }
 .cta-seguranca { border: 1px solid #e8edf7; background: #f7f9fd; }
 .cta-seguranca strong { color: #2449c8; }
+.estudio-pratica { display: grid; gap: 18px; padding: 24px; border: 1px solid #dbe5f5; border-radius: 22px; background: linear-gradient(135deg, #f3f7ff, #fff); }
+.estudio-pratica-grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.estudio-pratica-grade button { display: grid; gap: 7px; min-height: 118px; padding: 18px; border: 1px solid #dce5f3; border-radius: 16px; background: #fff; color: var(--texto); text-align: left; box-shadow: 0 5px 16px rgba(24,34,48,.04); }
+.estudio-pratica-grade button:hover { border-color: #9eb5f4; background: #f8faff; transform: translateY(-1px); }
+.estudio-pratica-grade strong { color: #2449c8; font-size: 15px; }
+.estudio-pratica-grade span { color: #59687a; font-size: 13px; line-height: 1.45; }
+.escala-explicacao { max-width: 74ch; padding: 12px 14px; border-left: 3px solid #315ce8; background: #f4f6ff; color: #53647a; font-size: 14px; line-height: 1.5; }
 .sugestoes { padding: 0; }

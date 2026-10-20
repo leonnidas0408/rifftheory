@@ -2,7 +2,22 @@
 /* ==================================================   RESPONSIVO
    ========================================================= */
 
+.bottom-bar { display: none; }
+
 @media (max-width: 900px) {
+    .sidebar {
+        display: none;
+    }
+
+    .area-lateral {
+        margin-left: 0;
+        min-width: 0;
+    }
+
+    .bottom-bar {
+        display: flex;
+    }
+
     .auth-mobile { display: flex; }
 
     .conteudo {
@@ -103,6 +118,38 @@
 }
 
 @media (max-width: 560px) {
+    .conteudo {
+        width: 100%;
+        min-width: 0;
+        overflow-x: clip;
+    }
+
+    .pagina,
+    .pretty-panel,
+    .braco-card,
+    .braco-scroll {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .barra {
+        border-radius: 14px;
+    }
+
+    .auth-mobile {
+        min-width: 0;
+        gap: 8px;
+    }
+
+    .mobile-brand {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .mobile-brand strong {
+        white-space: nowrap;
+    }
+
     .prova-numeros,
     .prova-recursos,
     .objecoes-grid {
@@ -133,5 +180,13 @@
 
     .section-cta {
         width: 100%;
+    }
+
+    .estudio-pratica {
+        padding: 18px;
+    }
+
+    .estudio-pratica-grade {
+        grid-template-columns: 1fr;
     }
 }

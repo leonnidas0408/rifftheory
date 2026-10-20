@@ -37,7 +37,7 @@
 
 @font-face {
     font-family: "AlteHaas";
-    src: url("fonts/AlteHaasGroteskRegular.ttf");
+    src: url("../fonts/AlteHaasGroteskRegular.ttf") format("truetype");
     font-display: swap;
 }
 
@@ -76,5 +76,4 @@ svg.icone {
     flex: none;
     display: block;
 }
-
 

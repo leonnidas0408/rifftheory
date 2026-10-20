@@ -184,7 +184,6 @@ export default function Pratica() {
         <>
         <h2>O que essa trilha treina</h2>
           <PrettyPanel>
-            <PrettyPanel>
             <SectionTitle
               eyebrow="Trilha de evolução"
               title="Um passo de cada vez"
@@ -204,7 +203,6 @@ export default function Pratica() {
                 <span>5 · Ouvido</span>
               </div>
             </div>
-          </PrettyPanel>
           
           <section className="roadmap-grid roadmap-grid-3">
             {AVANCADO.map((item) => (

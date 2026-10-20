@@ -96,7 +96,7 @@ export default function Home({ setPage }) {
                 <h1>Escolha um acorde. Veja a posição no braço e comece a tocar.</h1>
                 <p>
                     Em cerca de 1 minuto, abra uma trilha de 4 acordes e veja onde colocar os dedos no braço interativo.
-                    Depois, avance acorde por acorde — sem alternar entre ferramentas.
+                    Depois, avance acorde por acorde com as próximas ferramentas sempre a um clique de distância.
                 </p>
                 <div className="hero-demo hero-demo-compact" aria-label="Prévia do que aparece ao testar a trilha">
                     <div className="hero-demo-topline">
@@ -157,8 +157,8 @@ export default function Home({ setPage }) {
             <section className="prova-valor" aria-label="Por que usar o Riff Theory">
                 <div className="prova-intro">
                     <span className="eyebrow">A diferença está no próximo clique</span>
-                    <h2>Menos procura. Mais tempo tocando.</h2>
-                    <p>Em vez de abrir uma busca, um diagrama e um metrônomo separados, você escolhe um acorde e já tem uma próxima ação dentro do app.</p>
+                    <h2>Um estúdio para sair da consulta e tocar.</h2>
+                    <p>Busca, braço, escala e metrônomo continuam conectados pelo mesmo contexto de prática, para você não perder o próximo passo ao trocar de ferramenta.</p>
                 </div>
                 <div className="prova-numeros">
                     <div className="prova-numero"><strong>1 clique</strong><span>para revelar a forma de um acorde no braço</span></div>
@@ -168,10 +168,10 @@ export default function Home({ setPage }) {
                 <div className="prova-recursos">
                     <div><strong>1. Escolha</strong><span>Comece com uma trilha ou acorde pronto.</span></div>
                     <div><strong>2. Veja</strong><span>A forma aparece no braço interativo.</span></div>
-                    <div><strong>3. Toque</strong><span>Avance para o próximo acorde sem trocar de ferramenta.</span></div>
+                    <div><strong>3. Toque</strong><span>Avance para o próximo acorde e ajuste o pulso quando precisar.</span></div>
                     <div className="prova-tempo"><strong>Teste rápido · cerca de 1 minuto</strong><span>Você já vê a primeira forma no braço no primeiro clique.</span></div>
                 </div>
-                <div className="comparacao"><strong>Alternativa comum:</strong> buscar → abrir abas → copiar o acorde. <strong>No Riff Theory:</strong> escolher → visualizar → tocar.</div>
+                <div className="comparacao"><strong>Alternativa comum:</strong> buscar → abrir abas → copiar o acorde. <strong>No Riff Theory:</strong> escolher → visualizar → tocar → repetir.</div>
                 <div className="prova-credibilidade"><span><strong>Confira no próprio app:</strong> o botão “Testar trilha de 4 acordes” abre uma sequência no braço interativo; não é necessário criar conta para testar a prática.</span></div>
                 <div className="trust-grid" aria-label="Sinais de confiança">
                     <div className="trust-item"><span className="trust-check">✓</span><div><strong>Sem cartão para testar</strong><span>A prática guiada e o braço interativo podem ser explorados sem cadastro.</span></div></div>
@@ -181,6 +181,28 @@ export default function Home({ setPage }) {
                 <button className="section-cta" type="button" onClick={() => iniciarTrilha(PROGRESSOES[0])}>
                     Testar no braço <span>sem conta</span>
                 </button>
+            </section>
+
+            <section className="estudio-pratica" aria-labelledby="titulo-estudio">
+                <div className="secao-heading">
+                    <span className="eyebrow">Estúdio de prática</span>
+                    <h2 id="titulo-estudio">A próxima ação fica no mesmo fluxo</h2>
+                    <p>Comece pelo que você quer tocar e abra a ferramenta certa sem perder o acorde, a tonalidade ou o objetivo da sessão.</p>
+                </div>
+                <div className="estudio-pratica-grade">
+                    <button type="button" onClick={() => { setPage?.("Dashboard"); }}>
+                        <strong>Braço + acorde</strong>
+                        <span>Veja a forma e avance por uma trilha curta.</span>
+                    </button>
+                    <button type="button" onClick={() => setPage?.("Escalas")}>
+                        <strong>Escala + campo harmônico</strong>
+                        <span>Entenda de onde vêm os acordes que você está tocando.</span>
+                    </button>
+                    <button type="button" onClick={() => setPage?.("Metrônomo")}>
+                        <strong>Metrônomo + troca</strong>
+                        <span>Defina um pulso e repita a progressão com intenção.</span>
+                    </button>
+                </div>
             </section>
 
             <section className="objecoes" aria-labelledby="titulo-objecoes">
@@ -218,7 +240,7 @@ export default function Home({ setPage }) {
                     <article className="rota-card">
                         <span className="rota-numero">03</span>
                         <strong>Entender a relação</strong>
-                        <p>Explore a escala e veja como ela se conecta aos acordes que você toca.</p>
+                        <p>Veja como as notas formam os acordes do campo harmônico e teste cada forma no braço.</p>
                         <button className="pilula" onClick={() => setPage?.("Escalas")}>Explorar escalas</button>
                     </article>
                 </div>
@@ -237,7 +259,7 @@ export default function Home({ setPage }) {
                             <li>Trilhas guiadas de acordes</li>
                             <li>Braço interativo e busca de acordes</li>
                             <li>Escalas, afinador e metrônomo</li>
-                            <li>Sem cartão e sem conta para começar</li>
+                            <li>Sem cartão e sem conta para testar as ferramentas abertas</li>
                         </ul>
                         <button className="pilula" type="button" onClick={() => iniciarTrilha(PROGRESSOES[0])}>Testar no braço</button>
                     </article>

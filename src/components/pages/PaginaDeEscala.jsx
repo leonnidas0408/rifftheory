@@ -189,6 +189,11 @@ export default function PaginaDeEscala() {
                 )}
 
                 <h3>Acordes da escala</h3>
+                <p className="escala-explicacao">
+                    Cada acorde é formado usando notas da escala em saltos de uma nota. O grau em romano mostra
+                    a posição do acorde no campo harmônico; selecione um cartão para ver a forma e ouvir como ele
+                    se conecta ao braço.
+                </p>
 
                 {campo ? (
                     <div className="acordes">

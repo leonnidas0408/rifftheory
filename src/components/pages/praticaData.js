@@ -40,9 +40,9 @@ export const ESTILOS = [
 ];
 
 export const AVANCADO = [
-    { titulo: "Voice leading", texto: "Mova o mínimo possível entre acordes: procure notas comuns e conduza apenas uma voz." },
-    { titulo: "Tensões", texto: "Experimente 7, 9 e sus4 depois de dominar a tríade; a tensão deve resolver em uma nota estável." },
-    { titulo: "Ritmo", texto: "Pratique uma mesma progressão com semínimas, contratempo e arpejo antes de trocar os acordes." },
+    { titulo: "Trocas mais fáceis", texto: "Procure dedos e notas que continuam no mesmo lugar quando você muda de acorde. Mova só o necessário." },
+    { titulo: "Cores depois do básico", texto: "Quando as tríades estiverem firmes, experimente acordes com 7, 9 ou sus4 e compare a sensação." },
+    { titulo: "Um ritmo por vez", texto: "Toque a mesma progressão com batidas regulares, pausas e dedilhado antes de acelerar ou trocar os acordes." },
 ];
 
 export const TREINO_OUVIDO = [
