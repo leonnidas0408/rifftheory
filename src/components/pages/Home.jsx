@@ -55,7 +55,10 @@ export default function Home({ setPage }) {
         blocos.forEach((bloco) => bloco.classList.add("scroll-reveal"));
         const observer = new IntersectionObserver((entradas) => {
             entradas.forEach((entrada) => {
-                entrada.target.classList.toggle("is-visible", entrada.isIntersecting);
+                if (entrada.isIntersecting) {
+                    entrada.target.classList.add("is-visible");
+                    observer.unobserve(entrada.target);
+                }
             });
         }, { threshold: 0.08, rootMargin: "0px 0px -5% 0px" });
 
@@ -86,15 +89,11 @@ export default function Home({ setPage }) {
     return (
         <div className="pagina">
             <Barra titulo="Início"/>
-            <section className="tab-hero tab-hero-banner">
-                <picture className="tab-hero-art">
-                    <img src="/riff-banner.jpg" alt="Banner do Riff Theory com guitarra, logo, recursos da plataforma e acesso por QR Code" title="Recursos do Riff Theory" width="1376" height="768" fetchPriority="high" decoding="async" />
-                </picture>
+            <section className="hero">
                 <div className="hero-kicker">Riff Theory · estúdio de guitarra</div>
-                <h1>Escolha um acorde. Veja a posição no braço e comece a tocar.</h1>
+                <h1>Veja o acorde no braço. Comece a tocar.</h1>
                 <p>
-                    Em cerca de 1 minuto, abra uma trilha de 4 acordes e veja onde colocar os dedos no braço interativo.
-                    Depois, avance acorde por acorde com as próximas ferramentas sempre a um clique de distância.
+                    Teste uma trilha de quatro acordes e descubra onde colocar os dedos no braço interativo. Grátis e sem cadastro.
                 </p>
                 <div className="hero-demo hero-demo-compact" aria-label="Prévia do que aparece ao testar a trilha">
                     <div className="hero-demo-topline">
@@ -116,26 +115,13 @@ export default function Home({ setPage }) {
                     <span className="hero-demo-hint">O braço mostra onde colocar os dedos.</span>
                 </div>
                 <div className="hero-acoes">
-                    <button
-                        className="link-botao hero-cta"
-                        onClick={() => {
-                            registrarEvento("hero_cta_clicked", { cta: "pratica_guiada" });
-                            iniciarTrilha(PROGRESSOES[0]);
-                        }}
-                    >
-                        Testar trilha no braço
-                    </button>
-                    <button
-                        className="hero-secundaria"
-                        onClick={() => {
-                            registrarEvento("hero_cta_clicked", { cta: "acordes" });
-                            abrirAcordes();
-                        }}
-                    >
-                        Escolher um acorde
+                    <button className="link-botao hero-cta" onClick={() => {
+                        registrarEvento("hero_cta_clicked", { cta: "pratica_guiada" });
+                        iniciarTrilha(PROGRESSOES[0]);
+                    }}>
+                        Testar grátis · sem cadastro
                     </button>
                 </div>
-                <p className="hero-cta-note">Abre uma sequência de 4 acordes e mostra a 1ª forma — sem conta, sem cartão.</p>
                 <div className="hero-social-proof" aria-label="Prova social do Riff Theory">
                     <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
                     <div>
