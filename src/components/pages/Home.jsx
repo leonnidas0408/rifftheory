@@ -251,6 +251,8 @@ export default function Home({ setPage }) {
                         <div className="plano-topo"><span className="plano-tag plano-tag-premium">Com cadastro</span><strong>Premium · Thonic</strong></div>
                         <ul>
                             <li>Assistente para dúvidas de teoria musical</li>
+                            <li>Guias de prática focados na sua dificuldade, com checklist e impressão em PDF</li>
+                            <li>Bases editáveis de tablatura e atalhos para o braço interativo</li>
                             <li>Login Google e histórico salvo na sua conta</li>
                             <li>Até 5 perguntas por minuto</li>
                             <li>Até 30 perguntas por hora, por usuário</li>

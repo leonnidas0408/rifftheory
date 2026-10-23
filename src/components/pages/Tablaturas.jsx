@@ -248,7 +248,7 @@ export default function Tablaturas() {
             <header className="tabmaker-heading">
                 <span className="eyebrow">EDITOR DE TABLATURA</span>
                 <h1>Escreva sua própria tab</h1>
-                <p>Edite as casas nas seis cordas. Cada compasso tem oito posições; notas simultâneas na mesma coluna formam acordes. O editor não gera nem atribui tablaturas automaticamente.</p>
+                <p>Edite as casas nas seis cordas. Cada compasso tem oito posições; notas simultâneas na mesma coluna formam acordes. Uma base preparada pelo Thonic é só um ponto de partida: revise e ajuste as notas antes de usar.</p>
             </header>
 
             <section className="tabmaker-settings" aria-label="Identificação da tablatura">
