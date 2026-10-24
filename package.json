@@ -21,7 +21,7 @@
     "exceljs": "^4.4.0",
     "image-size": "^2.0.4",
     "jszip": "^3.10.2",
-    "music-metadata": "^12.1.0",
+    "music-metadata": "^12.2.3",
     "pdf-parse": "^1.1.1",
     "react": "^19.2.8",
     "react-device-detect": "^2.2.3",
