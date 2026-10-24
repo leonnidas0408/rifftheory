@@ -16,7 +16,7 @@
     "build:catalog": "npm run sync:drive && npm run build:knowledge"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.117.3",
+    "@supabase/supabase-js": "^2.118.0",
     "@vitejs/plugin-react": "^6.0.5",
     "exceljs": "^4.4.0",
     "image-size": "^2.0.4",
