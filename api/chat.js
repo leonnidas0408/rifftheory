@@ -18,7 +18,7 @@ const { readFileSync } = require("fs");
 const path = require("path");
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+const GROQ_MODEL = process.env.GROQ_MODEL || "qwen/qwen3.8-27b";
 const GROQ_API_KEY_ENV_NAMES = [
     "GROQ_API_KEY",
     ...Array.from({ length: 19 }, (_, indice) => `GROQ_API_KEY_${indice + 2}`),
