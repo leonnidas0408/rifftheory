@@ -29,6 +29,14 @@ Transformar os itens do TODO em uma primeira versão funcional, prática e test�
 - Manter a cascata CSS modular e a interface em português.
 - Áudio deve ser local via Web Audio API, sem enviar dados para servidor.
 
+## Atualização de escopo — Thonic agêntico no Premium
+- Adicionar ao Thonic autenticado um Studio com parâmetros de dificuldade, nível e tempo para solicitar ao assistente um guia contextualizado pelos recursos do Riff Theory.
+- Gerar uma ficha de prática com exercícios e checklist interativos, salvar preferências/progresso localmente e permitir imprimir/salvar a ficha como PDF pelo navegador.
+- Preparar uma base inicial baseada em progressões musicais selecionáveis e transferi-la ao editor existente como rascunho editável; não alegar que a base é uma composição verificada ou tablatura final.
+- Conectar a ficha aos módulos atuais de Prática e ao braço interativo, sem duplicar ferramentas nem alterar autenticação, persistência de conversa ou infraestrutura.
+- Informar que nível, foco e tempo só são enviados à API de IA quando a pessoa solicita um guia; checklists, preferências e rascunhos seguem locais.
+- Indicar os recursos na descrição do Thonic Premium sem publicar preço ou inventar limites.
+
 ## Atualização de escopo — monitor de acessos (15/10/2026)
 - Manter a contagem consentida por identificador aleatório de navegador, sem usar contas Google para identificar visitantes.
 - Remover a gravação direta do cliente; aceitar gravações apenas via Edge Function com validação server-side do Cloudflare Turnstile, assinatura HMAC do identificador e limites por dispositivo.

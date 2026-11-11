@@ -1,0 +1,47 @@
+.thonic-studio { display: grid; gap: 16px; padding: clamp(16px, 2.6vw, 24px); border: 1px solid #dce4f0; background: linear-gradient(135deg, #f7f9ff, #fff 74%); color: #202b3a; }
+.thonic-studio-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.thonic-studio-head h2 { max-width: 760px; margin: 6px 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.08; letter-spacing: -.035em; }
+.thonic-studio-head p, .thonic-studio-tab p { max-width: 760px; color: #59687a; font-size: 13px; line-height: 1.5; }
+.thonic-studio-toggle, .thonic-studio-actions button, .thonic-studio-tab button { min-height: 40px; padding: 9px 13px; border: 1px solid #d6deea; background: #fff; color: #25334a; font-size: 12px; font-weight: 750; cursor: pointer; }
+.thonic-studio-toggle { flex: none; }
+.thonic-studio-toggle:hover, .thonic-studio-actions button:hover, .thonic-studio-tab button:hover { border-color: #315ce8; color: #2449c8; }
+.thonic-studio-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.thonic-studio-form label, .thonic-progression { display: grid; gap: 6px; color: #566477; font-size: 11px; font-weight: 750; }
+.thonic-studio-form select, .thonic-progression select { width: 100%; min-height: 42px; padding: 8px 10px; border: 1px solid #d6deea; border-radius: 3px; background: #fff; color: #202b3a; font: inherit; font-size: 13px; }
+.thonic-studio-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.thonic-studio-actions .thonic-action-primary, .thonic-studio-tab .thonic-action-primary { border-color: #315ce8; background: #315ce8; color: #fff; }
+.thonic-studio-actions .thonic-action-primary:hover, .thonic-studio-tab .thonic-action-primary:hover { background: #2449c8; color: #fff; }
+.thonic-studio-tab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(200px, .7fr) auto; align-items: end; gap: 14px; padding: 16px; border-left: 3px solid #315ce8; background: #f2f5fc; }
+.thonic-studio-tab h3 { margin: 5px 0; font-size: 17px; }
+.thonic-workout-sheet { display: grid; gap: 14px; padding: 18px; border: 1px solid #dce4f0; background: #fff; }
+.thonic-sheet-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.thonic-sheet-heading h3 { margin: 5px 0; font-size: 21px; }
+.thonic-sheet-heading p { color: #59687a; font-size: 12px; line-height: 1.45; }
+.thonic-sheet-badge { flex: none; padding: 7px 9px; border: 1px solid #dce4f0; background: #f7f9fc; color: #315ce8; font-size: 11px; font-weight: 800; }
+.thonic-workout-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.thonic-workout-item { display: grid; grid-template-columns: 20px 26px minmax(0, 1fr); align-items: start; gap: 8px; padding: 12px; border: 1px solid #e0e6ef; background: #fbfcfe; cursor: pointer; }
+.thonic-workout-item input { width: 16px; height: 16px; margin: 2px 0 0; accent-color: #315ce8; }
+.thonic-workout-number { color: #315ce8; font: 800 11px ui-monospace, monospace; }
+.thonic-workout-copy { display: grid; gap: 6px; }
+.thonic-workout-copy strong { font-size: 13px; }
+.thonic-workout-copy span { color: #59687a; font-size: 12px; line-height: 1.45; }
+.thonic-workout-copy small { color: #315ce8; font-size: 11px; font-weight: 800; }
+.thonic-workout-item.concluido { border-color: #bcd7c5; background: #f5fbf6; }
+.thonic-workout-item.concluido .thonic-workout-copy strong { text-decoration: line-through; text-decoration-color: #7f9d88; }
+.thonic-sheet-note { color: #59687a; font-size: 11px; line-height: 1.45; }
+@media (max-width: 760px) {
+  .thonic-studio-form, .thonic-workout-list { grid-template-columns: 1fr; }
+  .thonic-studio-tab { grid-template-columns: 1fr; align-items: stretch; }
+  .thonic-studio-head { flex-direction: column; }
+}
+@media print {
+  body.thonic-print-mode * { visibility: hidden !important; }
+  body.thonic-print-mode .thonic-workout-sheet,
+  body.thonic-print-mode .thonic-workout-sheet * { visibility: visible !important; }
+  body.thonic-print-mode .thonic-workout-sheet { position: fixed; inset: 0; display: block; overflow: visible; padding: 18mm; border: 0; color: #111; background: #fff; }
+  body.thonic-print-mode .thonic-sheet-heading { margin-bottom: 10mm; }
+  body.thonic-print-mode .thonic-workout-list { grid-template-columns: 1fr; }
+  body.thonic-print-mode .thonic-workout-item { break-inside: avoid; margin-bottom: 5mm; background: #fff; }
+  body.thonic-print-mode .thonic-workout-item input { appearance: checkbox; }
+  body.thonic-print-mode .thonic-workout-copy span, body.thonic-print-mode .thonic-sheet-note, body.thonic-print-mode .thonic-sheet-heading p { color: #333; }
+}

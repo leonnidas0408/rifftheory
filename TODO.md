@@ -163,3 +163,10 @@ sugerida de implementação (1 → 5) indicada no mapa.
 - [x] Mini tutorial com expectativa de tempo e correção da prévia do acorde exibido no hero.
 - [x] Título descritivo adicionado à imagem-chave do hero para SEO.
 - [ ] Publicar as alterações no repositório/deploy após validação e acesso de publicação.
+
+## Thonic agêntico — incremento do RT Premium
+- [x] **Executar ações dentro do site:** “Uma versão do Thonic que consegue fazer coisas dentro do site por você, igual criar tablaturas ou bases de tablatura”; oferecer uma base inicial baseada em progressão e abri-la como rascunho no editor de tablaturas existente, para o usuário revisar e editar.
+- [x] **Criar guia personalizado:** “consegue criar um guia personalizado para você usando o geral do site como base”; coletar foco/dificuldade, nível e tempo disponível, enviar esses dados ao Thonic somente quando solicitado e contextualizar o guia com os recursos atuais do Riff Theory.
+- [x] **Ficha de exercícios interativa e exportável:** “criar uma planilha exercícios focados nas suas dificuldades. Não só aquele markdown, uma planilha/pdf mesmo junto com coisas interativas”; apresentar exercícios personalizados com checklist/progresso local e permitir imprimir/salvar como PDF pelo navegador.
+- [ ] **Mensagens interativas geradas dinamicamente pela IA (opcional):** “E/ou então colocar para o Thonic conseguir gerar mensagens interativas”; o Studio já oferece controles e checklists interativos, mas respostas de IA convertidas em ações/cartões dinâmicos ficam para uma etapa posterior.
+- [x] **Braço interativo na prática:** “E coloca para a prática ter o braço interativo”; oferecer acesso direto ao braço interativo já existente como parte do fluxo de estudo Premium, sem duplicar o componente.
