@@ -123,9 +123,8 @@ export default function Home({ setPage }) {
                     </button>
                 </div>
                 <div className="hero-social-proof" aria-label="Prova social do Riff Theory">
-                    <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
                     <div>
-                        <strong>5,0/5 · 6 avaliações públicas</strong>
+                        <strong>Avaliações públicas da comunidade</strong>
                         <span>“Fácil de navegar e com transição clara.” · “Muito bem organizado e fácil de usar.”</span>
                         <small>Fonte: avaliações públicas do próprio site · iniciantes, navegação e prática guiada.</small>
                     </div>

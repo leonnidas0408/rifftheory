@@ -31,7 +31,11 @@ export default function NavbarAdapter({page, setPage, pageData, defaultPage}) {
                 sidebarCollapsed={sidebarCollapsed}
                 onToggleSidebar={alternarSidebar}
             />
-            <nav className="bottom-bar" aria-label="Menu de navegação móvel">
+            <nav
+                className="bottom-bar"
+                aria-label="Menu móvel; deslize horizontalmente para ver todas as ferramentas"
+                tabIndex={0}
+            >
                 {Object.entries(pageData)
                     .filter(([, item]) => item.icone)
                     .map(([chave, item]) => (

@@ -1,15 +1,13 @@
 import React from "react";
-import Icone from "./Icone";
 import AuthButton from "./AuthButton";
 import { GOOGLE_LOGIN_UI_ENABLED } from "../auth/featureFlags";
+import AccessConsent from "./AccessConsent";
 
-// Área principal: abas de ferramentas no topo, página atual e o botão
-// flutuante que abre o assistente (chat).
+// Área principal: consentimento, tela ativa e botão flutuante do assistente.
 export default function Conteudo({ page, setPage, pageData, sidebarCollapsed, onToggleSidebar }) {
-    const abas = Object.entries(pageData).filter(([, item]) => item.aba);
-
     return (
         <main className="conteudo">
+            <AccessConsent />
             {sidebarCollapsed && (
                 <button
                     className="sidebar-toggle sidebar-toggle-reopen"
@@ -27,19 +25,6 @@ export default function Conteudo({ page, setPage, pageData, sidebarCollapsed, on
                 <span className="mobile-brand"><img src="/icon.webp" alt="" title="Riff Theory" width="32" height="32" decoding="async" /><strong>riff<span>theory</span></strong></span>
                 {GOOGLE_LOGIN_UI_ENABLED && <AuthButton compact />}
             </div>
-            <nav className="abas" aria-label="Ferramentas">
-                {abas.map(([chave, item]) => (
-                    <button
-                        key={chave}
-                        className={`aba${page === chave ? " ativa" : ""}`}
-                        onClick={() => setPage(chave)}
-                    >
-                        <Icone nome={item.aba} tamanho={20} />
-                        {chave}
-                    </button>
-                ))}
-            </nav>
-
             {pageData[page].page}
 
             {page !== "Chatbot" && (

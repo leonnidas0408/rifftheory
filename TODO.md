@@ -163,3 +163,27 @@ sugerida de implementação (1 → 5) indicada no mapa.
 - [x] Mini tutorial com expectativa de tempo e correção da prévia do acorde exibido no hero.
 - [x] Título descritivo adicionado à imagem-chave do hero para SEO.
 - [ ] Publicar as alterações no repositório/deploy após validação e acesso de publicação.
+
+
+## Primeira rodada de usabilidade — 12/11/2026
+
+### Navegação por contexto
+- [x] **Uma navegação principal por breakpoint**: no desktop, usar a sidebar como navegação primária; em telas de até 900 px, usar a barra móvel existente; retirar a faixa horizontal duplicada que atualmente repete os mesmos destinos.
+- [x] **Tela ativa continua acessível**: os destinos existentes e a sidebar colapsável continuam disponíveis; “Teoria” e “Riffs” permanecem desabilitados com indicação “em breve”. A navegação horizontal móvel anuncia como acessar os demais itens.
+
+### Consentimento opcional e não bloqueante
+- [x] **Escolha explícita**: há ações separadas para permitir e não permitir, uma explicação curta e detalhes opcionais.
+- [x] **Sem bloquear ferramentas**: o aviso fica no fluxo da página, sem cobrir o Thonic, controles de prática ou navegação.
+- [x] **Recusa testada**: `Não permitir` salva `declined`, fecha o aviso e não dispara a chamada de registro; preferências já existentes escondem o aviso.
+- [ ] **Permissão em homologação isolada**: confirmar o caminho `accepted` com chaves de teste/ambiente isolado antes de qualquer gravação real; a lógica existente de consentimento e monitoramento não foi alterada nesta rodada.
+
+### Prova social coerente
+- [x] **Sem contagem desatualizada no hero**: retirar do hero a nota e a contagem hard-coded, preservando a chamada para ler avaliações; a seção de avaliações continua sendo a fonte numérica atual.
+
+
+### Ajuste de navegação móvel identificado na validação
+- [x] **Priorizar Prática**: manter essa área entre os primeiros destinos visíveis no menu móvel e anunciar que os demais itens podem ser acessados deslizando horizontalmente.
+
+
+### Próxima rodada sugerida pela validação
+- [ ] Ajustar a posição/comportamento do botão flutuante do Thonic e do CTA fixo de celular para não encobrirem o conteúdo da demonstração no hero.
