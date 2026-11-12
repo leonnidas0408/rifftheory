@@ -11,7 +11,6 @@ import NavbarAdapter from "./components/NavbarAdapter";
 import { iniciarRastreioDeUso } from "./utils/usageStats";
 import Home from "./components/pages/Home";
 import { AuthProvider } from "./auth/AuthContext";
-import AccessConsent from "./components/AccessConsent";
 import AccessMonitor from "./components/pages/AccessMonitor";
 
 export default function App() {
@@ -35,11 +34,11 @@ function RiffTheoryApp() {
     const pageData = {
         "Início": { page: <Home setPage={setPage} />, icone: "inicio", aba: "inicio" },
         "Dashboard": { page: <Dashboard setPage={setPage} />, icone: "lista", aba: "lista" },
+        "Prática": { page: <Pratica />, icone: "pratica", aba: "pratica" },
         "Escalas": { page: <PaginaDeEscala setPage={setPage} />, icone: "escalas", aba: "escalas" },
         "Afinador": { page: <RiffTheoryTuner setPage={setPage} />, icone: "nota", aba: "nota" },
         "Metrônomo": { page: <Metronomo setPage={setPage} />, icone: "play", aba: "play" },
         "Tablaturas": { page: <Tablaturas />, icone: "tablaturas", aba: "tablaturas" },
-        "Prática": { page: <Pratica />, icone: "pratica", aba: "pratica" },
         "Chatbot": { page: <ChatbotTab /> },
     };
 
@@ -51,7 +50,6 @@ function RiffTheoryApp() {
                 pageData={pageData}
                 defaultPage="Início"
             />
-            <AccessConsent />
         </>
     );
 }
