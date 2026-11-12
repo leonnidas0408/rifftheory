@@ -185,5 +185,5 @@ sugerida de implementação (1 → 5) indicada no mapa.
 - [x] **Priorizar Prática**: manter essa área entre os primeiros destinos visíveis no menu móvel e anunciar que os demais itens podem ser acessados deslizando horizontalmente.
 
 
-### Próxima rodada sugerida pela validação
-- [ ] Ajustar a posição/comportamento do botão flutuante do Thonic e do CTA fixo de celular para não encobrirem o conteúdo da demonstração no hero.
+### Segunda rodada — overlays móveis
+- [x] Em telas móveis, esconder o botão flutuante do Thonic e o CTA fixo enquanto o hero estiver visível, mantendo o CTA primário dentro do hero acessível; reexibir os controles fixos depois que a pessoa rolar para fora do hero.

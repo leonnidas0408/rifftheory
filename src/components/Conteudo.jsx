@@ -1,12 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AuthButton from "./AuthButton";
 import { GOOGLE_LOGIN_UI_ENABLED } from "../auth/featureFlags";
 import AccessConsent from "./AccessConsent";
 
 // Área principal: consentimento, tela ativa e botão flutuante do assistente.
 export default function Conteudo({ page, setPage, pageData, sidebarCollapsed, onToggleSidebar }) {
+    const [heroVisivel, setHeroVisivel] = useState(page === "Início");
+
+    useEffect(() => {
+        if (page !== "Início") {
+            setHeroVisivel(false);
+            return undefined;
+        }
+
+        const hero = document.querySelector(".conteudo .hero");
+        if (!hero || typeof IntersectionObserver === "undefined") {
+            setHeroVisivel(false);
+            return undefined;
+        }
+
+        const observer = new IntersectionObserver(([entry]) => {
+            setHeroVisivel(entry.isIntersecting);
+        }, { threshold: 0.01 });
+
+        observer.observe(hero);
+        return () => observer.disconnect();
+    }, [page]);
+
     return (
-        <main className="conteudo">
+        <main className={`conteudo${heroVisivel ? " conteudo-hero-visivel" : ""}`}>
             <AccessConsent />
             {sidebarCollapsed && (
                 <button

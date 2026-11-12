@@ -59,3 +59,8 @@ Validação final: `npm test` passou (12/12); `node node_modules/vite/bin/vite.j
 
 ### Ajuste após validação móvel
 A captura em 375 px mostrou que “Prática” ficava fora dos primeiros destinos visíveis do menu com rolagem horizontal. Nesta mesma rodada, priorizar esse destino no início da lista e tornar a instrução de deslizar explícita para pessoas usando teclado/leitor de tela; manter as demais ferramentas acessíveis no menu móvel.
+
+### Segunda correção móvel
+A captura também mostrou o CTA fixo de trilha e o botão flutuante do Thonic sobrepondo o hero em viewport estreita. `Conteudo.jsx` observa a interseção do hero e aplica uma classe de estado; em larguras móveis, `06-responsive.css` oculta os dois overlays enquanto o hero está na viewport. O CTA primário dentro do próprio hero continua disponível. Quando o hero sai de vista, os controles fixos reaparecem. Nenhuma mudança em serviços ou coleta de dados.
+
+Validação desta correção: em 375 × 812, os dois overlays estão `hidden` no topo, o CTA primário do hero permanece visível e ambos reaparecem ao rolar além do hero. Em 1280 × 900, o FAB permanece visível e o CTA móvel permanece oculto. `npm test` passou (12/12), build Vite passou e `git diff --check` está limpo; build continua com o aviso conhecido de bundle acima de 500 kB.
