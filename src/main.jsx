@@ -4,6 +4,12 @@ import App from "./App";
 import "./assets/style.css";
 import "./assets/catalogo.css";
 
-ReactDOM.createRoot(document.body).render(
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+    throw new Error("Elemento #root não encontrado no documento.");
+}
+
+ReactDOM.createRoot(rootElement).render(
     <App />
 );
