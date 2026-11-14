@@ -28,6 +28,20 @@ function RiffTheoryApp() {
     const [page, setPage] = useState("Início");
 
     useEffect(() => {
+        const titles = {
+            "Início": "Riff Theory | Acordes, escalas e teoria para violão e guitarra",
+            "Dashboard": "Prática guiada de acordes | Riff Theory",
+            "Escalas": "Escalas de guitarra e campo harmônico | Riff Theory",
+            "Afinador": "Afinador de guitarra online | Riff Theory",
+            "Metrônomo": "Metrônomo online de 20 a 400 BPM | Riff Theory",
+            "Tablaturas": "Tablaturas de guitarra | Riff Theory",
+            "Prática": "Prática de guitarra | Riff Theory",
+            "Chatbot": "Thonic · Assistente de teoria musical | Riff Theory",
+        };
+        document.title = titles[page] || titles.Início;
+    }, [page]);
+
+    useEffect(() => {
         const pararRastreio = iniciarRastreioDeUso();
         return pararRastreio;
     }, []);

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://rifftheory.vercel.app/</loc>
-  </url>
+  <url><loc>https://rifftheory.vercel.app/</loc></url>
+  <url><loc>https://rifftheory.vercel.app/acordes/</loc></url>
+  <url><loc>https://rifftheory.vercel.app/afinador/</loc></url>
+  <url><loc>https://rifftheory.vercel.app/escalas/</loc></url>
+  <url><loc>https://rifftheory.vercel.app/metronomo/</loc></url>
+  <url><loc>https://rifftheory.vercel.app/tablaturas/</loc></url>
+  <url><loc>https://rifftheory.vercel.app/privacidade/</loc></url>
 </urlset>

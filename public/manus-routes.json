@@ -1,1 +1,1 @@
-{"routes":[{"path":"/","title":"Riff Theory"},{"path":"/admin/acessos","title":"Monitor de acessos"}]}
+{"routes":[{"path":"/","title":"Riff Theory"},{"path":"/acordes/","title":"Acordes de violão e guitarra"},{"path":"/afinador/","title":"Afinador de guitarra online"},{"path":"/escalas/","title":"Escalas de guitarra"},{"path":"/metronomo/","title":"Metrônomo online"},{"path":"/tablaturas/","title":"Tablaturas de guitarra"},{"path":"/privacidade/","title":"Política de privacidade"},{"path":"/admin/acessos","title":"Monitor de acessos"}]}
