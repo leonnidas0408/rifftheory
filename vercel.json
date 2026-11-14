@@ -19,6 +19,12 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/acordes(?:/)?", "destination": "/acordes/index.html" },
+    { "source": "/afinador(?:/)?", "destination": "/afinador/index.html" },
+    { "source": "/escalas(?:/)?", "destination": "/escalas/index.html" },
+    { "source": "/metronomo(?:/)?", "destination": "/metronomo/index.html" },
+    { "source": "/tablaturas(?:/)?", "destination": "/tablaturas/index.html" },
+    { "source": "/privacidade(?:/)?", "destination": "/privacidade/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
