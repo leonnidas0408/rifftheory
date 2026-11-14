@@ -8,6 +8,16 @@ export default function ThonicAvatar({ speaking = false, alt = "Thonic", size = 
             role="img"
             aria-label={alt}
             style={{ width: size, height: size }}
-        />
+        >
+            {speaking && (
+                <img
+                    className="thonic-avatar-gif"
+                    src="/thonic-speaking.gif"
+                    alt=""
+                    width={size}
+                    height={size}
+                />
+            )}
+        </span>
     );
 }
