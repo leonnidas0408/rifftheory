@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Barra from "../Barra";
 import AvatarUsuario from "../AvatarUsuario";
 import Icone from "../Icone";
+import ThonicAvatar from "../ThonicAvatar";
 import { useAuth } from "../../auth/AuthContext";
 import { supabase } from "../../auth/supabase";
 import "./ChatbotTab.css";
@@ -52,9 +53,9 @@ function normalizarMensagens(valor) {
 }
 
 const FALAS_THONIC = [
-    { fala: "Quer destravar um acorde?", pergunta: "Como posso tocar um acorde fácil no violão?" },
-    { fala: "Vamos montar uma progressão?", pergunta: "Sugira uma progressão simples para praticar." },
-    { fala: "Uma dica para escalas?", pergunta: "Como escolho uma escala para improvisar?" },
+    { fala: "Quer destravar um acorde?", pergunta: "Como posso tocar um acorde fácil no violão?", audio: "/audio/thonic-acorde.wav" },
+    { fala: "Vamos montar uma progressão?", pergunta: "Sugira uma progressão simples para praticar.", audio: "/audio/thonic-progressao.wav" },
+    { fala: "Uma dica para escalas?", pergunta: "Como escolho uma escala para improvisar?", audio: "/audio/thonic-escalas.wav" },
 ];
 
 function lerArquivoComoDataUrl(arquivo) {
@@ -73,8 +74,10 @@ export default function ChatbotTab() {
     const [anexosTesteAtivo, setAnexosTesteAtivo] = useState(false);
     const [arquivosTeste, setArquivosTeste] = useState([]);
     const inputArquivosRef = useRef(null);
+    const audioFalaRef = useRef(null);
     const [carregando, setCarregando] = useState(false);
     const [carregandoConversa, setCarregandoConversa] = useState(false);
+    const [falaAtiva, setFalaAtiva] = useState("");
     const [erro, setErro] = useState("");
 
     const fimDaListaRef = useRef(null);
@@ -82,6 +85,20 @@ export default function ChatbotTab() {
     const timerPersistenciaRef = useRef(null);
 
     const storageKey = user?.id ? `${CONVERSA_STORAGE_PREFIXO}${user.id}` : null;
+
+    function ouvirFala({ fala, pergunta, audio }) {
+        setEntrada(pergunta);
+        if (audioFalaRef.current) {
+            audioFalaRef.current.pause();
+            audioFalaRef.current.currentTime = 0;
+        }
+        const audioElement = new Audio(audio);
+        audioFalaRef.current = audioElement;
+        setFalaAtiva(fala);
+        audioElement.onended = () => setFalaAtiva("");
+        audioElement.onerror = () => setFalaAtiva("");
+        audioElement.play().catch(() => setFalaAtiva(""));
+    }
 
     useEffect(() => {
         const chave = "riffThonicAttachmentsTest";
@@ -321,7 +338,7 @@ export default function ChatbotTab() {
                     >
                         <span className="chatbot-avatar">
                             {mensagem.autor === "bot" ? (
-                                <img src="/thonic.webp" alt="Thonic" width="42" height="42" loading="lazy" decoding="async" />
+                                <ThonicAvatar speaking={falaAtiva !== ""} alt="Thonic" size={42} />
                             ) : (
                                 <AvatarUsuario tamanho={42} />
                             )}
@@ -348,15 +365,15 @@ export default function ChatbotTab() {
                     <div className="chatbot-falas" aria-label="Balões de sugestão do Thonic">
                         <p className="chatbot-falas-intro">Toque numa fala do Thonic para começar:</p>
                         <div className="chatbot-falas-lista">
-                            {FALAS_THONIC.map(({ fala, pergunta }) => (
+                            {FALAS_THONIC.map((falaThonic) => (
                                 <button
-                                    key={fala}
+                                    key={falaThonic.fala}
                                     type="button"
-                                    className="chatbot-fala"
-                                    onClick={() => setEntrada(pergunta)}
-                                    title="Usar como pergunta"
+                                    className={`chatbot-fala${falaAtiva === falaThonic.fala ? " is-speaking" : ""}`}
+                                    onClick={() => ouvirFala(falaThonic)}
+                                    title="Ouvir a fala e usar como pergunta"
                                 >
-                                    {fala}
+                                    {falaThonic.fala}
                                 </button>
                             ))}
                         </div>
@@ -366,7 +383,7 @@ export default function ChatbotTab() {
                 {carregando && (
                     <div className="chatbot-linha chatbot-linha-bot">
                         <span className="chatbot-avatar">
-                            <img src="/thonic.webp" alt="Thonic está digitando" width="42" height="42" loading="lazy" decoding="async" />
+                            <ThonicAvatar speaking alt="Thonic está digitando" size={42} />
                         </span>
                         <div className="chatbot-bolha chatbot-bolha-bot chatbot-digitando">
                             <span></span>
