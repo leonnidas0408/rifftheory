@@ -121,6 +121,9 @@ export default function Home({ setPage }) {
                     }}>
                         Testar grátis · sem cadastro
                     </button>
+                    <button className="hero-secundaria" type="button" onClick={() => setPage?.("Tablaturas")}>
+                        Criar uma tablatura
+                    </button>
                 </div>
                 <div className="hero-social-proof" aria-label="Prova social do Riff Theory">
                     <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
@@ -185,6 +188,14 @@ export default function Home({ setPage }) {
                     <button type="button" onClick={() => setPage?.("Metrônomo")}>
                         <strong>Metrônomo + troca</strong>
                         <span>Defina um pulso e repita a progressão com intenção.</span>
+                    </button>
+                    <button type="button" onClick={() => setPage?.("Afinador")}>
+                        <strong>Afinador online</strong>
+                        <span>Afine pelo microfone quando decidir iniciar o afinador.</span>
+                    </button>
+                    <button type="button" onClick={() => setPage?.("Tablaturas")}>
+                        <strong>Criar uma tablatura</strong>
+                        <span>Escreva sua tab no navegador e copie ou baixe o arquivo .txt.</span>
                     </button>
                 </div>
             </section>

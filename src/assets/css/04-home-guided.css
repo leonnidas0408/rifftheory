@@ -274,15 +274,23 @@ a.recent-item:hover {
 }
 
 .hero-secundaria {
+    padding: 10px 2px;
+    border: 0;
+    background: transparent;
     color: #d3e2f8;
     font-size: 15px;
     font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 3px;
+    cursor: pointer;
 }
 
 .hero-secundaria:hover {
     color: #fff;
+}
+.hero-secundaria:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
 }
 .hero-benefits {
     display: flex;

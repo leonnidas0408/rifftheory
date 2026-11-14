@@ -14,6 +14,18 @@ import { AuthProvider } from "./auth/AuthContext";
 import AccessConsent from "./components/AccessConsent";
 import AccessMonitor from "./components/pages/AccessMonitor";
 
+const TOOL_PAGE_BY_SLUG = {
+    acordes: "Dashboard",
+    afinador: "Afinador",
+    escalas: "Escalas",
+    metronomo: "Metrônomo",
+    tablaturas: "Tablaturas",
+};
+
+const TOOL_SLUG_BY_PAGE = Object.fromEntries(
+    Object.entries(TOOL_PAGE_BY_SLUG).map(([slug, page]) => [page, slug])
+);
+
 export default function App() {
     const isAccessMonitorRoute = window.location.pathname.replace(/\/+$/, "") === "/admin/acessos";
 
@@ -25,7 +37,18 @@ export default function App() {
 }
 
 function RiffTheoryApp() {
-    const [page, setPage] = useState("Início");
+    const [page, setPage] = useState(() => {
+        const requestedTool = new URLSearchParams(window.location.search).get("tool");
+        return TOOL_PAGE_BY_SLUG[requestedTool] || "Início";
+    });
+
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        const tool = TOOL_SLUG_BY_PAGE[page];
+        if (tool) url.searchParams.set("tool", tool);
+        else url.searchParams.delete("tool");
+        window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+    }, [page]);
 
     useEffect(() => {
         const titles = {
@@ -59,13 +82,13 @@ function RiffTheoryApp() {
 
     return (
         <>
+            <AccessConsent />
             <NavbarAdapter
                 page={page}
                 setPage={setPage}
                 pageData={pageData}
                 defaultPage="Início"
             />
-            <AccessConsent />
         </>
     );
 }

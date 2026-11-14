@@ -1,18 +1,17 @@
 .access-consent {
-    position: fixed;
-    z-index: 2000;
-    right: 18px;
-    bottom: 18px;
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 14px;
-    width: min(690px, calc(100vw - 36px));
+    width: min(1120px, calc(100% - 36px));
+    margin: 12px auto 0;
     padding: 14px 16px;
     border: 1px solid var(--borda, #d8e0eb);
     border-radius: 16px;
     background: #fff;
     color: var(--texto, #202b3a);
-    box-shadow: 0 16px 44px rgba(17, 31, 52, .2);
+    box-shadow: 0 8px 24px rgba(17, 31, 52, .1);
 }
 .access-consent p {
     max-width: 54ch;
@@ -52,14 +51,12 @@
 }
 @media (max-width: 680px) {
     .access-consent {
-        right: 10px;
-        bottom: 10px;
-        left: 10px;
-        width: auto;
-        flex-direction: column;
         align-items: stretch;
+        flex-direction: column;
         gap: 10px;
-        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        width: calc(100% - 20px);
+        margin: 10px auto 0;
+        padding: 12px;
     }
     .access-consent-actions {
         justify-content: stretch;
