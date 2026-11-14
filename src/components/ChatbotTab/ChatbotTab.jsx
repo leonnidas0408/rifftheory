@@ -93,8 +93,10 @@ export default function ChatbotTab() {
             audioFalaRef.current.currentTime = 0;
         }
         const audioElement = new Audio(audio);
+        audioElement.preload = "auto";
         audioFalaRef.current = audioElement;
-        setFalaAtiva(fala);
+        audioElement.onplay = () => setFalaAtiva(fala);
+        audioElement.onpause = () => setFalaAtiva("");
         audioElement.onended = () => setFalaAtiva("");
         audioElement.onerror = () => setFalaAtiva("");
         audioElement.play().catch(() => setFalaAtiva(""));
