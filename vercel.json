@@ -25,6 +25,10 @@
     { "source": "/metronomo(?:/)?", "destination": "/metronomo/index.html" },
     { "source": "/tablaturas(?:/)?", "destination": "/tablaturas/index.html" },
     { "source": "/privacidade(?:/)?", "destination": "/privacidade/index.html" },
+    { "source": "/como-afinar-guitarra-violao(?:/)?", "destination": "/como-afinar-guitarra-violao/index.html" },
+    { "source": "/metronomo-para-guitarra(?:/)?", "destination": "/metronomo-para-guitarra/index.html" },
+    { "source": "/tabmaker(?:/)?", "destination": "/tabmaker/index.html" },
+    { "source": "/cifras-de-musicas(?:/)?", "destination": "/cifras-de-musicas/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

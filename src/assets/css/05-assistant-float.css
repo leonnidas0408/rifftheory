@@ -1,7 +1,6 @@
 /* Riff Theory — Botão flutuante do assistente. Mantém a ordem original da cascata. */
 /* ==================================================   BOTÃO FLUTUANTE DO ASSISTENTE
    ========================================================= */
-
 .fab-chat {
     position: fixed;
     right: 26px;
@@ -17,9 +16,63 @@
     z-index: 15;
     transition: transform 0.15s;
 }
-
 .fab-chat:hover {
     transform: scale(1.06);
 }
-
-
+.fab-chat-logo {
+    animation: thonic-nudge 19s ease-in-out infinite;
+}
+.fab-chat-tip {
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 50%;
+    width: max-content;
+    max-width: min(220px, calc(100vw - 120px));
+    padding: 9px 12px;
+    border: 1px solid rgba(31, 79, 143, 0.16);
+    border-radius: 12px;
+    background: #fff;
+    color: #203247;
+    box-shadow: 0 5px 18px rgba(31, 47, 67, 0.18);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: left;
+    white-space: normal;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%) translateX(6px);
+    transition: opacity 350ms ease, transform 350ms ease, visibility 0s linear 350ms;
+}
+.fab-chat-tip::after {
+    position: absolute;
+    top: 50%;
+    right: -5px;
+    width: 8px;
+    height: 8px;
+    border-top: 1px solid rgba(31, 79, 143, 0.16);
+    border-right: 1px solid rgba(31, 79, 143, 0.16);
+    background: #fff;
+    content: "";
+    transform: translateY(-50%) rotate(45deg);
+}
+.fab-chat-tip-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+    transition-delay: 0s;
+}
+@keyframes thonic-nudge {
+    0%, 91%, 100% { transform: rotate(0) scale(1); }
+    92% { transform: rotate(-6deg) scale(1.04); }
+    93% { transform: rotate(5deg) scale(1.07); }
+    94% { transform: rotate(-3deg) scale(1.03); }
+    95% { transform: rotate(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .fab-chat-logo { animation: none; }
+    .fab-chat,
+    .fab-chat-tip { transition: none; }
+    .fab-chat:hover { transform: none; }
+}

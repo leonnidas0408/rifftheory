@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
+Allow: /como-afinar-guitarra-violao/
+Allow: /metronomo-para-guitarra/
+Allow: /tabmaker/
+Allow: /cifras-de-musicas/
 Disallow: /api/
 Disallow: /admin/
 

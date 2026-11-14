@@ -41,6 +41,15 @@ export default function Home({ setPage }) {
     const [abrirEscolha, setAbrirEscolha] = useState(0);
 
     useEffect(() => {
+        if (window.location.hash !== "#comecar") return undefined;
+        const frame = window.requestAnimationFrame(() => {
+            document.getElementById("comecar")?.scrollIntoView({ behavior: "auto", block: "start" });
+            document.getElementById("busca-cifra")?.focus({ preventScroll: true });
+        });
+        return () => window.cancelAnimationFrame(frame);
+    }, []);
+
+    useEffect(() => {
         const blocos = Array.from(document.querySelectorAll(
             ".pagina > section, .pagina > .comecar, .pagina > #secao-braco"
         ));

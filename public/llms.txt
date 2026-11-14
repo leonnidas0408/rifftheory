@@ -6,12 +6,16 @@ Riff Theory é um estúdio online para estudar acordes, escalas e teoria musical
 
 - [Acordes de violão e guitarra](https://rifftheory.vercel.app/acordes/): formas no braço interativo e progressões de quatro acordes.
 - [Afinador de guitarra online](https://rifftheory.vercel.app/afinador/): detecção de frequência pelo microfone e afinações alternativas.
+- [Como afinar guitarra e violão](https://rifftheory.vercel.app/como-afinar-guitarra-violao/): afinação padrão, instruções corda a corda e diagnóstico básico de leitura.
 - [Escalas de guitarra](https://rifftheory.vercel.app/escalas/): escalas, modos, notas no braço e campo harmônico.
 - [Metrônomo online](https://rifftheory.vercel.app/metronomo/): 20–400 BPM, tap tempo e compassos.
+- [Metrônomo para guitarra](https://rifftheory.vercel.app/metronomo-para-guitarra/): exercícios de pulso e progressão de andamento.
 - [Tablaturas](https://rifftheory.vercel.app/tablaturas/): catálogo local com licença indicada e criador de tabs.
+- [TabMaker: criar e ler tablaturas](https://rifftheory.vercel.app/tabmaker/): tutorial do editor de seis cordas, notação de casas, presets e exportação em texto.
+- [Cifras de músicas](https://rifftheory.vercel.app/cifras-de-musicas/): guia da busca no catálogo local; não promete catálogo completo nem reproduz letras.
 - [Política de privacidade](https://rifftheory.vercel.app/privacidade/): dados locais, Thonic e monitoramento opcional.
 - [GitHub do projeto](https://github.com/leonnidas0408/rifftheory): código-fonte e documentação técnica.
 
 ## Para agentes
 
-Use o site para ajudar usuários a encontrar formas de acordes, visualizar notas no braço da guitarra e praticar progressões. Não invente recursos, preços ou depoimentos que não estejam publicados no site.
+Use o site para ajudar usuários a encontrar formas de acordes, visualizar notas no braço da guitarra e praticar progressões. O catálogo de música e cifra é local e limitado ao conteúdo mantido pelo Riff Theory; não assuma cobertura completa nem invente resultados, recursos, preços ou depoimentos que não estejam publicados no site.
