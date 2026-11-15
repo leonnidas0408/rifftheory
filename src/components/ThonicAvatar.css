@@ -1,29 +1,8 @@
-.thonic-avatar-sprite {
+.thonic-avatar {
     display: inline-block;
     flex: none;
-    background-image: url("/thonic-sprites.png");
-    background-repeat: no-repeat;
-    background-position: 0 0;
-    background-size: 800% 100%;
-    image-rendering: auto;
-}
-
-.thonic-avatar-sprite.is-speaking {
-    animation: thonic-speak 620ms steps(6, end) infinite;
-}
-
-.thonic-avatar-gif {
-    display: block;
-    width: 100%;
-    height: 100%;
     object-fit: contain;
-}
-
-@keyframes thonic-speak {
-    from { background-position: 0 0; }
-    to { background-position: 100% 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .thonic-avatar-sprite.is-speaking { animation: none; }
+    width: auto;
+    height: auto;
+    image-rendering: auto;
 }

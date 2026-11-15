@@ -1,113 +1,48 @@
 import React from "react";
 import Icone from "./Icone";
-import ThonicAvatar from "./ThonicAvatar";
 import AuthButton from "./AuthButton";
 import { GOOGLE_LOGIN_UI_ENABLED } from "../auth/featureFlags";
+import { THONIC_BALOES, lerBaloesAtivos } from "./thonicBaloes";
 
 // Área principal: abas de ferramentas no topo, página atual e o botão
 // flutuante que abre o assistente (chat).
 export default function Conteudo({ page, setPage, pageData, sidebarCollapsed, onToggleSidebar }) {
-    const [reducedMotion, setReducedMotion] = React.useState(() => {
-        if (typeof window === "undefined" || !window.matchMedia) return false;
-        return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    });
-    const [bubbleVisible, setBubbleVisible] = React.useState(false);
-    const [bubbleText, setBubbleText] = React.useState("");
-    const [falaAtiva, setFalaAtiva] = React.useState(false);
-    const [audioBloqueado, setAudioBloqueado] = React.useState(false);
-    const falaAtualRef = React.useRef(null);
-    const audioRef = React.useRef(null);
-    const timerRef = React.useRef(null);
     const abas = Object.entries(pageData).filter(([, item]) => item.aba);
+    const [baloesAtivos, setBaloesAtivos] = React.useState(lerBaloesAtivos);
+    const [balaoAtual, setBalaoAtual] = React.useState(-1);
+    const [balaoVisivel, setBalaoVisivel] = React.useState(false);
+    const timerBalaoRef = React.useRef(null);
 
     React.useEffect(() => {
-        const query = window.matchMedia?.("(prefers-reduced-motion: reduce)");
-        if (!query) return undefined;
-
-        const onPreferenceChange = (event) => setReducedMotion(event.matches);
-        if (query.addEventListener) {
-            query.addEventListener("change", onPreferenceChange);
-            return () => query.removeEventListener("change", onPreferenceChange);
-        }
-        query.addListener(onPreferenceChange);
-        return () => query.removeListener(onPreferenceChange);
+        const atualizar = (evento) => {
+            const ativo = evento.detail?.baloesAtivos ?? lerBaloesAtivos();
+            setBaloesAtivos(ativo);
+            if (!ativo) setBalaoVisivel(false);
+        };
+        window.addEventListener("storage", atualizar);
+        window.addEventListener("riff-thonic-bubble-settings", atualizar);
+        return () => {
+            window.removeEventListener("storage", atualizar);
+            window.removeEventListener("riff-thonic-bubble-settings", atualizar);
+        };
     }, []);
 
     React.useEffect(() => {
-        if (page === "Chatbot" || reducedMotion) {
-            setBubbleVisible(false);
-            return undefined;
-        }
+        window.clearTimeout(timerBalaoRef.current);
+        setBalaoVisivel(false);
+        if (page === "Chatbot" || !baloesAtivos) return undefined;
 
-        const frases = [
-            { texto: "Quer conversar sobre teoria musical?", audio: "/audio/thonic-global-teoria.wav" },
-            { texto: "Dúvidas sobre acordes? Pode perguntar.", audio: "/audio/thonic-global-acordes.wav" },
-            { texto: "Explore escalas e seus usos.", audio: "/audio/thonic-global-escalas.wav" },
-            { texto: "Vamos falar de harmonia?", audio: "/audio/thonic-global-harmonia.wav" },
-        ];
-        let cancelled = false;
-
-        const limparAudio = () => {
-            if (audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current.currentTime = 0;
-                audioRef.current = null;
-            }
-            setFalaAtiva(false);
+        const mostrarBalao = () => {
+            setBalaoAtual((atual) => (atual + 1) % THONIC_BALOES.length);
+            setBalaoVisivel(true);
+            timerBalaoRef.current = window.setTimeout(() => setBalaoVisivel(false), 14000);
         };
-
-        const agendar = (delay) => {
-            timerRef.current = window.setTimeout(showBubble, delay);
-        };
-
-        const showBubble = () => {
-            if (cancelled) return;
-            const frase = frases[Math.floor(Math.random() * frases.length)];
-            falaAtualRef.current = frase;
-            setBubbleText(frase.texto);
-            setBubbleVisible(true);
-            limparAudio();
-            const audio = new Audio(frase.audio);
-            audio.preload = "auto";
-            audioRef.current = audio;
-            audio.onplay = () => {
-                setAudioBloqueado(false);
-                setFalaAtiva(true);
-            };
-            audio.onpause = () => setFalaAtiva(false);
-            audio.onended = () => {
-                setFalaAtiva(false);
-                window.setTimeout(() => setBubbleVisible(false), 900);
-            };
-            audio.onerror = () => setFalaAtiva(false);
-            audio.play().catch(() => setAudioBloqueado(true));
-            agendar(22000 + Math.floor(Math.random() * 14000));
-        };
-
-        agendar(7000 + Math.floor(Math.random() * 6000));
+        const intervalo = window.setInterval(mostrarBalao, 180000);
         return () => {
-            cancelled = true;
-            window.clearTimeout(timerRef.current);
-            limparAudio();
+            window.clearInterval(intervalo);
+            window.clearTimeout(timerBalaoRef.current);
         };
-    }, [page, reducedMotion]);
-
-    const tocarFalaAtual = () => {
-        const frase = falaAtualRef.current;
-        if (!frase) return;
-        const audio = audioRef.current || new Audio(frase.audio);
-        audioRef.current = audio;
-        audio.onplay = () => {
-            setAudioBloqueado(false);
-            setFalaAtiva(true);
-        };
-        audio.onpause = () => setFalaAtiva(false);
-        audio.onended = () => {
-            setFalaAtiva(false);
-            window.setTimeout(() => setBubbleVisible(false), 900);
-        };
-        audio.play().catch(() => setAudioBloqueado(true));
-    };
+    }, [page, baloesAtivos]);
 
     return (
         <main className="conteudo">
@@ -142,24 +77,26 @@ export default function Conteudo({ page, setPage, pageData, sidebarCollapsed, on
             </nav>
             {pageData[page].page}
             {page !== "Chatbot" && (
-                <button
-                    className="fab-chat"
-                    type="button"
-                    aria-label="Abrir assistente Thonic"
-                    onClick={() => {
-                        if (bubbleVisible && audioBloqueado) {
-                            tocarFalaAtual();
-                            return;
-                        }
-                        setBubbleVisible(false);
-                        setPage("Chatbot");
-                    }}
-                >
-                    <ThonicAvatar className="fab-chat-logo" speaking={falaAtiva} alt="Thonic" size={42} />
-                    <span className={`fab-chat-tip${bubbleVisible ? " fab-chat-tip-visible" : ""}`} aria-hidden="true">
-                        {bubbleText}
-                    </span>
-                </button>
+                <div className="fab-chat-wrap">
+                    <button
+                        className={`fab-chat-callout${balaoVisivel ? " is-visible" : ""}`}
+                        type="button"
+                        onClick={() => setPage("Chatbot")}
+                        aria-label={balaoAtual >= 0 ? THONIC_BALOES[balaoAtual].alt : "Abrir conversa com o Thonic"}
+                        aria-hidden={!balaoVisivel}
+                        tabIndex={balaoVisivel ? 0 : -1}
+                    >
+                        {balaoAtual >= 0 && <img src={THONIC_BALOES[balaoAtual].src} alt="" />}
+                    </button>
+                    <button
+                        className="fab-chat"
+                        type="button"
+                        aria-label="Abrir assistente Thonic"
+                        onClick={() => setPage("Chatbot")}
+                    >
+                        <img className="fab-chat-logo" src="/thonic-waveform-speaking.gif" alt="Thonic" width="60" height="60" />
+                    </button>
+                </div>
             )}
         </main>
     );
