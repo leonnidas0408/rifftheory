@@ -1,5 +1,6 @@
 import React from "react";
 import Icone from "./Icone";
+import ThonicAvatar from "./ThonicAvatar";
 import AuthButton from "./AuthButton";
 import { GOOGLE_LOGIN_UI_ENABLED } from "../auth/featureFlags";
 
@@ -12,6 +13,11 @@ export default function Conteudo({ page, setPage, pageData, sidebarCollapsed, on
     });
     const [bubbleVisible, setBubbleVisible] = React.useState(false);
     const [bubbleText, setBubbleText] = React.useState("");
+    const [falaAtiva, setFalaAtiva] = React.useState(false);
+    const [audioBloqueado, setAudioBloqueado] = React.useState(false);
+    const falaAtualRef = React.useRef(null);
+    const audioRef = React.useRef(null);
+    const timerRef = React.useRef(null);
     const abas = Object.entries(pageData).filter(([, item]) => item.aba);
 
     React.useEffect(() => {
@@ -34,32 +40,74 @@ export default function Conteudo({ page, setPage, pageData, sidebarCollapsed, on
         }
 
         const frases = [
-            "Quer conversar sobre teoria musical?",
-            "Dúvidas sobre acordes? Pode perguntar.",
-            "Explore escalas e seus usos.",
-            "Vamos falar de harmonia?",
+            { texto: "Quer conversar sobre teoria musical?", audio: "/audio/thonic-global-teoria.wav" },
+            { texto: "Dúvidas sobre acordes? Pode perguntar.", audio: "/audio/thonic-global-acordes.wav" },
+            { texto: "Explore escalas e seus usos.", audio: "/audio/thonic-global-escalas.wav" },
+            { texto: "Vamos falar de harmonia?", audio: "/audio/thonic-global-harmonia.wav" },
         ];
-        let timerId;
-        let phraseIndex = 0;
         let cancelled = false;
+
+        const limparAudio = () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+                audioRef.current = null;
+            }
+            setFalaAtiva(false);
+        };
+
+        const agendar = (delay) => {
+            timerRef.current = window.setTimeout(showBubble, delay);
+        };
 
         const showBubble = () => {
             if (cancelled) return;
-            setBubbleText(frases[phraseIndex % frases.length]);
-            phraseIndex += 1;
+            const frase = frases[Math.floor(Math.random() * frases.length)];
+            falaAtualRef.current = frase;
+            setBubbleText(frase.texto);
             setBubbleVisible(true);
-            timerId = window.setTimeout(() => {
-                setBubbleVisible(false);
-                timerId = window.setTimeout(showBubble, 22000);
-            }, 5000);
+            limparAudio();
+            const audio = new Audio(frase.audio);
+            audio.preload = "auto";
+            audioRef.current = audio;
+            audio.onplay = () => {
+                setAudioBloqueado(false);
+                setFalaAtiva(true);
+            };
+            audio.onpause = () => setFalaAtiva(false);
+            audio.onended = () => {
+                setFalaAtiva(false);
+                window.setTimeout(() => setBubbleVisible(false), 900);
+            };
+            audio.onerror = () => setFalaAtiva(false);
+            audio.play().catch(() => setAudioBloqueado(true));
+            agendar(22000 + Math.floor(Math.random() * 14000));
         };
 
-        timerId = window.setTimeout(showBubble, 2500);
+        agendar(7000 + Math.floor(Math.random() * 6000));
         return () => {
             cancelled = true;
-            window.clearTimeout(timerId);
+            window.clearTimeout(timerRef.current);
+            limparAudio();
         };
     }, [page, reducedMotion]);
+
+    const tocarFalaAtual = () => {
+        const frase = falaAtualRef.current;
+        if (!frase) return;
+        const audio = audioRef.current || new Audio(frase.audio);
+        audioRef.current = audio;
+        audio.onplay = () => {
+            setAudioBloqueado(false);
+            setFalaAtiva(true);
+        };
+        audio.onpause = () => setFalaAtiva(false);
+        audio.onended = () => {
+            setFalaAtiva(false);
+            window.setTimeout(() => setBubbleVisible(false), 900);
+        };
+        audio.play().catch(() => setAudioBloqueado(true));
+    };
 
     return (
         <main className="conteudo">
@@ -99,11 +147,15 @@ export default function Conteudo({ page, setPage, pageData, sidebarCollapsed, on
                     type="button"
                     aria-label="Abrir assistente Thonic"
                     onClick={() => {
+                        if (bubbleVisible && audioBloqueado) {
+                            tocarFalaAtual();
+                            return;
+                        }
                         setBubbleVisible(false);
                         setPage("Chatbot");
                     }}
                 >
-                    <img className="fab-chat-logo" src="/thonic.webp" alt="" width="42" height="42" loading="lazy" decoding="async" />
+                    <ThonicAvatar className="fab-chat-logo" speaking={falaAtiva} alt="Thonic" size={42} />
                     <span className={`fab-chat-tip${bubbleVisible ? " fab-chat-tip-visible" : ""}`} aria-hidden="true">
                         {bubbleText}
                     </span>
