@@ -8,6 +8,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { supabase } from "../../auth/supabase";
 import "./ChatbotTab.css";
 import Markdown from "react-markdown";
+import { THONIC_BALOES_ATIVOS_KEY, lerBaloesAtivos } from "../thonicBaloes";
 
 const CONVERSA_STORAGE_PREFIXO = "riffTheoryThonicConversation:v1:";
 const MAX_MENSAGENS_SALVAS = 100;
@@ -71,12 +72,23 @@ export default function ChatbotTab() {
     const [carregando, setCarregando] = useState(false);
     const [carregandoConversa, setCarregandoConversa] = useState(false);
     const [erro, setErro] = useState("");
+    const [configuracoesAbertas, setConfiguracoesAbertas] = useState(false);
+    const [baloesAtivos, setBaloesAtivos] = useState(lerBaloesAtivos);
 
     const fimDaListaRef = useRef(null);
     const conversaCarregadaRef = useRef(false);
     const timerPersistenciaRef = useRef(null);
 
     const storageKey = user?.id ? `${CONVERSA_STORAGE_PREFIXO}${user.id}` : null;
+
+    function alternarBaloes(evento) {
+        const ativo = evento.target.checked;
+        setBaloesAtivos(ativo);
+        window.localStorage.setItem(THONIC_BALOES_ATIVOS_KEY, ativo ? "1" : "0");
+        window.dispatchEvent(new CustomEvent("riff-thonic-bubble-settings", {
+            detail: { baloesAtivos: ativo },
+        }));
+    }
 
     useEffect(() => {
         const chave = "riffThonicAttachmentsTest";
@@ -297,15 +309,37 @@ export default function ChatbotTab() {
                     <Barra titulo="Riff Theory" />
                 </div>
 
-                <button
-                    type="button"
-                    className="chatbot-nova"
-                    onClick={novaConversa}
-                    aria-label="Nova conversa"
-                    title="Nova conversa"
-                >
-                    <Icone nome="novaConversa" tamanho={24} />
-                </button>
+                <div className="chatbot-acoes">
+                    <button
+                        type="button"
+                        className={`chatbot-configuracoes${configuracoesAbertas ? " ativo" : ""}`}
+                        onClick={() => setConfiguracoesAbertas((aberta) => !aberta)}
+                        aria-label="Configurações do Thonic"
+                        aria-expanded={configuracoesAbertas}
+                        title="Configurações do Thonic"
+                    >
+                        <Icone nome="configuracoes" tamanho={22} />
+                    </button>
+                    <button
+                        type="button"
+                        className="chatbot-nova"
+                        onClick={novaConversa}
+                        aria-label="Nova conversa"
+                        title="Nova conversa"
+                    >
+                        <Icone nome="novaConversa" tamanho={24} />
+                    </button>
+                    {configuracoesAbertas && (
+                        <div className="chatbot-configuracoes-painel" role="dialog" aria-label="Configurações do Thonic">
+                            <strong>Configurações do Thonic</strong>
+                            <label>
+                                <input type="checkbox" checked={baloesAtivos} onChange={alternarBaloes} />
+                                <span>Mostrar balões do Thonic</span>
+                            </label>
+                            <small>Os balões aparecem no site a cada 3 minutos.</small>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="chatbot-mensagens">
