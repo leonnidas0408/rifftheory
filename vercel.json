@@ -19,16 +19,16 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/acordes(?:/)?", "destination": "/acordes/index.html" },
-    { "source": "/afinador(?:/)?", "destination": "/afinador/index.html" },
-    { "source": "/escalas(?:/)?", "destination": "/escalas/index.html" },
-    { "source": "/metronomo(?:/)?", "destination": "/metronomo/index.html" },
-    { "source": "/tablaturas(?:/)?", "destination": "/tablaturas/index.html" },
-    { "source": "/privacidade(?:/)?", "destination": "/privacidade/index.html" },
-    { "source": "/como-afinar-guitarra-violao(?:/)?", "destination": "/como-afinar-guitarra-violao/index.html" },
-    { "source": "/metronomo-para-guitarra(?:/)?", "destination": "/metronomo-para-guitarra/index.html" },
-    { "source": "/tabmaker(?:/)?", "destination": "/tabmaker/index.html" },
-    { "source": "/cifras-de-musicas(?:/)?", "destination": "/cifras-de-musicas/index.html" },
+    { "source": "/acordes", "destination": "/acordes/index.html" },
+    { "source": "/afinador", "destination": "/afinador/index.html" },
+    { "source": "/escalas", "destination": "/escalas/index.html" },
+    { "source": "/metronomo", "destination": "/metronomo/index.html" },
+    { "source": "/tablaturas", "destination": "/tablaturas/index.html" },
+    { "source": "/privacidade", "destination": "/privacidade/index.html" },
+    { "source": "/como-afinar-guitarra-violao", "destination": "/como-afinar-guitarra-violao/index.html" },
+    { "source": "/metronomo-para-guitarra", "destination": "/metronomo-para-guitarra/index.html" },
+    { "source": "/tabmaker", "destination": "/tabmaker/index.html" },
+    { "source": "/cifras-de-musicas", "destination": "/cifras-de-musicas/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
