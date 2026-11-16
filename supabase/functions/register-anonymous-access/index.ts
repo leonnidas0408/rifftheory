@@ -1,10 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const ALLOWED_ORIGINS = new Set([
-    "https://rifftheory.vercel.app",
+    "https://www.rifftheory6.com.br",
     "http://localhost:5173",
 ]);
-const EXPECTED_HOSTNAME = "rifftheory.vercel.app";
+const EXPECTED_HOSTNAME = "www.rifftheory6.com.br";
 const EXPECTED_ACTION = "access_monitor";
 const encoder = new TextEncoder();
 

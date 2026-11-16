@@ -7,4 +7,4 @@ Allow: /cifras-de-musicas/
 Disallow: /api/
 Disallow: /admin/
 
-Sitemap: https://rifftheory.vercel.app/sitemap.xml
+Sitemap: https://www.rifftheory6.com.br/sitemap.xml

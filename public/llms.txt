@@ -4,16 +4,16 @@ Riff Theory é um estúdio online para estudar acordes, escalas e teoria musical
 
 ## Páginas indexáveis
 
-- [Acordes de violão e guitarra](https://rifftheory.vercel.app/acordes/): formas no braço interativo e progressões de quatro acordes.
-- [Afinador de guitarra online](https://rifftheory.vercel.app/afinador/): detecção de frequência pelo microfone e afinações alternativas.
-- [Como afinar guitarra e violão](https://rifftheory.vercel.app/como-afinar-guitarra-violao/): afinação padrão, instruções corda a corda e diagnóstico básico de leitura.
-- [Escalas de guitarra](https://rifftheory.vercel.app/escalas/): escalas, modos, notas no braço e campo harmônico.
-- [Metrônomo online](https://rifftheory.vercel.app/metronomo/): 20–400 BPM, tap tempo e compassos.
-- [Metrônomo para guitarra](https://rifftheory.vercel.app/metronomo-para-guitarra/): exercícios de pulso e progressão de andamento.
-- [Tablaturas](https://rifftheory.vercel.app/tablaturas/): catálogo local com licença indicada e criador de tabs.
-- [TabMaker: criar e ler tablaturas](https://rifftheory.vercel.app/tabmaker/): tutorial do editor de seis cordas, notação de casas, presets e exportação em texto.
-- [Cifras de músicas](https://rifftheory.vercel.app/cifras-de-musicas/): guia da busca no catálogo local; não promete catálogo completo nem reproduz letras.
-- [Política de privacidade](https://rifftheory.vercel.app/privacidade/): dados locais, Thonic e monitoramento opcional.
+- [Acordes de violão e guitarra](https://www.rifftheory6.com.br/acordes/): formas no braço interativo e progressões de quatro acordes.
+- [Afinador de guitarra online](https://www.rifftheory6.com.br/afinador/): detecção de frequência pelo microfone e afinações alternativas.
+- [Como afinar guitarra e violão](https://www.rifftheory6.com.br/como-afinar-guitarra-violao/): afinação padrão, instruções corda a corda e diagnóstico básico de leitura.
+- [Escalas de guitarra](https://www.rifftheory6.com.br/escalas/): escalas, modos, notas no braço e campo harmônico.
+- [Metrônomo online](https://www.rifftheory6.com.br/metronomo/): 20–400 BPM, tap tempo e compassos.
+- [Metrônomo para guitarra](https://www.rifftheory6.com.br/metronomo-para-guitarra/): exercícios de pulso e progressão de andamento.
+- [Tablaturas](https://www.rifftheory6.com.br/tablaturas/): catálogo local com licença indicada e criador de tabs.
+- [TabMaker: criar e ler tablaturas](https://www.rifftheory6.com.br/tabmaker/): tutorial do editor de seis cordas, notação de casas, presets e exportação em texto.
+- [Cifras de músicas](https://www.rifftheory6.com.br/cifras-de-musicas/): guia da busca no catálogo local; não promete catálogo completo nem reproduz letras.
+- [Política de privacidade](https://www.rifftheory6.com.br/privacidade/): dados locais, Thonic e monitoramento opcional.
 - [GitHub do projeto](https://github.com/leonnidas0408/rifftheory): código-fonte e documentação técnica.
 
 ## Para agentes

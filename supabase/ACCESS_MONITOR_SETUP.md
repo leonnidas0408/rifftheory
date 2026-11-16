@@ -12,7 +12,7 @@ Até as chaves do Turnstile serem configuradas, o monitoramento fica pausado; o 
 
 ## Configurar o Turnstile
 
-1. Crie um widget Cloudflare Turnstile para o host `rifftheory.vercel.app`.
+1. Crie um widget Cloudflare Turnstile para o host `www.rifftheory6.com.br`.
 2. Na Vercel, configure `VITE_TURNSTILE_SITE_KEY` com o **Site Key** público para o ambiente Production. Se usar Preview, configure-o separadamente.
 3. No Supabase Dashboard do projeto `RiffTheory`, abra **Edge Functions → Secrets** e salve o **Secret Key** com o nome `TURNSTILE_SECRET_KEY`. Não envie esse segredo pelo chat.
 4. A Edge Function usa as chaves secretas padrão fornecidas pelo Supabase no backend. Não exponha `SUPABASE_SECRET_KEYS` nem `service_role` no front-end.
@@ -41,7 +41,7 @@ A virada do dia não apaga eventos nem zera o histórico: cada data fica separad
 
 ## Abrir o painel
 
-Entre no Riff Theory com uma conta Google autorizada e acesse `https://rifftheory.vercel.app/admin/acessos`. Para cadastrar ou reativar um administrador, use o SQL Editor do mesmo projeto:
+Entre no Riff Theory com uma conta Google autorizada e acesse `https://www.rifftheory6.com.br/admin/acessos`. Para cadastrar ou reativar um administrador, use o SQL Editor do mesmo projeto:
 
 ```sql
 insert into public.access_monitor_admins (email)

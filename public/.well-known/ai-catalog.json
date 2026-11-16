@@ -2,14 +2,14 @@
   "specVersion": "1.0",
   "host": {
     "displayName": "Riff Theory",
-    "documentationUrl": "https://rifftheory.vercel.app/llms.txt"
+    "documentationUrl": "https://www.rifftheory6.com.br/llms.txt"
   },
   "entries": [
     {
-      "identifier": "urn:air:rifftheory.vercel.app:website:music-theory",
+      "identifier": "urn:air:www.rifftheory6.com.br:website:music-theory",
       "displayName": "Riff Theory",
       "type": "text/html",
-      "url": "https://rifftheory.vercel.app/",
+      "url": "https://www.rifftheory6.com.br/",
       "description": "Interactive guitar theory website with chord lookup, guided practice, scales and an interactive fretboard.",
       "tags": ["guitar", "music theory", "chords", "scales", "fretboard"],
       "capabilities": ["ChordLookup", "InteractiveFretboard", "GuidedPractice", "ScaleExploration"],
