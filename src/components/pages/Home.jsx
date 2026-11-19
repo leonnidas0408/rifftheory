@@ -5,6 +5,13 @@ import ChordSearch from "../Chord/ChordSearch";
 import ReviewForm from "./ReviewForm";
 import ReviewsDisplay from "./ReviewsDisplay";
 import { registrarEvento } from "../../utils/usageStats";
+import { supabase } from "../../auth/supabase";
+import {
+    REVIEW_UPDATED_EVENT,
+    carregarAvaliacoesComunitarias,
+    existingReviews,
+    resumirAvaliacoes,
+} from "./reviewsData";
 import FAQQuestion from "../FAQQuestion";
 import Markdown from "react-markdown";
 
@@ -39,6 +46,25 @@ export default function Home({ setPage }) {
     ];
     const [trilha, setTrilha] = useState(null);
     const [abrirEscolha, setAbrirEscolha] = useState(0);
+    const [reviewSummary, setReviewSummary] = useState(() => resumirAvaliacoes(existingReviews));
+
+    useEffect(() => {
+        let active = true;
+        async function atualizarResumoAvaliacoes() {
+            try {
+                const communityReviews = await carregarAvaliacoesComunitarias(supabase);
+                if (active) setReviewSummary(resumirAvaliacoes([...communityReviews, ...existingReviews]));
+            } catch {
+                if (active) setReviewSummary(resumirAvaliacoes(existingReviews));
+            }
+        }
+        atualizarResumoAvaliacoes();
+        window.addEventListener(REVIEW_UPDATED_EVENT, atualizarResumoAvaliacoes);
+        return () => {
+            active = false;
+            window.removeEventListener(REVIEW_UPDATED_EVENT, atualizarResumoAvaliacoes);
+        };
+    }, []);
 
     useEffect(() => {
         if (window.location.hash !== "#comecar") return undefined;
@@ -89,6 +115,9 @@ export default function Home({ setPage }) {
         setTrilha({ acordes, k: Date.now() });
         rolarPara("secao-braco");
     }
+    function mostrarAcordeNoBraco(acorde) {
+        iniciarTrilha([acorde]);
+    }
 
     function retomar(acorde) {
         registrarEvento("return_session_opened", { acorde });
@@ -135,9 +164,11 @@ export default function Home({ setPage }) {
                     </button>
                 </div>
                 <div className="hero-social-proof" aria-label="Prova social do Riff Theory">
-                    <span className="hero-social-stars" aria-hidden="true">★★★★★</span>
+                    <span className="hero-social-stars" aria-label={`${reviewSummary.score} de 5 estrelas`}>
+                        {"★".repeat(reviewSummary.stars)}{"☆".repeat(5 - reviewSummary.stars)}
+                    </span>
                     <div>
-                        <strong>5,0/5 · 6 avaliações públicas</strong>
+                        <strong>{reviewSummary.score}/5 · {reviewSummary.count} avaliações públicas</strong>
                         <span>“Fácil de navegar e com transição clara.” · “Muito bem organizado e fácil de usar.”</span>
                         <small>Fonte: avaliações públicas do próprio site · iniciantes, navegação e prática guiada.</small>
                     </div>
@@ -309,7 +340,7 @@ export default function Home({ setPage }) {
             </section>
 
             <div id="comecar" className="comecar">
-                <ChordSearch setPage={setPage} />
+                <ChordSearch setPage={setPage} onMostrarAcorde={mostrarAcordeNoBraco} />
 
                 <div className="sugestoes">
                     <span className="subtitulo">Ou treine uma progressão no braço:</span>

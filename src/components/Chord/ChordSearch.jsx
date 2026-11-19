@@ -13,7 +13,7 @@ import { TAB_CATALOG } from "../../data/tabCatalog";
 // Músicas para começar sem digitar (só viram um termo de busca).
 const SUGESTOES = TAB_CATALOG.slice(0, 4).map((item) => item.title);
 
-export default function ChordSearch({ setPage }) {
+export default function ChordSearch({ setPage, onMostrarAcorde }) {
     const [query, setQuery] = useState("");
     const [resultados, setResultados] = useState(null);
     const [erro, setErro] = useState("");
@@ -63,7 +63,7 @@ export default function ChordSearch({ setPage }) {
                 </div>
             )}
 
-            {resultados && <ChordResults resultados={resultados} setPage={setPage} />}
+            {resultados && <ChordResults resultados={resultados} setPage={setPage} onMostrarAcorde={onMostrarAcorde} />}
         </>
     );
 }
