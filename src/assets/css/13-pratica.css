@@ -38,6 +38,22 @@
 .roadmap-suggestion { display: grid; gap: 4px; margin-top: 18px; padding: 15px; border-left: 3px solid #315ce8; background: #f5f7fb; }
 .roadmap-suggestion strong { color: #202b3a; }
 .roadmap-suggestion span { color: #59687a; font-size: 13px; }
+.progression-builder { display: grid; gap: 16px; }
+.progression-builder-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #202b3a; }
+.progression-builder-heading span { color: #59687a; font-size: 12px; }
+.progression-builder .roadmap-chip-list button { display: inline-flex; align-items: center; gap: 7px; }
+.progression-builder .roadmap-chip-list button:disabled { cursor: not-allowed; opacity: .5; }
+.progression-builder .roadmap-chip-list small { color: #59687a; font-size: 10px; }
+.progression-sequence { display: flex; flex-wrap: wrap; align-items: stretch; gap: 9px; min-height: 72px; padding: 12px; border: 1px dashed #cbd5e1; background: #f8fbff; }
+.progression-step { display: flex; align-items: stretch; border: 1px solid #d8e0eb; background: #fff; }
+.progression-chord { display: grid; min-width: 64px; gap: 4px; padding: 10px; text-align: center; }
+.progression-chord strong { color: #202b3a; font-size: 18px; }
+.progression-chord span { color: #59687a; font-size: 11px; }
+.progression-step:focus-within, .progression-step:hover { border-color: #315ce8; background: #f4f6ff; }
+.progression-remove { align-self: flex-start; padding: 3px 7px; color: #59687a; font-size: 18px; }
+.progression-empty { align-self: center; color: #59687a; font-size: 13px; }
+.progression-builder-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.progression-builder-actions button:disabled { cursor: not-allowed; opacity: .5; }
 .voicing-list, .roadmap-scale-picker, .roadmap-overlay-list { display: grid; gap: 8px; margin-bottom: 18px; }
 .voicing-list button, .roadmap-scale-picker button { display: grid; gap: 4px; padding: 12px; border: 1px solid #e2e7ef; background: #fff; text-align: left; }
 .voicing-list button:hover, .voicing-list button.selecionado, .roadmap-scale-picker button:hover, .roadmap-scale-picker button.selecionado { border-color: #315ce8; background: #f4f6ff; }

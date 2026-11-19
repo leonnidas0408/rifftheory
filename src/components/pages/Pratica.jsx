@@ -112,6 +112,7 @@ export default function Pratica() {
   const [aba, setAba] = useState("começar");
   const [chave, setChave] = useState("C");
   const [acorde, setAcorde] = useState("C");
+  const [progressao, setProgressao] = useState(["C", "G", "Am", "F"]);
   const [voicing, setVoicing] = useState(VOICINGS[0]);
   const [escala, setEscala] = useState(ESCALAS_CONTEXTUAIS[0]);
   const [ouvido, setOuvido] = useState(0);
@@ -133,6 +134,16 @@ export default function Pratica() {
       VOICINGS.find((item) => item.acorde === nome.replace(/7|maj7/g, "")) ??
         VOICINGS[0],
     );
+  }
+
+  function adicionarAcordeProgressao(nome) {
+    setProgressao((atual) => atual.length >= 8 ? atual : [...atual, nome]);
+  }
+
+  function usarProgressaoSugerida() {
+    if (harmonia.length >= 6) {
+      setProgressao([harmonia[0], harmonia[4], harmonia[5], harmonia[3]]);
+    }
   }
 
   function responderOuvido(resposta) {
@@ -299,13 +310,82 @@ export default function Pratica() {
             <div className="roadmap-suggestion">
               <strong>
                 {PROGRESSOES.find((p) => p.acordes[0] === chave)?.nome ??
-                  "Progressão sugerida"}
+                  `I–V–vi–IV em ${chave}`}
               </strong>
               <span>
                 {PROGRESSOES.find((p) => p.acordes[0] === chave)?.contexto ??
-                  "Escolha um grau para gerar uma próxima ideia."}
+                  "Sequência pop comum calculada a partir do campo harmônico desta tonalidade."}
               </span>
             </div>
+            <PrettyPanel>
+              <SectionTitle
+                eyebrow="Composição guiada"
+                title="Rascunhe sua progressão"
+              >
+                Adicione acordes do campo harmônico, veja o grau de cada um e
+                selecione qualquer posição para estudar sua forma e sonoridade.
+              </SectionTitle>
+              <div className="progression-builder">
+                <div className="progression-builder-heading">
+                  <strong>Acordes disponíveis em {chave}</strong>
+                  <span>{progressao.length} de 8 posições</span>
+                </div>
+                <div className="roadmap-chip-list" aria-label={`Acordes do campo harmônico de ${chave}`}>
+                  {harmonia.map((item, index) => (
+                    <button
+                      key={`${item}-${index}`}
+                      type="button"
+                      onClick={() => adicionarAcordeProgressao(item)}
+                      disabled={progressao.length >= 8}
+                      aria-label={`Adicionar ${item}, grau ${["I", "ii", "iii", "IV", "V", "vi", "vii°"][index]}`}
+                    >
+                      + {item} <small>{["I", "ii", "iii", "IV", "V", "vi", "vii°"][index]}</small>
+                    </button>
+                  ))}
+                </div>
+                <div className="progression-sequence" aria-label="Sua progressão">
+                  {progressao.map((item, index) => {
+                    const grau = harmonia.indexOf(item);
+                    const graus = ["I", "ii", "iii", "IV", "V", "vi", "vii°"];
+                    return (
+                      <div className="progression-step" key={`${item}-${index}`}>
+                        <button
+                          type="button"
+                          className="progression-chord"
+                          onClick={() => escolherAcorde(item)}
+                          aria-label={`Estudar acorde ${item}${grau >= 0 ? `, grau ${graus[grau]}` : ""}`}
+                        >
+                          <strong>{item}</strong>
+                          <span>{grau >= 0 ? graus[grau] : "fora do campo"}</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="progression-remove"
+                          onClick={() => setProgressao((atual) => atual.filter((_, posicao) => posicao !== index))}
+                          aria-label={`Remover ${item} da posição ${index + 1}`}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    );
+                  })}
+                  {!progressao.length && <span className="progression-empty">Adicione um acorde para começar.</span>}
+                </div>
+                <div className="progression-builder-actions">
+                  <button type="button" className="pilula" onClick={usarProgressaoSugerida} disabled={harmonia.length < 6}>
+                    Usar I–V–vi–IV em {chave}
+                  </button>
+                  <button
+                    type="button"
+                    className="pilula"
+                    onClick={() => setProgressao([])}
+                    disabled={!progressao.length}
+                  >
+                    Limpar sequência
+                  </button>
+                </div>
+              </div>
+            </PrettyPanel>
             <PrettyPanel>
               <h3>Formas alternativas de {acorde}</h3>
               <div className="voicing-list">

@@ -12,6 +12,12 @@ import { THONIC_BALOES_ATIVOS_KEY, lerBaloesAtivos } from "../thonicBaloes";
 
 const CONVERSA_STORAGE_PREFIXO = "riffTheoryThonicConversation:v1:";
 const MAX_MENSAGENS_SALVAS = 100;
+const PERGUNTAS_INICIAIS = [
+    "Como funciona o campo harmônico maior?",
+    "Qual é a diferença entre acorde maior e menor?",
+    "Quando usar a pentatônica menor sobre um acorde?",
+    "Como praticar a troca entre C e G?",
+];
 
 function horaAgora() {
     return new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
@@ -389,6 +395,20 @@ export default function ChatbotTab() {
 
                 <div ref={fimDaListaRef} />
             </div>
+
+            {mensagens.length <= 1 && !carregando && (
+                <section className="chatbot-perguntas" aria-label="Exemplos de perguntas sobre teoria musical">
+                    <strong>Comece por uma dúvida de teoria</strong>
+                    <div>
+                        {PERGUNTAS_INICIAIS.map((pergunta) => (
+                            <button key={pergunta} type="button" onClick={() => setEntrada(pergunta)}>
+                                {pergunta}
+                            </button>
+                        ))}
+                    </div>
+                    <small>O Thonic explica teoria e técnica; ele não cria músicas ou letras.</small>
+                </section>
+            )}
 
             {erro && <div className="chatbot-erro">{erro}</div>}
 
