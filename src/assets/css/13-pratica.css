@@ -12,6 +12,33 @@
 .roadmap-section-heading { display: grid; gap: 7px; margin-bottom: 18px; }
 .roadmap-section-heading h2 { color: #202b3a; font-size: clamp(24px, 3vw, 34px); line-height: 1.05; }
 .roadmap-section-heading p { max-width: 740px; color: #59687a; line-height: 1.55; }
+.lesson-index { display: grid; gap: 18px; }
+.lesson-catalog { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.lesson-catalog-card { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-height: 205px; padding: 20px; border: 1px solid #dfe6f0; background: #fff; }
+.lesson-catalog-card h3 { color: #202b3a; font-size: 18px; }
+.lesson-catalog-card p { flex: 1; color: #59687a; font-size: 14px; line-height: 1.55; }
+.lesson-step-number { display: inline-grid; flex: none; width: 32px; height: 32px; place-items: center; border-radius: 50%; background: #edf1ff; color: #2449c8; font-size: 11px; font-weight: 800; }
+.lesson-open { display: inline-flex; align-items: center; gap: 8px; padding: 9px 0; color: #2449c8; font-size: 13px; font-weight: 800; }
+.lesson-open:hover { text-decoration: underline; }
+.lesson-note { color: #59687a; font-size: 13px; line-height: 1.5; }
+.lesson-guide { display: grid; gap: 18px; padding: clamp(18px, 3vw, 28px); border: 1px solid #dfe6f0; border-left: 4px solid #315ce8; background: #f8fbff; }
+.lesson-guide-heading { display: grid; gap: 7px; }
+.lesson-guide-heading h2 { color: #202b3a; font-size: clamp(22px, 3vw, 30px); line-height: 1.1; }
+.lesson-guide-heading p { max-width: 78ch; color: #59687a; line-height: 1.6; }
+.lesson-steps { display: grid; gap: 10px; padding: 0; list-style: none; counter-reset: none; }
+.lesson-steps li { display: flex; align-items: flex-start; gap: 12px; padding: 13px; border: 1px solid #e2e7ef; background: #fff; }
+.lesson-steps li > div { display: grid; gap: 4px; }
+.lesson-steps strong { color: #202b3a; font-size: 14px; }
+.lesson-steps p { color: #59687a; font-size: 13px; line-height: 1.55; }
+.lesson-control-group { display: grid; gap: 8px; }
+.lesson-control-group > strong { color: #59687a; font-size: 12px; }
+.lesson-example, .lesson-next-step { padding: clamp(18px, 3vw, 26px); border: 1px solid #dfe6f0; background: #fff; }
+.lesson-example h3 { margin: 8px 0 14px; color: #202b3a; font-size: 20px; }
+.lesson-example ol { display: grid; gap: 10px; padding-left: 22px; color: #59687a; font-size: 14px; line-height: 1.6; }
+.lesson-example strong { color: #202b3a; }
+.lesson-next-step { border-color: #b9c8f5; background: #f4f6ff; }
+.lesson-next-step strong { color: #2449c8; }
+.lesson-next-step p { margin-top: 6px; color: #59687a; font-size: 14px; line-height: 1.6; }
 .roadmap-grid { display: grid; gap: 14px; }
 .roadmap-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .roadmap-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }

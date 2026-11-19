@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import Barra from "../Barra";
 import PrettyPanel from "../PrettyPanel";
-import Icone from "../Icone";
 import {
   AVANCADO,
   CHAVES,
@@ -10,7 +9,6 @@ import {
   PROGRESSOES,
   TREINO_OUVIDO,
   VOICINGS,
-  arpejoDoAcorde,
   caminhoImproviso,
   gerarHarmonia,
   notasDaEscala,
@@ -42,6 +40,21 @@ const AMOSTRAS_ACORDES = {
   Dm: "/audio/ccmixter/minor-D.wav",
   Em: "/audio/ccmixter/minor-E.wav",
 };
+const NOMES_NOTAS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const SEMITONS = { C: 0, "C#": 1, Db: 1, D: 2, "D#": 3, Eb: 3, E: 4, F: 5, "F#": 6, Gb: 6, G: 7, "G#": 8, Ab: 8, A: 9, "A#": 10, Bb: 10, B: 11 };
+
+function notasDoAcorde(acorde) {
+  const partes = acorde.match(/^([A-G](?:#|b)?)(.*)$/);
+  if (!partes || SEMITONS[partes[1]] == null) return ["C4", "E4", "G4"];
+  const [_, raiz, qualidade] = partes;
+  const intervalos = qualidade.includes("dim") || qualidade.includes("°")
+    ? [0, 3, 6]
+    : /^m(?!aj)/.test(qualidade)
+      ? [0, 3, 7]
+      : [0, 4, 7];
+  if (qualidade.includes("7")) intervalos.push(qualidade.includes("maj7") ? 11 : 10);
+  return intervalos.map((semitom) => `${NOMES_NOTAS[(SEMITONS[raiz] + semitom) % 12]}4`);
+}
 
 function tocarNotas(notas, duracao = 0.85) {
   if (typeof window === "undefined") return;
@@ -73,13 +86,9 @@ function tocarNotas(notas, duracao = 0.85) {
 
 function tocarAcorde(acorde) {
   if (typeof window === "undefined") return;
-  const amostra =
-    AMOSTRAS_ACORDES[acorde] ?? AMOSTRAS_ACORDES[acorde.replace(/7|maj7/g, "")];
+  const amostra = AMOSTRAS_ACORDES[acorde];
   if (!amostra) {
-    tocarNotas(
-      VOICINGS.find((item) => item.acorde === acorde.replace(/7|maj7/g, ""))
-        ?.notas ?? ["C4", "E4", "G4"],
-    );
+    tocarNotas(notasDoAcorde(acorde));
     return;
   }
   const audio = new Audio(amostra);
@@ -87,10 +96,7 @@ function tocarAcorde(acorde) {
   audio
     .play()
     .catch(() =>
-      tocarNotas(
-        VOICINGS.find((item) => item.acorde === acorde.replace(/7|maj7/g, ""))
-          ?.notas ?? ["C4", "E4", "G4"],
-      ),
+      tocarNotas(notasDoAcorde(acorde)),
     );
   window.setTimeout(() => {
     audio.pause();
@@ -105,6 +111,29 @@ function SectionTitle({ eyebrow, title, children }) {
       <h2>{title}</h2>
       {children && <p>{children}</p>}
     </div>
+  );
+}
+
+function LessonGuide({ eyebrow, title, introduction, steps }) {
+  return (
+    <section className="lesson-guide" aria-label={title}>
+      <div className="lesson-guide-heading">
+        <span className="eyebrow">{eyebrow}</span>
+        <h2>{title}</h2>
+        <p>{introduction}</p>
+      </div>
+      <ol className="lesson-steps">
+        {steps.map((step, index) => (
+          <li key={step.title}>
+            <span className="lesson-step-number">{String(index + 1).padStart(2, "0")}</span>
+            <div>
+              <strong>{step.title}</strong>
+              <p>{step.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
 
@@ -125,15 +154,19 @@ export default function Pratica() {
   );
   const sugestoes = useMemo(() => sugestoesParaAcorde(acorde), [acorde]);
   const caminho = useMemo(() => caminhoImproviso(acorde), [acorde]);
-  const arpejo = useMemo(() => arpejoDoAcorde(acorde), [acorde]);
+  const arpejo = useMemo(
+    () => notasDoAcorde(acorde).map((nota) => nota.replace(/[0-9]/g, "")),
+    [acorde],
+  );
+  const formasAcorde = useMemo(
+    () => VOICINGS.filter((item) => item.acorde === acorde),
+    [acorde],
+  );
   const audioOuvido = TREINO_OUVIDO[ouvido];
 
   function escolherAcorde(nome) {
     setAcorde(nome);
-    setVoicing(
-      VOICINGS.find((item) => item.acorde === nome.replace(/7|maj7/g, "")) ??
-        VOICINGS[0],
-    );
+    setVoicing(VOICINGS.find((item) => item.acorde === nome) ?? null);
   }
 
   function adicionarAcordeProgressao(nome) {
@@ -143,6 +176,16 @@ export default function Pratica() {
   function usarProgressaoSugerida() {
     if (harmonia.length >= 6) {
       setProgressao([harmonia[0], harmonia[4], harmonia[5], harmonia[3]]);
+      escolherAcorde(harmonia[0]);
+    }
+  }
+
+  function selecionarTonalidade(novaChave) {
+    setChave(novaChave);
+    const novoCampo = gerarHarmonia(novaChave);
+    if (novoCampo.length >= 6) {
+      setProgressao([novoCampo[0], novoCampo[4], novoCampo[5], novoCampo[3]]);
+      escolherAcorde(novoCampo[0]);
     }
   }
 
@@ -161,25 +204,26 @@ export default function Pratica() {
       <Barra titulo="Prática" />
       <section className="roadmap-hero">
         <div>
-          <span className="eyebrow">Riff Theory · Beta prática</span>
-          <h1>Aprenda uma ideia. Ouça. Toque.</h1>
+          <span className="eyebrow">Riff Theory · aulas práticas</span>
+          <h1>Uma aula por tópico. Um passo por vez.</h1>
           <p>
-            Uma central para sair da consulta e entrar na execução: escolha um
-            caminho, experimente o som e avance por módulos.
+            Escolha o assunto, siga a explicação em ordem e use os exercícios
+            desta página para praticar o que acabou de aprender.
           </p>
         </div>
         <div className="roadmap-beta">
-          <strong>Beta 0.2</strong>
-          <span>núcleo de prática aberto</span>
+          <strong>5 aulas</strong>
+          <span>com exemplos interativos</span>
         </div>
       </section>
       <nav className="roadmap-tabs" aria-label="Módulos de prática">
         {[
-          ["começar", "Começar"],
-          ["harmonia", "Harmonia"],
-          ["improviso", "Improviso"],
+          ["começar", "Índice das aulas"],
+          ["harmonia", "Acordes e progressões"],
+          ["improviso", "Improvisação"],
           ["estilos", "Estilos e timbres"],
           ["ouvido", "Treino de ouvido"],
+          ["composicao", "Criar sua música"],
         ].map(([id, label]) => (
           <button
             key={id}
@@ -192,109 +236,76 @@ export default function Pratica() {
       </nav>
 
       {aba === "começar" && (
-        <>
-        <h2>O que essa trilha treina</h2>
-          <PrettyPanel>
-            <SectionTitle
-              eyebrow="Trilha de evolução"
-              title="Um passo de cada vez"
-            >
-              A trilha junta o básico, a aplicação e a especialização sem
-              esconder o próximo objetivo.
-            </SectionTitle>
-            <div className="roadmap-progress">
-              <div className="roadmap-progress-line">
-                <span className="roadmap-progress-fill" />
-              </div>
-              <div className="roadmap-steps">
-                <span className="feito">1 · Formas e som</span>
-                <span className="ativo">2 · Harmonia aplicada</span>
-                <span>3 · Improviso</span>
-                <span>4 · Estilo e timbre</span>
-                <span>5 · Ouvido</span>
-              </div>
-            </div>
-          
-          <section className="roadmap-grid roadmap-grid-3">
-            {AVANCADO.map((item) => (
-              <article className="roadmap-card" key={item.titulo}>
-                <Icone nome="info" tamanho={18} />
-                <h3>{item.titulo}</h3>
-                <p>{item.texto}</p>
+        <section className="lesson-index">
+          <SectionTitle
+            eyebrow="Por onde começar"
+            title="Escolha uma aula"
+          >
+            Cada assunto tem explicação, exemplo e uma atividade logo abaixo.
+            Comece por acordes e progressões; depois explore improvisação,
+            estilos e treino de ouvido.
+          </SectionTitle>
+          <div className="lesson-catalog">
+            {[
+              ["01", "Acordes e progressões", "Aprenda o que é tonalidade, entenda os graus e monte C–G–Am–F passo a passo.", "harmonia"],
+              ["02", "Improvisação", "Escolha notas do acorde, pratique o arpejo e entenda como resolver uma frase.", "improviso"],
+              ["03", "Estilos e timbres", "Compare ritmo, timbre e dinâmica sem confundir equipamento com teoria.", "estilos"],
+              ["04", "Treino de ouvido", "Ouça um acorde, escolha uma resposta e use o retorno para treinar de novo.", "ouvido"],
+              ["05", "Criar sua música", "Transforme uma ideia em tema, progressão, melodia, estrutura e arranjo.", "composicao"],
+            ].map(([numero, titulo, descricao, id]) => (
+              <article className="lesson-catalog-card" key={id}>
+                <span className="lesson-step-number">{numero}</span>
+                <h3>{titulo}</h3>
+                <p>{descricao}</p>
+                <button type="button" className="lesson-open" onClick={() => setAba(id)}>
+                  Abrir aula <span aria-hidden="true">→</span>
+                </button>
               </article>
             ))}
-          </section>
-          </PrettyPanel>
-        <h2>Lições de prática</h2>
-          <PrettyPanel>
-            <section className="roadmap-grid roadmap-grid-3">
-            <article className="roadmap-card destaque">
-              <span className="roadmap-number">01</span>
-              <h3>Primeiros acordes</h3>
-              <p>
-                Veja a forma, toque o som e faça a troca em uma progressão
-                curta.
-              </p>
-              <button
-                className="link-botao"
-                onClick={() => {
-                  escolherAcorde("C");
-                  setAba("harmonia");
-                }}
-              >
-                Começar por C →
-              </button>
-            </article>
-            <article className="roadmap-card">
-              <span className="roadmap-number">02</span>
-              <h3>Conectar teoria</h3>
-              <p>
-                Parta do campo harmônico e descubra quais acordes e escalas
-                conversam.
-              </p>
-              <button className="pilula" onClick={() => setAba("harmonia")}>
-                Explorar harmonia
-              </button>
-            </article>
-            <article className="roadmap-card">
-              <span className="roadmap-number">03</span>
-              <h3>Criar frases</h3>
-              <p>
-                Use notas-alvo, arpejos e sobreposições para improvisar com
-                direção.
-              </p>
-              <button className="pilula" onClick={() => setAba("improviso")}>
-                Guiar improviso
-              </button>
-            </article>
-          </section>
-        </PrettyPanel>
-        </>
+          </div>
+          <p className="lesson-note">
+            Não precisa saber teoria antes: siga os passos em ordem e experimente os controles da própria aula.
+          </p>
+        </section>
       )}
 
       {aba === "harmonia" && (
         <>
-        <h2>Acordes</h2>
+        <h2>Aula 1 · Acordes e progressões</h2>
+          <LessonGuide
+            eyebrow="Siga estes passos antes de mexer no montador"
+            title="Como montar uma progressão"
+            introduction="Progressão é uma ordem de acordes que sustenta uma parte da música. Você não precisa adivinhar: primeiro escolhe o tom, depois combina acordes desse tom e organiza a ordem."
+            steps={[
+              { title: "Escolha a tonalidade", text: "O tom é o ponto de repouso da música. Escolha C (Dó) para seguir o exemplo abaixo. Ao mudar o tom, a sequência de demonstração se ajusta junto." },
+              { title: "Leia o campo harmônico", text: "Em C maior, os acordes são C, Dm, Em, F, G, Am e Bdim. Os algarismos romanos são graus: I, ii, iii, IV, V, vi e vii°. Maiúsculas indicam acorde maior; minúsculas, menor; °, diminuto." },
+              { title: "Experimente uma ordem conhecida", text: "I–V–vi–IV significa pegar o 1º, 5º, 6º e 4º acordes do campo. Em C isso vira C–G–Am–F. Use o botão ‘Usar I–V–vi–IV’ para preencher a sequência automaticamente." },
+              { title: "Monte ou altere a sequência", text: "Cada botão com ‘+’ acrescenta aquele acorde ao final. A ordem dos cartões é a ordem em que os acordes entram na música. O ‘×’ remove uma posição; você pode ter até oito." },
+              { title: "Estude e ouça cada acorde", text: "Clique no cartão de um acorde da sequência. A área de formas abaixo troca para esse acorde; escolha uma forma e pressione ‘Ouvir’ para comparar o som. Repita a progressão no seu instrumento, um acorde de cada vez." },
+            ]}
+          />
           <PrettyPanel>
             <SectionTitle
               eyebrow="Teoria que vira ação"
-              title="Monte uma ideia na tonalidade escolhida"
+              title="Agora experimente os passos no montador"
             >
-              O campo harmônico sugere uma sequência; o mapa de escalas mostra
-              como continuar tocando sobre ela.
+              Primeiro escolha o tom. Em seguida use o botão I–V–vi–IV para
+              carregar o exemplo, ou acrescente acordes manualmente.
             </SectionTitle>
             <div className="roadmap-controls">
               <label>
                 Tonalidade
                 <select
                   value={chave}
-                  onChange={(e) => setChave(e.target.value)}
+                  onChange={(e) => selecionarTonalidade(e.target.value)}
                 >
                   {CHAVES.map((item) => (
                     <option key={item}>{item}</option>
                   ))}
                 </select>
               </label>
+              <div className="lesson-control-group">
+                <strong>Toque um acorde para estudar sua forma:</strong>
               <div className="roadmap-chip-list">
                 {harmonia.map((item) => (
                   <button
@@ -305,6 +316,7 @@ export default function Pratica() {
                     {item}
                   </button>
                 ))}
+              </div>
               </div>
             </div>
             <div className="roadmap-suggestion">
@@ -389,11 +401,7 @@ export default function Pratica() {
             <PrettyPanel>
               <h3>Formas alternativas de {acorde}</h3>
               <div className="voicing-list">
-                {VOICINGS.filter(
-                  (item) =>
-                    item.acorde === acorde.replace(/7|maj7/g, "") ||
-                    item.acorde === acorde,
-                ).map((item) => (
+                {formasAcorde.map((item) => (
                   <button
                     key={item.nome}
                     className={voicing.nome === item.nome ? "selecionado" : ""}
@@ -408,16 +416,32 @@ export default function Pratica() {
                     </code>
                   </button>
                 ))}
+                {!formasAcorde.length && (
+                  <p className="lesson-note">Ainda não há desenho de braço cadastrado para {acorde}. Você pode ouvir a harmonia e continuar estudando a escala.</p>
+                )}
               </div>
               <button
                 className="link-botao"
-                onClick={() => tocarAcorde(acorde)}
+                onClick={() =>
+                  voicing ? tocarNotas(voicing.notas) : tocarAcorde(acorde)
+                }
               >
-                ▶ Ouvir {voicing.nome}
+                ▶ Ouvir {voicing?.nome ?? acorde}
               </button>
             </PrettyPanel>
           </PrettyPanel>
-            <h2>Escala contextual</h2>
+            <LessonGuide
+              eyebrow="Aula extra · escalas"
+              title="Como escolher uma escala para um acorde"
+              introduction="Escala é um conjunto de notas; acorde é um conjunto menor de notas que define a harmonia do momento. A escala dá notas de ligação, mas as notas do acorde costumam soar mais estáveis."
+              steps={[
+                { title: "Escolha o acorde que está soando", text: "Use os cartões da tonalidade ou clique em um acorde da progressão. A escala deve ser pensada em relação à harmonia, não escolhida ao acaso." },
+                { title: "Selecione uma cor de escala", text: "Maior é um ponto de partida claro para acordes maiores do tom; pentatônica menor e blues funcionam bem em contextos de rock/blues; dórica dá cor a muitos acordes menores. Use as descrições como orientação, não como regra absoluta." },
+                { title: "Leia as notas exibidas", text: "As notas listadas são as disponíveis na tonalidade e no tipo selecionado. Toque devagar e perceba como cada nota se relaciona com o acorde escolhido." },
+                { title: "Aponte para notas do acorde", text: "Comece e termine uma frase em uma nota do acorde (como tônica, terça ou quinta). Use outras notas da escala para chegar até ela." },
+              ]}
+            />
+            <h2>Aplique a escala ao acorde</h2>
           <section className="roadmap-suggestion">
             <PrettyPanel>
               <h3>{escala.nome}</h3>
@@ -448,6 +472,18 @@ export default function Pratica() {
 
       {aba === "improviso" && (
         <>
+          <h2>Aula 2 · Improvisação</h2>
+          <LessonGuide
+            eyebrow="Do acorde à frase"
+            title="Como escolher notas para improvisar"
+            introduction="Improvisar não é tocar notas aleatórias nem correr pela escala. Use o acorde como mapa: as notas dele soam estáveis; as outras notas da escala fazem a ligação."
+            steps={[
+              { title: "Escolha e ouça um acorde", text: "Selecione C, G, Am, F ou A7 e pressione ‘Ouvir base’. Cante ou toque a tônica (o nome do acorde) para sentir onde o som repousa." },
+              { title: "Veja as notas-alvo", text: "A lista numerada sugere uma ordem. Comece pela tônica; a terça mostra se o acorde é maior ou menor; a quinta dá estabilidade. A sexta e a sétima acrescentam cor." },
+              { title: "Pratique o arpejo", text: "‘Ouvir arpejo’ toca as notas do acorde uma a uma. Toque cada botão de nota, depois tente ligar tônica, terça e quinta com poucas notas da escala." },
+              { title: "Faça uma frase curta e resolva", text: "Use um ritmo simples, deixe espaço e termine numa nota do acorde, especialmente a tônica, em um tempo forte. Repita mudando só o ritmo ou uma nota de cada vez." },
+            ]}
+          />
           <PrettyPanel>
             <SectionTitle
               eyebrow="Improvisação guiada"
@@ -539,9 +575,21 @@ export default function Pratica() {
 
       {aba === "estilos" && (
         <>
+          <h2>Aula 3 · Estilos e timbres</h2>
+          <LessonGuide
+            eyebrow="Ouça o contexto, não só o acorde"
+            title="Como estudar um estilo musical"
+            introduction="O mesmo acorde pode funcionar em muitos estilos. O que muda é o ritmo, a intensidade, a articulação e o timbre. Nesta aula, compare as escolhas descritas nos exemplos."
+            steps={[
+              { title: "Escolha o clima", text: "Decida o que quer comunicar (por exemplo: leve, pesado, íntimo ou dançante). O clima ajuda a escolher ritmo e dinâmica antes de pensar em equipamento." },
+              { title: "Leia o padrão rítmico", text: "Observe a descrição ‘Padrão’ de cada estilo. Identifique se a base usa acordes abertos, power chords, dedilhado, shuffle ou batidas regulares." },
+              { title: "Mude uma coisa por vez", text: "Toque a mesma progressão com uma batida simples; depois troque apenas o ritmo ou a articulação. Compare como a sensação muda sem alterar os acordes." },
+              { title: "Ajuste timbre e pegada", text: "Só depois considere captador, ganho, compressão, delay ou reverb. A mão direita, o volume e o ataque também mudam o timbre; equipamento não substitui a execução." },
+            ]}
+          />
           <SectionTitle
             eyebrow="Especialização"
-            title="O mesmo acorde muda com o contexto"
+            title="Compare os quatro exemplos"
           >
             Use estilo, timbre e equipamento como escolhas musicais, não como
             uma lista de compras.
@@ -559,9 +607,6 @@ export default function Pratica() {
                 <p>
                   <strong>Equipamento e pegada:</strong> {item.equipamento}
                 </p>
-                <button className="pilula" onClick={() => tocarAcorde(acorde)}>
-                  Ouvir com a forma atual
-                </button>
               </article>
             ))}
           </section>
@@ -581,7 +626,18 @@ export default function Pratica() {
 
       {aba === "ouvido" && (
         <>
-        <h2>Treine para descobrir o acorde pelo som</h2>
+          <h2>Aula 4 · Treino de ouvido</h2>
+          <LessonGuide
+            eyebrow="Ouça, compare, responda"
+            title="Como reconhecer um acorde pelo som"
+            introduction="O objetivo não é acertar por sorte: repita o áudio, observe a sensação de repouso e compare com o timbre maior ou menor. Este exercício de três notas roda no seu navegador."
+            steps={[
+              { title: "Toque o exemplo", text: "Pressione ‘Tocar exemplo’ e escute as três notas. Se precisar, toque novamente; não há limite de tentativas." },
+              { title: "Procure a sensação do acorde", text: "Maior costuma soar mais aberto/brilhante; menor, mais fechado/sombrio. Cante a nota que parece repousar para estimar a tônica." },
+              { title: "Escolha uma resposta", text: "Toque C, Am, G ou F. O retorno diz se acertou; se não, revela a resposta para você aprender com a comparação." },
+              { title: "Repita e aumente a dificuldade", text: "Use ‘Próximo exemplo’ para ouvir outra tríade. Depois tente cantar a tônica antes de olhar as opções e confirme no seu instrumento." },
+            ]}
+          />
           <PrettyPanel>
             <SectionTitle
               eyebrow="Tirar música de ouvido"
@@ -646,6 +702,42 @@ export default function Pratica() {
               </article>
             ))}
           </section>
+        </>
+      )}
+
+      {aba === "composicao" && (
+        <>
+          <h2>Aula 5 · Criar sua música</h2>
+          <LessonGuide
+            eyebrow="Da ideia à primeira demo"
+            title="Um método para compor a sua própria música"
+            introduction="Compor é tomar uma série de decisões pequenas. Não é preciso começar pela letra nem saber teoria avançada. Faça uma versão simples primeiro; depois refine o que não comunica a ideia que você queria."
+            steps={[
+              { title: "Escolha uma ideia central", text: "Resuma em uma frase o tema, a imagem ou a emoção que quer transmitir. Anote palavras-chave e uma frase curta que poderia virar o gancho do refrão; escreva com sua própria voz." },
+              { title: "Encontre um tom e uma região confortável", text: "Toque ou cante algumas notas e escolha uma tonalidade em que a melodia caiba sem esforço. A tônica é a nota de repouso. Se compõe no violão, comece por uma tonalidade com acordes que você consegue tocar." },
+              { title: "Monte a harmonia", text: "Escolha três ou quatro acordes que combinem, por exemplo I–V–vi–IV. Na aula anterior, selecione o tom, carregue esse padrão e toque a sequência em loop. Troque um acorde por vez e note como muda a emoção." },
+              { title: "Defina pulso, andamento e groove", text: "Comece com um compasso simples (por exemplo, 4/4) e um andamento que permita cantar a ideia. Bata o pulso com a mão; escolha batida, dedilhado, groove ou silêncio antes de adicionar produção." },
+              { title: "Crie uma melodia curta", text: "Cante ou toque uma célula de poucas notas e grave um rascunho. Faça notas do acorde soarem nos tempos fortes; use notas da escala para ligar uma ideia à outra. Repita o motivo e mude o final para criar resposta e desenvolvimento." },
+              { title: "Organize as seções", text: "Dê funções diferentes às partes: verso apresenta, pré-refrão cria expectativa, refrão resume o gancho, ponte oferece contraste. Nem toda música precisa de todas as partes; deixe a repetição ajudar a memorizar." },
+              { title: "Escreva, arranje e revise", text: "Se houver letra, ajuste sílabas e acentos às notas fortes, sem encher todos os espaços. Depois grave uma demo simples de voz e instrumento; escute, anote uma mudança de cada vez e mantenha o que serve à ideia central." },
+            ]}
+          />
+          <section className="lesson-example">
+            <span className="eyebrow">Exemplo didático · ponto de partida, não uma música pronta</span>
+            <h3>Como transformar decisões em um rascunho</h3>
+            <ol>
+              <li><strong>Ideia:</strong> uma sensação de recomeço; anote imagens e palavras que sejam suas.</li>
+              <li><strong>Tom e harmonia:</strong> C maior, I–V–vi–IV = C–G–Am–F, um acorde por compasso.</li>
+              <li><strong>Pulso:</strong> 4/4 em andamento confortável; comece com batida leve no verso.</li>
+              <li><strong>Melodia:</strong> cante um motivo curto; sobre C, teste C, E ou G como notas estáveis. Quando chegar a G, experimente G, B ou D e crie sua própria ligação entre elas.</li>
+              <li><strong>Forma:</strong> faça um verso mais contido e repita o motivo com ritmo ou alcance maior no refrão; crie contraste na ponte se a canção pedir.</li>
+              <li><strong>Revisão:</strong> grave uma demo e pergunte: o gancho aparece? A melodia é cantável? Cada seção acrescenta algo? Mude apenas o que não funciona.</li>
+            </ol>
+          </section>
+          <div className="lesson-next-step">
+            <strong>Seu primeiro exercício</strong>
+            <p>Complete as frases: “Quero falar sobre…”, “quero que soe…”, “vou testar os acordes…”. Com essas três decisões, grave um rascunho de 30 segundos e depois revise.</p>
+          </div>
         </>
       )}
     </div>
